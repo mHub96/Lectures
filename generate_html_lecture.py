@@ -1738,6 +1738,331 @@ html_content = f"""<!DOCTYPE html>
     .rank-2 {{ color: var(--silver); }}
     .rank-3 {{ color: var(--bronze); }}
 
+
+    /* ==========================================================================
+       TRUE FULLSCREEN HALL PRESENTATION MODE (100vw x 100vh EDGE-TO-EDGE)
+       ========================================================================== */
+    :fullscreen .lecture-header,
+    :-webkit-full-screen .lecture-header,
+    body.is-fullscreen .lecture-header,
+    :fullscreen .controls-footer,
+    :-webkit-full-screen .controls-footer,
+    body.is-fullscreen .controls-footer {{
+      display: none !important;
+    }}
+
+    :fullscreen .progress-strip,
+    :-webkit-full-screen .progress-strip,
+    body.is-fullscreen .progress-strip {{
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 3px !important;
+      z-index: 999 !important;
+      background: transparent !important;
+    }}
+
+    :fullscreen main.presentation-stage,
+    :-webkit-full-screen main.presentation-stage,
+    body.is-fullscreen main.presentation-stage {{
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+      background: var(--bg-base) !important;
+    }}
+
+    :fullscreen .slide-aspect-box,
+    :-webkit-full-screen .slide-aspect-box,
+    body.is-fullscreen .slide-aspect-box {{
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      aspect-ratio: auto !important;
+      border: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      background: var(--bg-surface) !important;
+    }}
+
+    :fullscreen .slide-content-container,
+    :-webkit-full-screen .slide-content-container,
+    body.is-fullscreen .slide-content-container {{
+      width: 100vw !important;
+      height: 100vh !important;
+      padding: clamp(1.25rem, 2.2vh, 2.75rem) clamp(2.5rem, 4vw, 5.5rem) clamp(2.5rem, 4vh, 4.5rem) !important;
+      box-sizing: border-box !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }}
+
+    :fullscreen .slide-header,
+    :-webkit-full-screen .slide-header,
+    body.is-fullscreen .slide-header {{
+      margin-bottom: clamp(1rem, 2vh, 1.8rem) !important;
+    }}
+
+    :fullscreen .slide-title,
+    :-webkit-full-screen .slide-title,
+    body.is-fullscreen .slide-title {{
+      font-size: clamp(2.2rem, 3.4vw, 4rem) !important;
+      line-height: 1.15 !important;
+    }}
+
+    :fullscreen .slide-subtitle,
+    :-webkit-full-screen .slide-subtitle,
+    body.is-fullscreen .slide-subtitle {{
+      font-size: clamp(1.1rem, 1.4vw, 1.6rem) !important;
+    }}
+
+    :fullscreen .slide-category-badge,
+    :-webkit-full-screen .slide-category-badge,
+    body.is-fullscreen .slide-category-badge {{
+      font-size: clamp(0.85rem, 1vw, 1.15rem) !important;
+      padding: 6px 14px !important;
+    }}
+
+    :fullscreen .slide-body-grid,
+    :-webkit-full-screen .slide-body-grid,
+    body.is-fullscreen .slide-body-grid {{
+      grid-template-columns: 1.1fr 0.9fr !important;
+      gap: clamp(2rem, 3.5vw, 4.5rem) !important;
+      flex: 1 !important;
+      min-height: 0 !important;
+    }}
+
+    :fullscreen .cards-column,
+    :-webkit-full-screen .cards-column,
+    body.is-fullscreen .cards-column {{
+      gap: clamp(0.85rem, 1.6vh, 1.5rem) !important;
+    }}
+
+    :fullscreen .lecture-card,
+    :-webkit-full-screen .lecture-card,
+    body.is-fullscreen .lecture-card {{
+      padding: clamp(1rem, 1.8vh, 1.75rem) clamp(1.25rem, 2vw, 2.25rem) !important;
+      border-radius: var(--radius-lg) !important;
+      border-left-width: 5px !important;
+    }}
+
+    :fullscreen .card-heading,
+    :-webkit-full-screen .card-heading,
+    body.is-fullscreen .card-heading {{
+      font-size: clamp(1.15rem, 1.45vw, 1.7rem) !important;
+      margin-bottom: 0.45rem !important;
+    }}
+
+    :fullscreen .card-text,
+    :-webkit-full-screen .card-text,
+    body.is-fullscreen .card-text {{
+      font-size: clamp(1.0rem, 1.25vw, 1.45rem) !important;
+      line-height: 1.55 !important;
+    }}
+
+    :fullscreen .image-panel,
+    :-webkit-full-screen .image-panel,
+    body.is-fullscreen .image-panel {{
+      height: 100% !important;
+      min-height: 0 !important;
+    }}
+
+    :fullscreen .image-viewport,
+    :-webkit-full-screen .image-viewport,
+    body.is-fullscreen .image-viewport {{
+      flex: 1 !important;
+      height: 100% !important;
+      border-radius: var(--radius-lg) !important;
+    }}
+
+    :fullscreen .caption-card,
+    :-webkit-full-screen .caption-card,
+    body.is-fullscreen .caption-card {{
+      margin-top: clamp(0.75rem, 1.4vh, 1.25rem) !important;
+      padding: clamp(0.75rem, 1.4vh, 1.25rem) clamp(1rem, 1.5vw, 1.75rem) !important;
+      border-radius: var(--radius-md) !important;
+    }}
+
+    :fullscreen .caption-title,
+    :-webkit-full-screen .caption-title,
+    body.is-fullscreen .caption-title {{
+      font-size: clamp(0.95rem, 1.15vw, 1.35rem) !important;
+    }}
+
+    :fullscreen .caption-text,
+    :-webkit-full-screen .caption-text,
+    body.is-fullscreen .caption-text {{
+      font-size: clamp(0.92rem, 1.1vw, 1.3rem) !important;
+      line-height: 1.5 !important;
+    }}
+
+    /* Title slides in Fullscreen */
+    :fullscreen .title-slide-container,
+    :-webkit-full-screen .title-slide-container,
+    body.is-fullscreen .title-slide-container {{
+      gap: clamp(2.5rem, 4.5vw, 5.5rem) !important;
+      height: 100% !important;
+    }}
+
+    :fullscreen .title-left .slide-title,
+    :-webkit-full-screen .title-left .slide-title,
+    body.is-fullscreen .title-left .slide-title {{
+      font-size: clamp(3rem, 4.8vw, 5.2rem) !important;
+      line-height: 1.12 !important;
+    }}
+
+    :fullscreen .title-left .slide-subtitle,
+    :-webkit-full-screen .title-left .slide-subtitle,
+    body.is-fullscreen .title-left .slide-subtitle {{
+      font-size: clamp(1.35rem, 1.8vw, 2.2rem) !important;
+      margin-bottom: clamp(1.5rem, 2.5vh, 2.5rem) !important;
+    }}
+
+    :fullscreen .credits-box,
+    :-webkit-full-screen .credits-box,
+    body.is-fullscreen .credits-box {{
+      padding: clamp(1.25rem, 2vh, 2.25rem) clamp(1.5rem, 2vw, 2.5rem) !important;
+      border-radius: var(--radius-lg) !important;
+    }}
+
+    :fullscreen .credits-heading,
+    :-webkit-full-screen .credits-heading,
+    body.is-fullscreen .credits-heading {{
+      font-size: clamp(0.9rem, 1.1vw, 1.25rem) !important;
+      margin-bottom: 0.75rem !important;
+    }}
+
+    :fullscreen .credits-list li,
+    :-webkit-full-screen .credits-list li,
+    body.is-fullscreen .credits-list li {{
+      font-size: clamp(1.05rem, 1.25vw, 1.45rem) !important;
+      margin-bottom: 0.45rem !important;
+    }}
+
+    /* Sleek Floating Fullscreen Presentation HUD (Auto-Hiding) */
+    .fullscreen-hud {{
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(0);
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }}
+
+    :fullscreen .fullscreen-hud,
+    :-webkit-full-screen .fullscreen-hud,
+    body.is-fullscreen .fullscreen-hud {{
+      pointer-events: auto;
+      opacity: 1;
+    }}
+
+    .fullscreen-hud.hud-hidden {{
+      opacity: 0.08 !important;
+      transform: translateX(-50%) translateY(10px) !important;
+    }}
+
+    .fullscreen-hud:hover,
+    .fullscreen-hud:focus-within {{
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) !important;
+    }}
+
+    .hud-btn {{
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }}
+
+    .hud-btn.primary {{
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #030712;
+    }}
+
+    .hud-btn:hover:not(:disabled) {{
+      transform: translateY(-1px);
+    }}
+
+    .hud-btn:disabled {{
+      opacity: 0.4;
+      cursor: not-allowed;
+    }}
+
+    .hud-counter {{
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #fff;
+      padding: 0 4px;
+    }}
+
+    .hud-divider {{
+      width: 1px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.2);
+    }}
+
+    .hud-step-pill {{
+      background: rgba(56, 189, 248, 0.18);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-primary);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }}
+
+    .hud-icon-btn {{
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }}
+
+    .hud-icon-btn:hover {{
+      background: rgba(255, 255, 255, 0.2);
+      color: var(--accent-primary);
+    }}
+
+    .hud-icon-btn.exit-fs:hover {{
+      background: rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.5);
+    }}
+
     /* Responsive */
     @media (max-width: 1100px) {{
       .slide-body-grid {{
@@ -1810,6 +2135,30 @@ html_content = f"""<!DOCTYPE html>
       <!-- Dynamic slide content renders here -->
     </div>
   </main>
+
+  <!-- Sleek Floating Presentation HUD (Auto-Hiding in Fullscreen) -->
+  <div id="fullscreenHud" class="fullscreen-hud">
+    <button class="hud-btn" id="fsBtnPrev" onclick="navigateStepOrSlide(-1)" title="Previous (Left Arrow)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span class="hud-counter" id="fsSlideCounter">Slide 1 / 66</span>
+    <button class="hud-btn primary" id="fsBtnNext" onclick="navigateStepOrSlide(1)" title="Next Point (Space or Right Arrow)">
+      <span id="fsNextLabel">Next</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="hud-divider"></div>
+    <span class="hud-step-pill" id="fsStepBadge">Build: Ready</span>
+    <button class="hud-icon-btn" onclick="toggleDrawer()" title="Slide Overview & Index (O)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    </button>
+    <button class="hud-icon-btn" onclick="toggleQuiz()" title="Live Quiz Arena (Q)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </button>
+    <button class="hud-icon-btn exit-fs" onclick="toggleFullscreen()" title="Exit Fullscreen (Esc or F)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
 
   <!-- Bottom Navigation & Controls -->
   <footer class="controls-footer">
@@ -2032,6 +2381,8 @@ html_content = f"""<!DOCTYPE html>
 
       const indicator = document.getElementById('stepIndicator');
       const nextLabel = document.getElementById('nextBtnLabel');
+      const fsStep = document.getElementById('fsStepBadge');
+      const fsNextLabel = document.getElementById('fsNextLabel');
 
       if (totalStepsForSlide === 0) {{
         indicator.textContent = "Title View";
@@ -2043,6 +2394,8 @@ html_content = f"""<!DOCTYPE html>
         indicator.textContent = "Slide Complete ✓";
         nextLabel.textContent = "Next Slide";
       }}
+      if (fsStep) fsStep.textContent = indicator.textContent;
+      if (fsNextLabel) fsNextLabel.textContent = (nextLabel.textContent === 'Next Point') ? 'Next' : nextLabel.textContent;
     }}
 
     function renderSlide(direction = 'forward') {{
@@ -2053,6 +2406,13 @@ html_content = f"""<!DOCTYPE html>
       document.getElementById('slideCounter').textContent = `Slide ${{pos + 1}} / ${{filteredIndices.length}}`;
       document.getElementById('btnPrev').disabled = (pos === 0 && currentStep === 0);
       document.getElementById('btnNext').disabled = (pos === filteredIndices.length - 1 && currentStep >= totalStepsForSlide);
+
+      const fsCounter = document.getElementById('fsSlideCounter');
+      if (fsCounter) fsCounter.textContent = `Slide ${{pos + 1}} / ${{filteredIndices.length}}`;
+      const fsPrev = document.getElementById('fsBtnPrev');
+      if (fsPrev) fsPrev.disabled = (pos === 0 && currentStep === 0);
+      const fsNext = document.getElementById('fsBtnNext');
+      if (fsNext) fsNext.disabled = (pos === filteredIndices.length - 1 && currentStep >= totalStepsForSlide);
 
       const pct = ((pos + 1) / filteredIndices.length) * 100;
       document.getElementById('progressBar').style.width = pct + '%';
@@ -2294,12 +2654,59 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function toggleFullscreen() {{
-      if (!document.fullscreenElement) {{
-        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      const isCurrentlyFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.body.classList.contains('is-fullscreen-forced'));
+      if (!isCurrentlyFs) {{
+        const el = document.documentElement;
+        if (el.requestFullscreen) {{
+          el.requestFullscreen().catch(err => {{
+            console.warn('Native requestFullscreen blocked, using CSS hall fullscreen:', err);
+            document.body.classList.add('is-fullscreen-forced');
+            updateFullscreenState();
+          }});
+        }} else if (el.webkitRequestFullscreen) {{
+          el.webkitRequestFullscreen();
+        }} else {{
+          document.body.classList.add('is-fullscreen-forced');
+          updateFullscreenState();
+        }}
       }} else {{
-        document.exitFullscreen().catch(err => console.log(err));
+        document.body.classList.remove('is-fullscreen-forced');
+        if (document.exitFullscreen && document.fullscreenElement) {{
+          document.exitFullscreen().catch(err => console.log(err));
+        }} else if (document.webkitExitFullscreen && document.webkitFullscreenElement) {{
+          document.webkitExitFullscreen();
+        }}
+        updateFullscreenState();
       }}
     }}
+
+    function updateFullscreenState() {{
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.body.classList.contains('is-fullscreen-forced'));
+      document.body.classList.toggle('is-fullscreen', isFs);
+      const hud = document.getElementById('fullscreenHud');
+      if (hud) {{
+        hud.classList.remove('hud-hidden');
+        if (isFs) resetHudTimer();
+      }}
+    }}
+
+    document.addEventListener('fullscreenchange', updateFullscreenState);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenState);
+
+    let hudHideTimeout = null;
+    function resetHudTimer() {{
+      const hud = document.getElementById('fullscreenHud');
+      if (!hud) return;
+      hud.classList.remove('hud-hidden');
+      clearTimeout(hudHideTimeout);
+      if (document.body.classList.contains('is-fullscreen') || document.fullscreenElement) {{
+        hudHideTimeout = setTimeout(() => {{
+          hud.classList.add('hud-hidden');
+        }}, 2500);
+      }}
+    }}
+    window.addEventListener('mousemove', resetHudTimer);
+    window.addEventListener('touchstart', resetHudTimer);
 
     // ==========================================================================
     // 10 HIGH-YIELD NEUROSURGICAL BOARD EXAMINATION QUESTIONS
@@ -2422,7 +2829,13 @@ html_content = f"""<!DOCTYPE html>
     // ==========================================================================
     const QUIZ_STORAGE_KEY = 'ventricular_tumors_quiz_results_v2';
     const ROOM_ID = 'VENTRICLE';
-    const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
+    const MQTT_FALLBACKS = [
+      'wss://test.mosquitto.org:8081',
+      'wss://broker.hivemq.com:8884/mqtt',
+      'wss://broker.emqx.io:8084/mqtt'
+    ];
+    let currentBrokerIdx = 0;
+    const MQTT_BROKER = MQTT_FALLBACKS[0];
     const TOPIC = `neurosurg/ventricular-quiz/${{ROOM_ID}}`;
 
     let quizArenaMode = 'live'; // 'live' or 'solo'
@@ -2446,6 +2859,9 @@ html_content = f"""<!DOCTYPE html>
     let soloScore = 0;
 
     function getPlayerUrl() {{
+      if (window.location.protocol === 'file:') {{
+        return 'https://mhub96.github.io/Lectures/quiz_player.html?room=' + ROOM_ID;
+      }}
       const loc = window.location;
       let base = loc.href.split('?')[0].split('#')[0];
       if (base.endsWith('/index.html') || base.endsWith('/interactive_lecture.html')) {{
@@ -2480,13 +2896,18 @@ html_content = f"""<!DOCTYPE html>
         }}
       }});
 
-      // 3. MQTT over WebSockets
+      // 3. Resilient MQTT connection with broker failover
+      connectHostMqtt();
+    }}
+
+    function connectHostMqtt() {{
+      const brokerUrl = MQTT_FALLBACKS[currentBrokerIdx];
       try {{
         const hostId = `vqh_${{Math.random().toString(16).substring(2, 8)}}`;
-        hostMqttClient = mqtt.connect(MQTT_BROKER, {{
+        hostMqttClient = mqtt.connect(brokerUrl, {{
           clientId: hostId,
           clean: true,
-          connectTimeout: 5000,
+          connectTimeout: 6000,
           reconnectPeriod: 3000
         }});
 
@@ -2504,15 +2925,19 @@ html_content = f"""<!DOCTYPE html>
         }});
 
         hostMqttClient.on('offline', () => {{
-          updateArenaConnectionStatus(false, 'Broker Offline');
+          updateArenaConnectionStatus(false, 'Broker Reconnecting');
         }});
 
-        hostMqttClient.on('error', () => {{
-          updateArenaConnectionStatus(false, 'Local Sync Mode');
+        hostMqttClient.on('error', (err) => {{
+          console.warn(`Host broker ${{brokerUrl}} error:`, err);
+          if (!hostMqttClient.connected && currentBrokerIdx < MQTT_FALLBACKS.length - 1) {{
+            currentBrokerIdx++;
+            try {{ hostMqttClient.end(true); }} catch(e){{}}
+            setTimeout(connectHostMqtt, 1000);
+          }}
         }});
       }} catch(err) {{
-        console.warn('MQTT init failed, falling back to Local Tab Broadcast:', err);
-        updateArenaConnectionStatus(true, 'Local Sync Mode');
+        console.warn('Host MQTT init error:', err);
       }}
     }}
 
@@ -2557,10 +2982,9 @@ html_content = f"""<!DOCTYPE html>
     function handleHostIncomingMessage(msg) {{
       if (!msg || !msg.type || msg.sender === 'HOST') return;
 
-      if (msg.type === 'PLAYER_JOIN_REQUEST') {{
+      if (msg.type === 'PLAYER_JOIN_REQUEST' || (msg.type === 'PLAYER_PING' && hostState === 'LOBBY')) {{
         // REGISTRATION LOCK CHECK:
-        if (hostState !== 'LOBBY') {{
-          // Registration is locked!
+        if (hostState !== 'LOBBY' && !participants[msg.playerId]) {{
           broadcastToPlayers({{
             type: 'HOST_PLAYER_REJECTED',
             targetPlayerId: msg.playerId,
@@ -2569,7 +2993,8 @@ html_content = f"""<!DOCTYPE html>
           return;
         }}
 
-        // Accept user
+        // Accept user or update name
+        let updated = false;
         if (!participants[msg.playerId]) {{
           participants[msg.playerId] = {{
             id: msg.playerId,
@@ -2579,15 +3004,22 @@ html_content = f"""<!DOCTYPE html>
             answers: {{}},
             isBot: false
           }};
-          broadcastToPlayers({{
-            type: 'HOST_PLAYER_ACCEPTED',
-            targetPlayerId: msg.playerId
-          }});
-          broadcastHostSync();
-          if (document.getElementById('quizOverlay').classList.contains('active') && hostState === 'LOBBY') {{
-            renderLobbyScreen();
-          }}
+          updated = true;
+        }} else if (msg.name && participants[msg.playerId].name !== msg.name) {{
+          participants[msg.playerId].name = msg.name;
+          updated = true;
         }}
+
+        if (updated && document.getElementById('quizOverlay').classList.contains('active') && hostState === 'LOBBY') {{
+          renderLobbyScreen();
+        }}
+
+        // ALWAYS acknowledge join requests so player knows they are registered!
+        broadcastToPlayers({{
+          type: 'HOST_PLAYER_ACCEPTED',
+          targetPlayerId: msg.playerId
+        }});
+        broadcastHostSync();
       }} else if (msg.type === 'PLAYER_PING') {{
         if (participants[msg.playerId]) {{
           broadcastHostSync();
@@ -3371,6 +3803,11 @@ html_content = f"""<!DOCTYPE html>
 
     // URL param support for direct slide jump, quiz states, and lightbox zoom
     const urlParams = new URLSearchParams(window.location.search);
+    const fsParam = urlParams.get('fullscreen');
+    if (fsParam === 'true' || fsParam === '1') {{
+      document.body.classList.add('is-fullscreen');
+      document.body.classList.add('is-fullscreen-forced');
+    }}
     const slideParam = urlParams.get('slide');
     if (slideParam) {{
       const targetIdx = parseInt(slideParam, 10) - 1;

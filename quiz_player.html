@@ -502,7 +502,12 @@
     // Configuration & Session State
     const urlParams = new URLSearchParams(window.location.search);
     const ROOM_ID = (urlParams.get('room') || 'VENTRICLE').toUpperCase();
-    const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
+    const MQTT_FALLBACKS = [
+      'wss://test.mosquitto.org:8081',
+      'wss://broker.hivemq.com:8884/mqtt',
+      'wss://broker.emqx.io:8084/mqtt'
+    ];
+    let currentBrokerIdx = 0;
     const TOPIC = `neurosurg/ventricular-quiz/${ROOM_ID}`;
 
     let playerId = localStorage.getItem('vq_player_id');
@@ -532,6 +537,8 @@
     let client = null;
     let broadcastChannel = null;
     let timerInterval = null;
+    let joinHeartbeatTimer = null;
+    let isAcceptedByHost = false;
 
     // Setup Local BroadcastChannel for same-origin tabs (immediate offline test capability)
     try {
@@ -545,14 +552,15 @@
       console.log('BroadcastChannel not available:', err);
     }
 
-    // Connect to MQTT Broker
+    // Connect to MQTT Broker with automatic broker pool fallback
     function connectMqtt() {
+      const brokerUrl = MQTT_FALLBACKS[currentBrokerIdx];
       try {
         const clientId = `vqp_${playerId}_${Math.random().toString(16).substring(2, 6)}`;
-        client = mqtt.connect(MQTT_BROKER, {
+        client = mqtt.connect(brokerUrl, {
           clientId: clientId,
           clean: true,
-          connectTimeout: 5000,
+          connectTimeout: 6000,
           reconnectPeriod: 2500
         });
 
@@ -560,13 +568,8 @@
           setConnectionStatus(true, 'Online');
           client.subscribe(TOPIC, { qos: 1 }, (err) => {
             if (!err) {
-              // If we already have a name, announce our presence
               if (playerName) {
-                sendToHost({
-                  type: 'PLAYER_PING',
-                  playerId: playerId,
-                  name: playerName
-                });
+                sendJoinRequest();
               }
             }
           });
@@ -586,12 +589,16 @@
         });
 
         client.on('error', (err) => {
-          console.log('MQTT error:', err);
-          setConnectionStatus(false, 'Local Tab Mode');
+          console.log(`MQTT error on ${brokerUrl}:`, err);
+          if (!client.connected && currentBrokerIdx < MQTT_FALLBACKS.length - 1) {
+            currentBrokerIdx++;
+            try { client.end(true); } catch(e){}
+            setTimeout(connectMqtt, 1000);
+          }
         });
       } catch (err) {
         console.warn('MQTT init error, using Local BroadcastChannel:', err);
-        setConnectionStatus(true, 'Local Tab Mode');
+        setConnectionStatus(false, 'Local Tab Mode');
       }
     }
 
@@ -684,10 +691,13 @@
         }
       } else if (msg.type === 'HOST_PLAYER_REJECTED') {
         if (msg.targetPlayerId === playerId) {
+          clearInterval(joinHeartbeatTimer);
           renderLockedOut();
         }
       } else if (msg.type === 'HOST_PLAYER_ACCEPTED') {
         if (msg.targetPlayerId === playerId) {
+          isAcceptedByHost = true;
+          clearInterval(joinHeartbeatTimer);
           renderWaitingScreen();
         }
       }
@@ -751,6 +761,16 @@
       `;
     }
 
+    function sendJoinRequest() {
+      if (!playerName) return;
+      sendToHost({
+        type: 'PLAYER_JOIN_REQUEST',
+        playerId: playerId,
+        name: playerName,
+        avatar: playerAvatar
+      });
+    }
+
     function submitJoin() {
       const input = document.getElementById('nameInput');
       const val = (input ? input.value : '').trim();
@@ -761,14 +781,20 @@
       playerName = val;
       localStorage.setItem('vq_player_name', playerName);
 
-      sendToHost({
-        type: 'PLAYER_JOIN_REQUEST',
-        playerId: playerId,
-        name: playerName,
-        avatar: playerAvatar
-      });
-
       renderWaitingScreen();
+
+      // Send join request immediately
+      sendJoinRequest();
+
+      // Continuous retry heartbeat every 2 seconds until accepted or quiz starts
+      clearInterval(joinHeartbeatTimer);
+      joinHeartbeatTimer = setInterval(() => {
+        if (!isAcceptedByHost && (gameState.state === 'LOBBY' || !gameState.state)) {
+          sendJoinRequest();
+        } else {
+          clearInterval(joinHeartbeatTimer);
+        }
+      }, 2000);
     }
 
     function renderWaitingScreen() {
@@ -947,10 +973,26 @@
       currentScore = 950;
       currentRank = 1;
       renderPodiumScreen();
-    } else if (playerName) {
-      renderWaitingScreen();
     } else {
-      renderJoinScreen();
+      const nameParam = urlParams.get('name');
+      if (nameParam) {
+        playerName = nameParam;
+        localStorage.setItem('vq_player_name', playerName);
+      }
+      if (playerName) {
+        renderWaitingScreen();
+        sendJoinRequest();
+        clearInterval(joinHeartbeatTimer);
+        joinHeartbeatTimer = setInterval(() => {
+          if (!isAcceptedByHost && (gameState.state === 'LOBBY' || !gameState.state)) {
+            sendJoinRequest();
+          } else {
+            clearInterval(joinHeartbeatTimer);
+          }
+        }, 2000);
+      } else {
+        renderJoinScreen();
+      }
     }
   </script>
 </body>
