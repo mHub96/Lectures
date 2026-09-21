@@ -687,26 +687,29 @@ html_content = f"""<!DOCTYPE html>
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-xl);
-      width: 100%;
-      max-width: 1250px;
-      height: 85vh;
+      width: 95vw;
+      max-width: 1440px;
+      height: 90vh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
       animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }}
 
-    @keyframes modalPop {{
-      from {{ transform: scale(0.95); opacity: 0; }}
-      to {{ transform: scale(1); opacity: 1; }}
-    }}
-
     .drawer-header {{
-      padding: 1.25rem 1.75rem;
+      padding: 1.25rem 2rem;
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 1.5rem;
+      background: rgba(15, 23, 42, 0.95);
+      flex-wrap: wrap;
+    }}
+
+    .drawer-header-left {{
+      display: flex;
+      align-items: center;
       gap: 1.5rem;
     }}
 
@@ -714,11 +717,53 @@ html_content = f"""<!DOCTYPE html>
       font-size: 1.25rem;
       font-weight: 800;
       color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }}
+
+    .drawer-filter-pills {{
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(2, 6, 23, 0.6);
+      padding: 0.25rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-subtle);
+    }}
+
+    .drawer-pill-btn {{
+      padding: 0.4rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }}
+
+    .drawer-pill-btn:hover {{
+      color: var(--text-main);
+    }}
+
+    .drawer-pill-btn.active {{
+      background: var(--accent-primary);
+      color: #020617;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+    }}
+
+    .drawer-header-right {{
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      max-width: 480px;
+      justify-content: flex-end;
     }}
 
     .drawer-search-input {{
-      flex: 1;
-      max-width: 400px;
+      width: 100%;
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
@@ -727,75 +772,132 @@ html_content = f"""<!DOCTYPE html>
       font-family: inherit;
       font-size: 0.88rem;
       outline: none;
+      transition: border-color var(--transition-fast);
     }}
 
     .drawer-search-input:focus {{
       border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
     }}
 
     .drawer-grid {{
       flex: 1;
+      min-height: 0;
       overflow-y: auto;
-      padding: 1.75rem;
+      padding: 1.75rem 2rem;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-auto-rows: 250px;
+      gap: 1.5rem;
     }}
 
     .drawer-card {{
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-lg);
       overflow: hidden;
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      transition: transform var(--transition-fast), border-color var(--transition-fast);
+      height: 250px;
+      min-height: 250px;
+      transition: all var(--transition-fast);
+      position: relative;
     }}
 
     .drawer-card:hover {{
-      transform: translateY(-3px);
+      transform: translateY(-4px);
       border-color: var(--accent-primary);
+      box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent-primary);
     }}
 
     .drawer-card.active-slide {{
       border: 2px solid var(--accent-primary);
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
     }}
 
     .drawer-card-thumb {{
-      height: 140px;
+      height: 155px;
+      min-height: 155px;
+      flex-shrink: 0;
       background: #020617;
       overflow: hidden;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-bottom: 1px solid var(--border-subtle);
     }}
 
     .drawer-card-thumb img {{
       width: 100%;
       height: 100%;
-      object-fit: contain;
+      object-fit: cover;
+      transition: transform 0.3s ease;
     }}
 
-    .drawer-card-meta {{
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.72rem;
-      font-weight: 700;
+    .drawer-card:hover .drawer-card-thumb img {{
+      transform: scale(1.05);
+    }}
+
+    .drawer-badge-slide {{
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--accent-primary);
-      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }}
+
+    .drawer-badge-part {{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(30, 41, 59, 0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+    }}
+
+    .drawer-card-body {{
+      padding: 0.8rem 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--bg-card);
+      overflow: hidden;
     }}
 
     .drawer-card-title {{
-      padding: 0.75rem 1rem;
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: var(--text-main);
       line-height: 1.35;
-      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+
+    .drawer-card-sub {{
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }}
 
     /* ULTRA-CLEAR HIGH-POWER LIGHTBOX ZOOM MODAL */
@@ -1740,9 +1842,21 @@ html_content = f"""<!DOCTYPE html>
   <div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this) toggleDrawer()">
     <div class="drawer-modal">
       <div class="drawer-header">
-        <h2 class="drawer-title">Masterclass Curriculum Index (66 Slides)</h2>
-        <input type="text" class="drawer-search-input" id="drawerSearch" placeholder="Search anatomy, corridor, pathology, figure..." oninput="filterDrawerSlides()">
-        <button class="btn-icon" onclick="toggleDrawer()">✕</button>
+        <div class="drawer-header-left">
+          <h2 class="drawer-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Slide Overview &amp; Visual Index
+          </h2>
+          <div class="drawer-filter-pills">
+            <button class="drawer-pill-btn active" id="drawerPillAll" onclick="setDrawerFilter('all', this)">All (66)</button>
+            <button class="drawer-pill-btn" id="drawerPill1" onclick="setDrawerFilter('1', this)">Part 1 (33)</button>
+            <button class="drawer-pill-btn" id="drawerPill2" onclick="setDrawerFilter('2', this)">Part 2 (33)</button>
+          </div>
+        </div>
+        <div class="drawer-header-right">
+          <input type="text" class="drawer-search-input" id="drawerSearch" placeholder="Search anatomy, corridor, pathology, figure..." oninput="filterDrawerSlides()">
+          <button class="btn-icon" title="Close Overview (Esc)" onclick="toggleDrawer()">✕</button>
+        </div>
       </div>
       <div class="drawer-grid" id="drawerGrid">
         <!-- Rendered by JS -->
@@ -2031,6 +2145,15 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     // Drawer Functions
+    let currentDrawerPart = 'all';
+
+    function setDrawerFilter(part, btn) {{
+      currentDrawerPart = part;
+      document.querySelectorAll('.drawer-pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      filterDrawerSlides();
+    }}
+
     function toggleDrawer() {{
       const overlay = document.getElementById('drawerOverlay');
       overlay.classList.toggle('active');
@@ -2045,6 +2168,8 @@ html_content = f"""<!DOCTYPE html>
       const query = filterText.toLowerCase();
 
       grid.innerHTML = SLIDES_DATA.map((s, idx) => {{
+        if (currentDrawerPart !== 'all' && String(s.part) !== String(currentDrawerPart)) return '';
+
         const matches = s.title.toLowerCase().includes(query) || 
                         s.subtitle.toLowerCase().includes(query) ||
                         s.badge.toLowerCase().includes(query) ||
@@ -2052,16 +2177,19 @@ html_content = f"""<!DOCTYPE html>
         if (!matches) return '';
 
         const isActive = (idx === currentIndex);
+        const safeTitle = s.title.replace(/"/g, '&quot;').replace(/\\n/g, ' ');
+        const subtitleText = s.subtitle || s.badge || '';
         return `
-          <div class="drawer-card ${{isActive ? 'active-slide' : ''}}" onclick="jumpToSlide(${{idx}})">
+          <div class="drawer-card ${{isActive ? 'active-slide' : ''}}" onclick="jumpToSlide(${{idx}})" title="Slide ${{idx + 1}}: ${{safeTitle}}">
             <div class="drawer-card-thumb">
-              <img src="${{s.img_path}}" alt="${{s.title}}" loading="lazy">
+              <img src="${{s.img_path}}" alt="${{safeTitle}}" loading="lazy">
+              <span class="drawer-badge-slide">SLIDE ${{idx + 1}}</span>
+              <span class="drawer-badge-part">PART ${{s.part}}</span>
             </div>
-            <div class="drawer-card-meta">
-              <span>SLIDE ${{idx + 1}}</span>
-              <span>PART ${{s.part}}</span>
+            <div class="drawer-card-body">
+              <div class="drawer-card-title">${{safeTitle}}</div>
+              <div class="drawer-card-sub">${{subtitleText}}</div>
             </div>
-            <div class="drawer-card-title">${{s.title.replace(/\\n/g, ' ')}}</div>
           </div>
         `;
       }}).join('');
@@ -3274,6 +3402,15 @@ html_content = f"""<!DOCTYPE html>
     const zoomParam = urlParams.get('zoom');
     if (zoomParam) {{
       openLightbox(zoomParam, '300 DPI High-Resolution Microanatomy Inspection');
+    }}
+    const drawerParam = urlParams.get('drawer');
+    if (drawerParam) {{
+      toggleDrawer();
+      if (drawerParam === 'part1' || drawerParam === '1') {{
+        setDrawerFilter('1', document.getElementById('drawerPill1'));
+      }} else if (drawerParam === 'part2' || drawerParam === '2') {{
+        setDrawerFilter('2', document.getElementById('drawerPill2'));
+      }}
     }}
 
     // Initialize first slide on load

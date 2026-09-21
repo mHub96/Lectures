@@ -7,10 +7,17 @@ __pycache__/
 .tools/
 tmp_chrome/
 
-# Temporary test captures and prototypes
-test_*.png
-test_*.jpg
-test_*.pptx
+# Temporary test captures, scripts, and prototypes
+test_*.*
+debug_*.*
+check_*.*
+inspect_*.*
+find_*.*
+run_*.*
+dump_*.*
+dumped_*.*
+capture_*.*
+dom_dump.html
 prototype_*.pptx
 prototype_*.png
 * (1).pptx
