@@ -1,0 +1,23 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+
+# Local portable tools
+.tools/
+tmp_chrome/
+
+# Temporary test captures and prototypes
+test_*.png
+test_*.jpg
+test_*.pptx
+prototype_*.pptx
+prototype_*.png
+* (1).pptx
+*.log
+
+# System & editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,3257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventricular Tumors Masterclass • Lecture Hall Presentation & Interactive Curriculum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Standalone QR Code & MQTT Libraries (Self-Contained Offline + Online) -->
+  <script src="qrcode.min.js"></script>
+  <script src="mqtt.min.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #0b1120;
+      --bg-surface: #131d31;
+      --bg-card: #1c2a45;
+      --bg-card-hover: #233557;
+      --border-subtle: #243552;
+      --border-focus: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-primary: #38bdf8;
+      --accent-primary-hover: #7dd3fc;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --navy-deep: #030712;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --rose: #ef4444;
+      --purple: #a855f7;
+      --gold: #fbbf24;
+      --silver: #cbd5e1;
+      --bronze: #d97706;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.5);
+      --shadow-xl: 0 20px 30px rgba(0, 0, 0, 0.7);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --transition-fast: 0.16s ease;
+      --transition-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #f8fafc;
+      --bg-card-hover: #f1f5f9;
+      --border-subtle: #cbd5e1;
+      --border-focus: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #64748b;
+      --accent-primary: #0284c7;
+      --accent-primary-hover: #0369a1;
+      --accent-glow: rgba(2, 132, 199, 0.18);
+      --navy-deep: #0f1e36;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      user-select: none;
+    }
+
+    /* Top Navigation Header */
+    header.lecture-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .logo-badge {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+
+    .lecture-title-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lecture-title-text span:first-child {
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+    }
+
+    .lecture-subtitle-text {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 4px;
+      border-radius: 999px;
+    }
+
+    .part-pill {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 5px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .part-pill:hover {
+      color: var(--text-main);
+    }
+
+    .part-pill.active {
+      background: var(--accent-primary);
+      color: #030712;
+      box-shadow: 0 2px 8px rgba(56, 189, 248, 0.4);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .btn-icon:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .btn-icon.active-mode {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .btn-icon.btn-quiz-highlight {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(16, 185, 129, 0.25));
+      border-color: var(--accent-primary);
+      color: #38bdf8;
+    }
+
+    /* Progress strip */
+    .progress-strip {
+      height: 4px;
+      background: var(--bg-card);
+      width: 100%;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Main Presentation Canvas */
+    main.presentation-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 2rem;
+      position: relative;
+    }
+
+    .slide-aspect-box {
+      width: 100%;
+      max-width: 1550px;
+      aspect-ratio: 16 / 9;
+      max-height: calc(100vh - 145px);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all var(--transition-normal);
+    }
+
+    .slide-content-container {
+      width: 100%;
+      height: 100%;
+      padding: 2.25rem 2.75rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animations for slides */
+    .slide-forward {
+      animation: slideInForward 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .slide-backward {
+      animation: slideInBackward 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideInForward {
+      from { opacity: 0; transform: translateX(35px) scale(0.98); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    @keyframes slideInBackward {
+      from { opacity: 0; transform: translateX(-35px) scale(0.98); }
+      to { opacity: 1; transform: translateX(0) scale(1); }
+    }
+
+    /* Step-by-step element reveal */
+    .step-hidden {
+      opacity: 0 !important;
+      transform: translateY(16px) !important;
+      pointer-events: none !important;
+      visibility: hidden !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .step-active {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      pointer-events: auto !important;
+      visibility: visible !important;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Slide Header Area */
+    .slide-header {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .slide-category-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-primary);
+    }
+
+    .slide-category-badge.badge-emerald {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: var(--emerald);
+    }
+
+    .slide-category-badge.badge-purple {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.35);
+      color: var(--purple);
+    }
+
+    .slide-title {
+      font-size: 1.95rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      color: var(--text-main);
+    }
+
+    .slide-subtitle {
+      font-size: 0.96rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Two Column Body Grid */
+    .slide-body-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.25rem;
+      min-height: 0;
+    }
+
+    .cards-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      justify-content: center;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .lecture-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .lecture-card:hover {
+      transform: translateX(4px);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .lecture-card.card-emerald {
+      border-left-color: var(--emerald);
+    }
+
+    .lecture-card.card-purple {
+      border-left-color: var(--purple);
+    }
+
+    .card-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-text {
+      font-size: 0.86rem;
+      line-height: 1.48;
+      color: var(--text-muted);
+    }
+
+    /* Image Display Panel */
+    .image-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .image-viewport {
+      flex: 1;
+      background: #020617;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: zoom-in;
+      box-shadow: var(--shadow-md);
+    }
+
+    .image-viewport img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.25s ease;
+    }
+
+    .image-viewport:hover img {
+      transform: scale(1.025);
+    }
+
+    .zoom-hint-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .caption-card {
+      margin-top: 0.65rem;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+    }
+
+    .caption-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.2rem;
+    }
+
+    .caption-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Title Slide Special Styles */
+    .title-slide-container {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      height: 100%;
+      align-items: center;
+    }
+
+    .title-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .title-left .slide-title {
+      font-size: 2.75rem;
+      margin: 0.75rem 0 0.5rem;
+      line-height: 1.12;
+    }
+
+    .title-left .slide-subtitle {
+      font-size: 1.15rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .credits-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+    }
+
+    .credits-heading {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.5rem;
+    }
+
+    .credits-list {
+      list-style: none;
+    }
+
+    .credits-list li {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .credits-list li::before {
+      content: "•";
+      color: var(--accent-primary);
+      font-weight: bold;
+    }
+
+    /* Controls Bottom Bar */
+    footer.controls-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-subtle);
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.75rem;
+      position: sticky;
+      bottom: 0;
+      z-index: 50;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .controls-help-text {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .key-badge {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .nav-buttons-cluster {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-nav {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.55rem 1.15rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.86rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .btn-nav.primary {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #030712;
+      box-shadow: 0 2px 10px rgba(56, 189, 248, 0.35);
+    }
+
+    .btn-nav.primary:hover:not(:disabled) {
+      background: var(--accent-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .slide-counter-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      padding: 0 0.5rem;
+    }
+
+    .step-indicator-pill {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-primary);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Drawer Modal (Curriculum Overview) */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+      padding: 1.5rem;
+    }
+
+    .drawer-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 1250px;
+      height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .drawer-header {
+      padding: 1.25rem 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .drawer-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .drawer-search-input {
+      flex: 1;
+      max-width: 400px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .drawer-search-input:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .drawer-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.75rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .drawer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition-fast), border-color var(--transition-fast);
+    }
+
+    .drawer-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-primary);
+    }
+
+    .drawer-card.active-slide {
+      border: 2px solid var(--accent-primary);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .drawer-card-thumb {
+      height: 140px;
+      background: #020617;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drawer-card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .drawer-card-meta {
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drawer-card-title {
+      padding: 0.75rem 1rem;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    /* ULTRA-CLEAR HIGH-POWER LIGHTBOX ZOOM MODAL */
+    .lightbox-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .lightbox-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-toolbar {
+      height: 60px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 210;
+    }
+
+    .lightbox-tool-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .lightbox-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }
+
+    .lightbox-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    .zoom-level-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+      background: rgba(56, 189, 248, 0.15);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .lightbox-viewport {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+    }
+
+    .lightbox-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    .lightbox-img-wrapper {
+      transform-origin: center center;
+      will-change: transform;
+      user-select: none;
+    }
+
+    .lightbox-img-wrapper img {
+      max-width: 90vw;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+    }
+
+    .lightbox-footer {
+      padding: 0.85rem 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid var(--border-subtle);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      z-index: 210;
+    }
+
+    /* ==========================================================================
+       LIVE AUDIENCE INTERACTIVE QUIZ ARENA (HOST SCREEN)
+       ========================================================================== */
+    .quiz-drawer-modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      width: 96vw;
+      max-width: 1180px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .quiz-header-bar {
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+    }
+
+    .quiz-header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .quiz-badge-live {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      animation: pulseLive 1.5s infinite;
+    }
+
+    @keyframes pulseLive {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.98); }
+    }
+
+    .room-code-badge {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: var(--accent-primary);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .quiz-header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .quiz-mode-pill-group {
+      display: flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 3px;
+      border-radius: 999px;
+    }
+
+    .quiz-mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      padding: 4px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .quiz-mode-btn.active {
+      background: var(--accent-primary);
+      color: #030712;
+    }
+
+    /* Main Arena Viewport */
+    .quiz-arena-viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.75rem 2.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* LOBBY SCREEN */
+    .lobby-grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .qr-card-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .qr-box {
+      width: 210px;
+      height: 210px;
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-box img, .qr-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .qr-instruction-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .qr-instruction-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 1.15rem;
+    }
+
+    .join-link-box {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--accent-primary);
+      margin-bottom: 0.85rem;
+      word-break: break-all;
+    }
+
+    .lobby-action-row {
+      display: flex;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .btn-secondary-sm {
+      flex: 1;
+      padding: 0.55rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-secondary-sm:hover {
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
+    }
+
+    /* Participants Column */
+    .participants-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .roster-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1rem 1.35rem;
+      border-radius: var(--radius-md);
+    }
+
+    .roster-count-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--emerald);
+    }
+
+    .participants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0.85rem;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .participant-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      animation: chipJoin 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: border-color 0.2s;
+    }
+
+    .participant-chip:hover {
+      border-color: var(--accent-primary);
+    }
+
+    @keyframes chipJoin {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .chip-avatar {
+      font-size: 1.5rem;
+    }
+
+    .chip-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .empty-roster-msg {
+      grid-column: 1 / -1;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+
+    /* Start Button & Controls */
+    .lobby-controls-strip {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-start-arena {
+      flex: 1.4;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      color: #ffffff;
+      padding: 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-start-arena:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.55);
+    }
+
+    .btn-start-arena:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-sim-bots {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 1.1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-sim-bots:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    /* ==========================================================================
+       QUESTION & REVEAL ACTIVE SCREEN (HOST)
+       ========================================================================== */
+    .arena-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+
+    .arena-q-index {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+    }
+
+    .arena-timer-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--gold);
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 4px 18px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .arena-timer-pill.urgent {
+      color: var(--rose);
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--rose);
+      animation: pulseUrgent 0.8s infinite;
+    }
+
+    @keyframes pulseUrgent {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .respondent-tracker {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .resp-bar-wrap {
+      width: 140px;
+      height: 10px;
+      background: var(--bg-surface);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .resp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0284c7, #10b981);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .resp-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Main Question Card */
+    .arena-question-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .arena-question-prompt {
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.4;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+
+    /* 4 Option Rows */
+    .arena-options-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .arena-option-card {
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .arena-option-card.correct {
+      border-color: var(--emerald) !important;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), var(--bg-surface)) !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .arena-option-card.dimmed {
+      opacity: 0.55;
+    }
+
+    .arena-opt-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .arena-opt-letter {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .arena-opt-letter.let-a { background: #ef4444; }
+    .arena-opt-letter.let-b { background: #0284c7; }
+    .arena-opt-letter.let-c { background: #f59e0b; }
+    .arena-opt-letter.let-d { background: #10b981; }
+
+    .arena-opt-text {
+      font-size: 1.02rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .arena-correct-tag {
+      background: var(--emerald);
+      color: #030712;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Vote distribution bar */
+    .vote-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-card);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+
+    .vote-bar-fill {
+      height: 100%;
+      background: var(--accent-primary);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .vote-stats-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    /* Rationale box */
+    .arena-rationale-box {
+      background: var(--bg-surface);
+      border-left: 5px solid var(--accent-primary);
+      border-radius: var(--radius-sm);
+      padding: 1.15rem 1.35rem;
+      margin-top: 1.25rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      animation: fadeIn 0.4s ease;
+    }
+
+    .arena-rationale-box strong {
+      color: var(--text-main);
+    }
+
+    /* Reveal Bottom Transition Bar (5s countdown with pause button) */
+    .reveal-transition-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 0.85rem 1.5rem;
+      border-radius: var(--radius-md);
+      margin-top: 1rem;
+    }
+
+    .countdown-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reveal-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* ==========================================================================
+       PODIUM & FINAL LEADERBOARD SCREEN
+       ========================================================================== */
+    .podium-arena-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 1rem 0;
+    }
+
+    .podium-title-box {
+      text-align: center;
+    }
+
+    .podium-title-box h2 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.35rem;
+    }
+
+    /* 3D Olympic Podium Steps */
+    .olympic-podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 1.5rem 0 2rem;
+      height: 280px;
+    }
+
+    .podium-col {
+      width: 190px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .podium-user-card {
+      margin-bottom: 0.75rem;
+      text-align: center;
+      animation: dropUser 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dropUser {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .podium-avatar {
+      font-size: 2.4rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .podium-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .podium-score {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--accent-primary);
+    }
+
+    .podium-block {
+      width: 100%;
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding-top: 1rem;
+      color: #030712;
+      font-weight: 900;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .podium-block.first {
+      height: 180px;
+      background: linear-gradient(180deg, #fcd34d, #f59e0b);
+      border: 2px solid #fbbf24;
+    }
+
+    .podium-block.second {
+      height: 130px;
+      background: linear-gradient(180deg, #e2e8f0, #94a3b8);
+      border: 2px solid #cbd5e1;
+    }
+
+    .podium-block.third {
+      height: 95px;
+      background: linear-gradient(180deg, #fba973, #d97706);
+      border: 2px solid #ea580c;
+    }
+
+    .podium-rank-num {
+      font-size: 2.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .podium-medal-icon {
+      font-size: 1.5rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Leaderboard Table */
+    .leaderboard-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .leaderboard-table th {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .leaderboard-table td {
+      padding: 0.85rem 1rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .leaderboard-table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    .rank-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      width: 60px;
+    }
+
+    .rank-1 { color: var(--gold); }
+    .rank-2 { color: var(--silver); }
+    .rank-3 { color: var(--bronze); }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .slide-body-grid {
+        grid-template-columns: 1fr;
+      }
+      .slide-aspect-box {
+        height: auto;
+        min-height: 85vh;
+        overflow-y: auto;
+      }
+      .image-panel {
+        min-height: 380px;
+      }
+      .lobby-grid {
+        grid-template-columns: 1fr;
+      }
+      .arena-options-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Header -->
+  <header class="lecture-header">
+    <div class="header-left">
+      <div class="logo-badge">
+        <span>YOUMANS & WINN</span>
+      </div>
+      <div class="lecture-title-text">
+        <span>Ventricular Tumors Masterclass</span>
+        <span class="lecture-subtitle-text">Chapter 170 • High-Yield Neurosurgical Interactive Curriculum</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <button class="part-pill active" id="pillAll" onclick="setFilter('all')">All Slides (66)</button>
+      <button class="part-pill" id="pillPart1" onclick="setFilter('part1')">Part 1: Lateral (33)</button>
+      <button class="part-pill" id="pillPart2" onclick="setFilter('part2')">Part 2: 3rd & 4th (33)</button>
+    </div>
+
+    <div class="header-right">
+      <button class="btn-icon active-mode" id="btnStepMode" title="Toggle Click-by-Click Element Reveal (Press B)" onclick="toggleStepMode()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+      </button>
+      <button class="btn-icon" title="Slide Overview & Grid (Press O)" onclick="toggleDrawer()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </button>
+      <button class="btn-icon btn-quiz-highlight" title="Interactive Live Audience Quiz (Press Q)" onclick="toggleQuiz()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <button class="btn-icon" title="Toggle Light/Dark Theme (Press T)" onclick="toggleTheme()">
+        <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      </button>
+      <button class="btn-icon" title="Fullscreen Hall Mode (Press F)" onclick="toggleFullscreen()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-strip">
+    <div class="progress-fill" id="progressBar"></div>
+  </div>
+
+  <!-- Main Presentation Stage -->
+  <main class="presentation-stage">
+    <div class="slide-aspect-box" id="slideBox" onclick="handleSlideBoxClick(event)">
+      <!-- Dynamic slide content renders here -->
+    </div>
+  </main>
+
+  <!-- Bottom Navigation & Controls -->
+  <footer class="controls-footer">
+    <div class="controls-help-text">
+      <span><span class="key-badge">Click / Space / →</span> Reveal & Advance</span>
+      <span><span class="key-badge">←</span> Back</span>
+      <span><span class="key-badge">B</span> Build Mode</span>
+      <span><span class="key-badge">F</span> Fullscreen</span>
+      <span><span class="key-badge">O</span> Index</span>
+      <span><span class="key-badge">Q</span> Live Quiz</span>
+    </div>
+
+    <div class="nav-buttons-cluster">
+      <button class="btn-nav" id="btnPrev" onclick="navigateStepOrSlide(-1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Previous</span>
+      </button>
+
+      <div class="step-indicator-pill" id="stepIndicator">Build: Ready</div>
+      <span class="slide-counter-badge" id="slideCounter">Slide 1 / 66</span>
+
+      <button class="btn-nav primary" id="btnNext" onclick="navigateStepOrSlide(1)">
+        <span id="nextBtnLabel">Next Point</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- Slide Overview Grid Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this) toggleDrawer()">
+    <div class="drawer-modal">
+      <div class="drawer-header">
+        <h2 class="drawer-title">Masterclass Curriculum Index (66 Slides)</h2>
+        <input type="text" class="drawer-search-input" id="drawerSearch" placeholder="Search anatomy, corridor, pathology, figure..." oninput="filterDrawerSlides()">
+        <button class="btn-icon" onclick="toggleDrawer()">✕</button>
+      </div>
+      <div class="drawer-grid" id="drawerGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ULTRA-CLEAR HIGH-POWER LIGHTBOX ZOOM MODAL -->
+  <div class="lightbox-modal" id="lightboxModal" onclick="if(event.target===this) toggleLightbox()">
+    <div class="lightbox-toolbar">
+      <div class="lightbox-tool-group">
+        <button class="lightbox-btn" onclick="adjustZoom(0.35)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <span>Zoom In (+)</span>
+        </button>
+        <button class="lightbox-btn" onclick="adjustZoom(-0.35)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <span>Zoom Out (-)</span>
+        </button>
+        <button class="lightbox-btn" onclick="setZoomLevel(1)">100%</button>
+        <button class="lightbox-btn" onclick="setZoomLevel(2)">200% (Labels & Arrows)</button>
+        <button class="lightbox-btn" onclick="setZoomLevel(3)">300% (Ultra-Detail)</button>
+        <button class="lightbox-btn" onclick="resetZoom()">Fit</button>
+      </div>
+      <div class="lightbox-tool-group">
+        <span class="zoom-level-badge" id="zoomLevelBadge">Zoom: 100%</span>
+        <button class="lightbox-btn" onclick="toggleLightbox()">✕ Close (Esc)</button>
+      </div>
+    </div>
+
+    <div class="lightbox-viewport" id="lightboxViewport" onmousedown="startDrag(event)" onwheel="handleWheelZoom(event)">
+      <div class="lightbox-img-wrapper" id="lightboxWrapper">
+        <img id="lightboxImg" src="" alt="Zoomed view">
+      </div>
+    </div>
+
+    <div class="lightbox-footer" id="lightboxCap"></div>
+  </div>
+
+  <!-- LIVE AUDIENCE INTERACTIVE QUIZ ARENA MODAL -->
+  <div class="drawer-overlay" id="quizOverlay" onclick="if(event.target===this) toggleQuiz()">
+    <div class="quiz-drawer-modal">
+      <div class="quiz-header-bar">
+        <div class="quiz-header-left">
+          <span class="quiz-badge-live">● LIVE AUDIENCE ARENA</span>
+          <span class="room-code-badge" id="arenaRoomBadge">ROOM: VENTRICLE</span>
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--emerald);" id="arenaConnDot"></span>
+            <span id="arenaConnLabel">Broker Ready</span>
+          </span>
+        </div>
+
+        <div class="quiz-header-right">
+          <div class="quiz-mode-pill-group">
+            <button class="quiz-mode-btn active" id="btnModeLive" onclick="setQuizArenaMode('live')">Live Audience Mode</button>
+            <button class="quiz-mode-btn" id="btnModeSolo" onclick="setQuizArenaMode('solo')">Solo Board Mode</button>
+          </div>
+          <button class="btn-icon" onclick="toggleQuiz()">✕</button>
+        </div>
+      </div>
+
+      <div class="quiz-arena-viewport" id="quizArenaBody">
+        <!-- Rendered dynamically by Quiz Engine: Lobby, Question, Reveal, or Podium -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SLIDES_DATA = [{"type": "title", "badge": "YOUMANS & WINN COMPREHENSIVE MASTERCLASS • PART 1", "title": "Ventricular Tumors:\nMicrosurgical Anatomy & Lateral Approaches", "subtitle": "Surgical corridors, neurovascular orientation, and operative strategies for lateral ventricular pathology.", "img_path": "assets_images/ventricular_system_3d.png", "credits": ["Source: Youmans & Winn Neurological Surgery (Chapter 170: Ventricular Tumors)", "Curriculum: Neurosurgical Anatomy, Approaches & Intraoperative Considerations", "Target Structures: Lateral Ventricles (Frontal, Body, Atrium, Occipital, Temporal)"], "global_id": 1, "part": 1, "slide_in_part": 1, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "HISTORICAL PERSPECTIVES • SURGICAL MILESTONES", "title": "Pioneering Milestones in Ventricular Surgery", "subtitle": "From ancient ventricular localization to Walter Dandy's revolutionary first lateral ventricular tumor resection.", "cards": [["3rd Century BC — Herophilos", "Described the four cerebral ventricles ('four small stomachs') and their communications, establishing the earliest anatomical record."], ["1504 — Leonardo da Vinci", "Performed the first cerebral wax cast ventriculography via bovine brain, accurately mapping ventricular geometry for the first time."], ["1764 — Cotugno & Magendie", "Defined cerebrospinal fluid (CSF) physiology, proving ventricles are filled with fluid rather than animal spirits ('vital pneuma')."], ["1918–1933 — Walter Dandy", "Pioneered air ventriculography, endoscopic choroid plexectomy, and performed the first direct surgical resection of a lateral ventricle ependymoma."]], "img_path": "assets_images/walter_dandy.jpg", "caption_title": "HISTORICAL FIGURE: WALTER E. DANDY (1886–1946)", "caption_body": "Father of modern ventricular surgery, inventor of ventriculography, and pioneer of the transcallosal approach for direct intraventricular tumor resection.", "global_id": 2, "part": 1, "slide_in_part": 2, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "EPIDEMIOLOGIC LANDSCAPE • CLASSIFICATION", "title": "Incidence and Primary vs. Secondary Classification", "subtitle": "Pecker schema categorizing neoplasms based on ventricular wall embryological and topographical origin.", "cards": [["Overall Incidence (1.6%)", "Ventricular tumors account for approximately 1.6% of all primary intracranial neoplasms in comprehensive neuro-oncology registries."], ["Pecker Schema: Primary Lesions", "Originate intrinsically from the ventricular ependymal lining, choroid plexus epithelium, subependymal glia, or tela choroidea."], ["Pecker Schema: Secondary Lesions", "Arise in surrounding periventricular deep parenchyma (e.g., thalamus, caudate, septum) and project exophytically into the ventricular cavity."], ["Clinical Correlation", "True primary tumors often expand indolently within CSF pathways, presenting late with massive ventriculomegaly."]], "img_path": "assets_images/lateral_ventricles.jpg", "caption_title": "VENTRICULAR CAVITY & LINING TOPOGRAPHY", "caption_body": "Anatomical casting and schematic of ventricular chambers demonstrating the ependymal lining that gives rise to primary neuroepithelial tumors.", "global_id": 3, "part": 1, "slide_in_part": 3, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "CLINICAL MANIFESTATIONS • SYMPTOM TRIAD", "title": "The Symptom Triad of Ventricular Neoplasms", "subtitle": "Three pathophysiological mechanisms dictate clinical presentation: invasion, mass effect, and CSF obstruction.", "cards": [["1. Local Neural Tissue Invasion", "Destruction or compression of adjacent critical structures: caudate head, forniceal columns, thalamus, or internal capsule tracts."], ["2. Global Parenchymal Mass Effect", "Progressive space-occupying expansion causing hemispheric distortion, subfalcine herniation, progressive headache, and lethargy."], ["3. Mechanical CSF Flow Obstruction", "Ball-valve occlusion of the foramen of Monro, third ventricle, or aqueduct of Sylvius causing acute, intermittent, or chronic ventriculomegaly."], ["Emergency Presentation", "Acute hydrocephalus can precipitate sudden deterioration, bilateral visual loss from papilledema, or fatal herniation syndromes."]], "img_path": "assets_images/hydrocephalus.jpg", "caption_title": "OBSTRUCTIVE HYDROCEPHALUS ON NEUROIMAGING", "caption_body": "Severe ventriculomegaly secondary to intraventricular pathway obstruction, demonstrating periventricular interstitial CSF seepage / transependymal edema.", "global_id": 4, "part": 1, "slide_in_part": 4, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "DEMOGRAPHICS • AGE PATTERNS", "title": "Pediatric vs. Adult Presentation Patterns", "subtitle": "Cranial compliance and suture patency profoundly alter presentation between infants and adults.", "cards": [["Pediatric Presentation: Calvarial Expansion", "Open sutures and patent fontanelles permit massive ventricular expansion prior to elevated intracranial pressure."], ["Pediatric Signs: Fontanelle & Milestones", "Full or bulging anterior fontanelle, sunset sign (forced downward gaze), failure to thrive, and loss of developmental milestones."], ["Adult Presentation: Fixed Calvarium", "Rigid cranium results in rapid intracranial hypertension: morning headache, positional nausea, projective vomiting, and papilledema."], ["Adult Presentation: Hakim-like Triad", "Chronic low-grade hydrocephalus mimics normal pressure hydrocephalus: progressive gait ataxia, cognitive decline, and urinary urgency."]], "img_path": "enhanced_figures/fig_170_16_hydrocephalus_ct.png", "caption_title": "FIG 170.16: ACUTE VENTRICULOMEGALY ON CT/MRI", "caption_body": "Full labeled neuroimaging from Chapter 170 illustrating acute ventricular dilatation, sulcal effacement, and temporal horn ballooning.", "global_id": 5, "part": 1, "slide_in_part": 5, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "SYNDROMIC PATTERNS • MIDBRAIN & TECTUM", "title": "Mesencephalic Tectal & Parinaud Syndrome", "subtitle": "Compression of dorsal midbrain tectum and sylvian aqueduct produces characteristic neuro-ophthalmic deficits.", "cards": [["Parinaud (Dorsal Midbrain) Syndrome", "Classic tetrad: Upward gaze paralysis, convergence-retraction nystagmus on attempted upgaze, light-near pupillary dissociation, and Collier sign."], ["Collier's Sign", "Pathological retraction of the upper eyelids caused by posterior commissure disruption ('tucked lids')."], ["Aqueductal Stenosis", "Compression of the periaqueductal gray and sylvian aqueduct creates noncommunicating triventricular hydrocephalus."], ["Tumor Etiologies", "Pineal parenchymal tumors, germ cell tumors, tectal gliomas, and dorsal third ventricular lesions."]], "img_path": "assets_images/parinaud_syndrome.jpg", "caption_title": "DORSAL MIDBRAIN & TECTAL TOPOGRAPHY", "caption_body": "Anatomical relationship of the pineal gland, superior and inferior colliculi, and the sylvian aqueduct vulnerable to compression.", "global_id": 6, "part": 1, "slide_in_part": 6, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "MEDICAL MANAGEMENT • NONSURGICAL OPTIONS", "title": "Pathologies Responsive to Nonoperative Therapy", "subtitle": "Certain histological subtypes achieve cure or durable control via chemotherapy and radiotherapy alone.", "cards": [["Pure Germinoma", "Highly radiosensitive and chemosensitive; definitive diagnosis via CSF oncomarkers (AFP normal, β-hCG normal/low) or endoscopic biopsy."], ["Primary CNS Lymphoma", "High-dose methotrexate-based immunochemotherapy and whole-brain radiotherapy; surgical resection offers no survival advantage."], ["Tectal Glioma (Low-Grade Astrocytoma)", "Indolent course; managed primarily with CSF diversion (endoscopic third ventriculostomy) and serial surveillance MRI."], ["Prolactinoma Invading Ventricle", "Exceptional third ventricular giant prolactinomas respond dramatically to dopamine agonist medical therapy (cabergoline)."]], "img_path": "assets_images/germinoma.jpg", "caption_title": "CHEMO- & RADIOSENSITIVE INTRACRANIAL TUMORS", "caption_body": "Histological landscape of intracranial germinoma featuring large polygonal tumor cells intermixed with mature reactive T-lymphocytes.", "global_id": 7, "part": 1, "slide_in_part": 7, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "HYDROCEPHALUS STRATEGY • CSF DIVERSION", "title": "CSF Diversion vs. Direct Tumor Resection", "subtitle": "Timing of hydrocephalus treatment remains a fundamental strategic neurosurgical decision.", "cards": [["Direct Tumor Resection as Primary Strategy", "Preferred when tumor removal will completely restore physiological CSF pathways without need for permanent hardware."], ["Preoperative Endoscopic Third Ventriculostomy (ETV)", "Recommended for pineal region, posterior third, or fourth ventricular tumors causing severe acute hydrocephalus; allows biopsy."], ["External Ventricular Drain (EVD)", "Temporary bridge in unstable emergency presentations; placed contralateral to the surgical corridor to prevent ventricular collapse."], ["Ventriculoperitoneal Shunt (VPS) Precautions", "Avoid routine upfront shunting; carries risk of peritoneal tumor seeding (especially medulloblastoma/germinoma) and shunt dependency."]], "img_path": "enhanced_figures/fig_170_18_etv_case.png", "caption_title": "FIG 170.18: ENDOSCOPIC THIRD VENTRICULOSTOMY (ETV)", "caption_body": "Full labeled operative endoscopic view from Chapter 170 demonstrating tuber cinereum perforation anterior to basilar artery apex.", "global_id": 8, "part": 1, "slide_in_part": 8, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "DIAGNOSTIC IMAGING • MR SEQUENCES", "title": "High-Resolution MR Sequences in Planning", "subtitle": "Advanced volumetric, steady-state, and diffusion imaging optimizes corridor selection and minimizes neurological morbidity.", "cards": [["CISS / FIESTA (Steady-State Free Precession)", "Submillimeter high-contrast T2 imaging delineates cyst walls, ventricular membranes, basilar artery apex, and ETV floor patency."], ["3D-SPACE / CUBE (Volumetric T1 & T2)", "Isotropic 1-mm volumetric sequences for precise intraoperative neuronavigation and multiplanar trajectory modeling."], ["DTI Tractography (Diffusion Tensor Imaging)", "Reconstructs corticospinal motor tracts, optic radiations (Meyer loop), and forniceal bundles to navigate cortical incisions safely."], ["MR Venography & Arterial MRA", "Defines bridging veins, superior sagittal sinus anatomy, and deep venous drainage displacement (internal cerebral veins)."]], "img_path": "assets_images/ciss_fiesta_mri.jpg", "caption_title": "HIGH-RESOLUTION 3D CISS / FIESTA SEQUENCE", "caption_body": "Submillimeter steady-state MR imaging displaying micro-details of intraventricular structures, CSF interfaces, and cranial nerves.", "global_id": 9, "part": 1, "slide_in_part": 9, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "PREOPERATIVE ANGIOGRAPHY • VASCULAR MAPPING", "title": "Dynamic CTA & Catheter DSA Integration", "subtitle": "Discerning arterial feeders and deep venous drainage patterns before incision prevents catastrophic intraoperative hemorrhage.", "cards": [["Dynamic CTA (dCTA) Multi-Phase Imaging", "Provides time-resolved arterial, capillary, and venous phases in a single noninvasive acquisition, capturing flow kinetics."], ["Catheter Digital Subtraction Angiography (DSA)", "Gold standard for hypervascular tumors (choroid plexus papilloma, hemangioblastoma, meningioma); allows preoperative embolization."], ["Early Arterial Pedicle Identification", "Guides corridor selection to target arterial feeders (e.g., anterior or posterior choroidal arteries) early before tumor debulking."], ["Deep Venous Outflow Preservation", "Visualizes displacement of the internal cerebral veins, basal vein of Rosenthal, and Vein of Galen to avoid venous infarction."]], "img_path": "enhanced_figures/fig_170_1_dcta.png", "caption_title": "FIG 170.1: DYNAMIC CTA ARTERIAL & VENOUS PHASES", "caption_body": "Complete 300 DPI high-resolution multi-phase dCTA panels from Chapter 170 with labeled arterial, mixed, and venous phases.", "global_id": 10, "part": 1, "slide_in_part": 10, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "VENOUS TOPOGRAPHY • CORTICAL DRAINAGE", "title": "Critical Superficial Draining Veins", "subtitle": "Preservation of cortical bridging veins is the primary constraint of interhemispheric and transcortical approaches.", "cards": [["Superior Sagittal Sinus Bridging Veins", "Coronal bridging veins enter the SSS at acute anterior angles; excessive retraction can cause avulsion, thrombosis, and venous infarction."], ["Vein of Trolard (Superior Anastomotic)", "Connects middle cerebral system to SSS; injury leads to venous hypertension, hemispheric edema, and hemorrhagic infarction."], ["Vein of Labbé (Inferior Anastomotic)", "Drains lateral temporal neocortex into transverse sinus; must be scrupulously protected during subtemporal and transtemporal approaches."], ["Preoperative Venous Mapping", "MRV or late venous phase DSA identifies safe interhemispheric entry windows where bridging vein density is lowest."]], "img_path": "assets_images/bridging_veins.jpg", "caption_title": "DURAL VENOUS SINUSES & BRIDGING VEINS", "caption_body": "Anatomical schematic of the superior sagittal sinus and cortical bridging veins demonstrating high vulnerability during interhemispheric retraction.", "global_id": 11, "part": 1, "slide_in_part": 11, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "SURGICAL ANATOMY • LATERAL VENTRICLE", "title": "The Five Sectors of the Lateral Ventricle", "subtitle": "The C-shaped lateral ventricle wraps around diencephalic structures, divided into five distinct operative sectors.", "cards": [["1. Frontal (Anterior) Horn", "Extends anterior to foramen of Monro; bounded medially by septum pellucidum and laterally by the head of the caudate nucleus."], ["2. Ventricular Body (Cella Media)", "Extends from foramen of Monro to splenium of corpus callosum; roof formed by corpus callosum body, floor by thalamus."], ["3. Atrium (Trigone)", "Triangular confluence of body, occipital horn, and temporal horn; harbors the glomus of the choroid plexus."], ["4. Occipital (Posterior) Horn", "Projects posteriorly into occipital lobe; bounded medially by forceps major and calcar avis; contains no choroid plexus."], ["5. Temporal (Inferior) Horn", "Curves anteriorly and inferiorly into temporal lobe, ending blindly behind the amygdala; contains the hippocampus in its floor."]], "img_path": "enhanced_figures/fig_170_6_cross_sections.png", "caption_title": "FIG 170.6: LATERAL VENTRICULAR LABELED CROSS SECTIONS", "caption_body": "Complete 300 DPI coronal cuts from Chapter 170 with all labels intact: frontal horn, body, occipital horn, atrium, and temporal horn.", "global_id": 12, "part": 1, "slide_in_part": 12, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "COMMISSURAL ANATOMY • WHITE MATTER", "title": "Corpus Callosum: Anatomic Subdivisions", "subtitle": "The principal interhemispheric commissure connecting homologous cerebral cortical regions.", "cards": [["Rostrum", "Tapers posteroinferiorly from genu to lamina terminalis; forms anterior floor of frontal horn."], ["Genu ('Knee')", "Anterior convexity curving around frontal horns; fibers form forceps minor projecting into frontal poles."], ["Body (Trunk)", "Extensive horizontal central portion; roof of lateral ventricular frontal horns and bodies; fibers form radiation of corpus callosum."], ["Splenium", "Thick rounded posterior terminus; fibers form forceps major sweeping into occipital lobes; wraps over pineal region and vein of Galen."]], "img_path": "assets_images/corpus_callosum.jpg", "caption_title": "SAGITTAL CORPUS CALLOSUM SUBDIVISIONS", "caption_body": "Midsagittal neuroanatomical section highlighting rostrum, genu, body, and splenium in relation to ventricular cavities.", "global_id": 13, "part": 1, "slide_in_part": 13, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "LIMBIC ARCHITECTURE • MEMORY CIRCUITS", "title": "The Five Segments of the Fornix", "subtitle": "Critical limbic arch connecting hippocampus to mamillary bodies; bilaterally vulnerable during ventricular surgery.", "cards": [["1. Alveus & Fimbria", "Originates along ventricular surface of hippocampus, coalescing along medial border to form the fimbria."], ["2. Crura (Paired Posterior Limbs)", "Ascend beneath the splenium of the corpus callosum, interconnected across midline by the hippocampal commissure (psalterium)."], ["3. Body (Corpus Fornicis)", "Runs anteriorly along inferior edge of septum pellucidum, intimately related to roof of third ventricle and superior tela choroidea."], ["4. Columns (Columnae Fornicis)", "Arch anteroinferiorly forming the anterior border of the foramen of Monro, descending into hypothalamus to terminate in mamillary bodies."]], "img_path": "enhanced_figures/fig_170_2_fornix.png", "caption_title": "FIG 170.2: 3D ANATOMY OF THE FORNIX (WITH ALL LABELS)", "caption_body": "Ultra-sharp 300 DPI dissection from Chapter 170 showing labeled forniceal columns, body, crus, fimbria, and alveus.", "global_id": 14, "part": 1, "slide_in_part": 14, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "SURGICAL ANATOMY • FRONTAL HORN", "title": "Frontal Horn Boundaries & Landmarks", "subtitle": "The most common surgical entry site for ventricular tumor resection and ventricular drainage.", "cards": [["Anterior & Superior Boundaries", "Roof and anterior limit formed by body and genu of corpus callosum; rostrum curves beneath anterior floor."], ["Medial Wall", "Septum pellucidum (separating paired frontal horns) and forniceal columns posteriorly."], ["Lateral Wall", "Prominent rounded convexity of the head of the caudate nucleus bulging into the ventricular cavity."], ["Floor & Foramen of Monro", "Rostrum of corpus callosum anteriorly; opens posteriorly at foramen of Monro into third ventricle."]], "img_path": "enhanced_figures/fig_170_3_frontal_horn.png", "caption_title": "FIG 170.3: FRONTAL HORN & CAUDATE HEAD (300 DPI)", "caption_body": "Axial cut from Chapter 170 showing all labels: caudate head, septum pellucidum, internal capsule genu, and foramen of Monro.", "global_id": 15, "part": 1, "slide_in_part": 15, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "VASCULAR ORIENTATION • VENOUS LANDMARKS", "title": "The Venous Angle Distance Landmark", "subtitle": "The critical intraventricular anatomical landmark identifying the posterior margin of the foramen of Monro.", "cards": [["Anterior Septal Vein (ASV)", "Courses anteriorly along septum pellucidum, turning posteriorly at foramen of Monro."], ["Thalamostriate Vein (TSV)", "Runs anteriorly in striothalamic sulcus between caudate and thalamus, joining ASV at venous angle."], ["The Venous Angle Junction", "Union of ASV and TSV marks the exact posterior lip of the foramen of Monro and origin of internal cerebral vein."], ["Distance Landmark (5.5 mm)", "In normal anatomy, the venous angle lies within 5.5 mm of the posterior margin of Monro; distortion signifies tumor displacement."]], "img_path": "enhanced_figures/fig_170_4_venous_angle.png", "caption_title": "FIG 170.4: VENOUS ANGLE & STRIA TERMINALIS (LABELED)", "caption_body": "Cranial-to-caudal view from Chapter 170 showing thalamostriate vein, septal vein, choroid plexus, and internal capsule relations.", "global_id": 16, "part": 1, "slide_in_part": 16, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "MOTOR PATHWAYS • INTERNAL CAPSULE", "title": "Internal Capsule Genu Spatial Relationship", "subtitle": "Directly lateral to the thalamostriate-caudate junction lies the corticobulbar and corticospinal motor pathway.", "cards": [["Genu & Anterior Limb Proximity", "The genu of the internal capsule lies immediately adjacent to the striothalamic sulcus and lateral margin of Monro."], ["Surgical Margin of Safety", "Over-aggressive coagulation or retraction along the lateral ventricular wall risks catastrophic contralateral hemiparesis or dysarthria."], ["Septal Vein Transection Safety", "The anterior septal vein may be safely transected proximal to its venous angle junction; the thalamostriate vein must NEVER be coagulated."], ["Stereotactic Guidance", "Preoperative DTI integration ensures lateral corridor retraction vectors remain parallel rather than perpendicular to capsular tracts."]], "img_path": "assets_images/internal_capsule.jpg", "caption_title": "INTERNAL CAPSULE ANATOMICAL COURSE", "caption_body": "Axial white matter dissection displaying anterior limb, genu, and posterior limb of internal capsule hugging the lateral ventricular wall.", "global_id": 17, "part": 1, "slide_in_part": 17, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "SURGICAL ANATOMY • CELLA MEDIA", "title": "Ventricular Body & Striothalamic Sulcus", "subtitle": "The central body of the lateral ventricle extends from foramen of Monro posteriorly to the splenium.", "cards": [["Roof & Floor Boundaries", "Roof: Body of corpus callosum; Floor: Dorsal surface of thalamus laterally, fornix medially, separated by choroidal fissure."], ["Striothalamic Sulcus (Sulcus Terminalis)", "Groove separating caudate body from dorsal thalamus; carries thalamostriate vein and stria terminalis bundle."], ["Choroidal Fissure Entry Point", "Natural cleft between fornix and dorsal thalamus; opening the tenia fornicis provides access to velum interpositum and third ventricle."], ["Medial Boundary", "Septum pellucidum anteriorly; posterior body of fornix attached to callosal undersurface posteriorly."]], "img_path": "enhanced_figures/fig_170_5_tela_choroidea.png", "caption_title": "FIG 170.5: VENTRICULAR BODY & TELA CHOROIDEA (300 DPI)", "caption_body": "Complete labeled view from Chapter 170 with tela choroidea opened, displaying internal cerebral veins and MPChA.", "global_id": 18, "part": 1, "slide_in_part": 18, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "ATRIAL ARCHITECTURE • TRIGONE", "title": "Anatomic Elements of the Ventricular Trigone", "subtitle": "The triangular confluence where frontal body, occipital horn, and temporal horn meet; common site for meningiomas.", "cards": [["Anterior & Medial Boundaries", "Anterior: Pulvinar of thalamus; Medial: Bulb of corpus callosum (forceps major) superiorly, calcar avis inferiorly."], ["Lateral Wall & Roof", "Lateral wall and roof formed by fibers of the tapetum of the corpus callosum and optic radiation (sagittal stratum)."], ["Floor (Collateral Trigone)", "Prominence formed by the collateral sulcus invaginating into the ventricular cavity."], ["Glomus of Choroid Plexus", "Massive confluence of choroid plexus; site of origin for intraventricular meningiomas, choroid papillomas, and vascular lesions."]], "img_path": "enhanced_figures/fig_170_6_cross_sections.png", "caption_title": "FIG 170.6C: ATRIUM & CHOROID GLOMUS ANATOMY", "caption_body": "Coronal section of the ventricular atrium showing tapetum, optic radiations, pulvinar, and glomus of choroid plexus.", "global_id": 19, "part": 1, "slide_in_part": 19, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "SURGICAL ANATOMY • OCCIPITAL HORN", "title": "The Occipital Horn: Anatomy & Trapping", "subtitle": "Highly variable posterior extension into occipital lobe; key landmark for visual pathway preservation.", "cards": [["Roof & Lateral Wall", "Formed by tapetum of the corpus callosum sweeping posteroinferiorly, separating cavity from optic radiations."], ["Medial Wall Landmarks", "Bulb of the occipital horn (forceps major) superiorly; Calcar avis (produced by deep calcarine fissure) inferiorly."], ["Absence of Choroid Plexus", "The occipital horn never contains choroid plexus under normal anatomical conditions."], ["Optic Radiation Vulnerability", "Lateral approach trajectories through parieto-occipital neocortex risk homonymous hemianopia; DTI tractography is mandatory."]], "img_path": "assets_images/dti_tractography.jpg", "caption_title": "DTI TRACTOGRAPHY: OPTIC RADIATIONS", "caption_body": "Reconstruction of the geniculocalcarine visual tract (Meyer loop and sagittal stratum) wrapping around the lateral wall of the atrium and occipital horn.", "global_id": 20, "part": 1, "slide_in_part": 20, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "TEMPORAL ARCHITECTURE • INFERIOR HORN", "title": "Temporal Horn Key Relationships", "subtitle": "Extends anteroinferiorly around the pulvinar into medial temporal lobe, terminating behind the amygdala.", "cards": [["Roof Boundaries", "Formed by tapetum laterally, tail of caudate nucleus, stria terminalis, and retrolenticular internal capsule."], ["Floor & Medial Wall", "Hippocampus and fimbria occupy the floor; choroidal fissure sits between fimbria and stria terminalis."], ["Anterior Pole & Amygdala", "Temporal horn terminates blindly approximately 2.5 cm behind temporal pole; amygdala forms anterior wall and roof."], ["Meyer's Loop Anatomy", "Anterior optic radiation fibers loop over the roof of the temporal horn; anterior temporal resections >3.5 cm cause superior quadrantanopia."]], "img_path": "assets_images/choroid_plexus.jpg", "caption_title": "TEMPORAL HORN & CHOROID PLEXUS", "caption_body": "Anatomical correlation of the inferior choroidal point, choroid plexus attachment, and hippocampal formation in the temporal horn floor.", "global_id": 21, "part": 1, "slide_in_part": 21, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "VASCULAR SUPPLY • ARTERIAL PEDICLES", "title": "Arterial Supply to Lateral Ventricles", "subtitle": "Choroidal arterial network provides dual supply from both internal carotid and vertebrobasilar systems.", "cards": [["Anterior Choroidal Artery (AChA)", "Branch of internal carotid artery; enters temporal horn through inferior choroidal point; supplies choroid plexus of temporal horn and atrium."], ["Lateral Posterior Choroidal Artery (LPChA)", "Branch of P2 segment of PCA; courses through choroidal fissure to supply glomus of choroid plexus in the atrium."], ["Medial Posterior Choroidal Artery (MPChA)", "Branch of P2 segment of PCA; wraps around midbrain, enters velum interpositum in third ventricle roof, and feeds third ventricle choroid."], ["Surgical Principle: Early Devascularization", "Approaching atrial tumors from corridors that access choroidal arteries early significantly reduces blood loss during debulking."]], "img_path": "enhanced_figures/fig_170_5_tela_choroidea.png", "caption_title": "FIG 170.5: POSTERIOR CHOROIDAL ARTERY BRANCHES", "caption_body": "Chapter 170 labeled dissection demonstrating lateral and medial posterior choroidal arteries entering through the choroidal fissure.", "global_id": 22, "part": 1, "slide_in_part": 22, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "DEEP DRAINAGE • GALENIC SYSTEM", "title": "Internal Cerebral Veins vs. Basal Vein", "subtitle": "Confluence of deep cerebral veins beneath the splenium creates the Galenic drainage complex.", "cards": [["Internal Cerebral Veins (ICVs)", "Formed at venous angle by septal and thalamostriate veins; run parallel within velum interpositum in third ventricle roof."], ["Basal Vein of Rosenthal (BVR)", "Formed at anterior perforated substance; wraps around cerebral peduncle in ambient cistern; drains into vein of Galen."], ["Great Cerebral Vein of Galen", "Short midline trunk formed by union of paired ICVs and BVRs beneath splenium; drains into straight sinus at tentorial apex."], ["Surgical Rule: Bilateral ICV Occlusion Fatal", "Occlusion of both ICVs leads to catastrophic bilateral thalamic and basal ganglia hemorrhagic infarction, coma, and death."]], "img_path": "enhanced_figures/fig_170_4_venous_angle.png", "caption_title": "FIG 170.4: DEEP CEREBRAL VENOUS CONFLUENCE", "caption_body": "Venous anatomy from Chapter 170 highlighting bilateral internal cerebral veins converging toward the Vein of Galen beneath the splenium.", "global_id": 23, "part": 1, "slide_in_part": 23, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "OPERATIVE TECHNOLOGY • MODERN ADJUNCTS", "title": "Modern Intraoperative Surgical Adjuncts", "subtitle": "Technological evolution from flat blade retractors to tubular ports, frameless navigation, and high-definition exoscopy.", "cards": [["Frameless Neuronavigation & Optical Tracking", "Provides submillimetric accuracy; merges volumetric MRI with DTI tractography to guide incision and trajectory vector."], ["Tubular Retractor Systems (Brain Ports)", "Distributes retraction force radially across 360 degrees, minimizing shear stress and focal ischemia along white matter tracts."], ["3D Digital Exoscopes & High-Definition Endoscopes", "Provide superior illumination, enhanced focal depth, and ergonomic visualization into deep narrow corridors."], ["Ultrasonic Surgical Aspirators (CUSA)", "Permits rapid internal tumor cytoreduction with selective tissue sparing, preserving adjacent delicate ependyma and vessels."]], "img_path": "assets_images/craniotomy_wiki.jpg", "caption_title": "MODERN INTRAOPERATIVE NEUROSURGICAL SETUP", "caption_body": "Integration of frameless stereotactic navigation, micro-instrumentation, and optics during ventricular and deep cranial access.", "global_id": 24, "part": 1, "slide_in_part": 24, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "ELECTROPHYSIOLOGY • NEUROMONITORING", "title": "Comprehensive Intraoperative Monitoring", "subtitle": "Continuous neurophysiological monitoring provides real-time warning before irreversible neurological injury occurs.", "cards": [["Motor Evoked Potentials (MEP)", "Monitors corticospinal tract integrity during retraction near internal capsule and thalamus; >50% amplitude drop warns of ischemia."], ["Somatosensory Evoked Potentials (SSEP)", "Evaluates sensory lemniscal pathways through dorsal column-thalamic tracts; sensitive to thalamostriate compromise."], ["Visual Evoked Potentials (VEP)", "Used during posterior atrial and occipital approaches to monitor optic radiation and calcarine cortex function."], ["Subcortical Direct Electrical Stimulation", "Employed during transfrontal and transcortical approaches to map motor and speech pathways ahead of the surgical corridor."]], "img_path": "enhanced_figures/fig_170_10_surgical_approaches.png", "caption_title": "FIG 170.10: MULTI-CORRIDOR MONITORING SCHEME", "caption_body": "Chapter 170 surgical approach schematic illustrating functional white matter pathways traversed by ventricular corridors.", "global_id": 25, "part": 1, "slide_in_part": 25, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "MIDLINE CORRIDORS • TRANSCALLOSAL", "title": "Anterior Interhemispheric Transcallosal", "subtitle": "The workhorse approach for tumors of the frontal horn, body of lateral ventricle, and third ventricle.", "cards": [["Patient Positioning & Craniotomy", "Supine with head elevated 15–20°; two-thirds of craniotomy anterior to coronal suture, crossing sagittal sinus by 1 cm."], ["Interhemispheric Dissection", "Gravity-assisted retraction of right frontal lobe away from falx; identification of callosomarginal and pericallosal arteries."], ["Callosotomy Extent (1.5–2.0 cm)", "Performed strictly in midline between pericallosal arteries; anterior to foramen of Monro; limited to ≤2.0 cm to prevent disconnection syndrome."], ["Bilateral Ventricular Access", "Fenestration of septum pellucidum provides simultaneous visualization of both lateral ventricles through a single callosotomy."]], "img_path": "enhanced_figures/fig_170_11_subependymoma_case.png", "caption_title": "FIG 170.11: TRANSCALLOSAL CORRIDOR EXPOSURE", "caption_body": "Full labeled operative view from Chapter 170 demonstrating interhemispheric transcallosal entry into the lateral ventricle for tumor resection.", "global_id": 26, "part": 1, "slide_in_part": 26, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "OPERATIVE HAZARDS • RISK REDUCTION", "title": "Transcallosal Complications & Avoidance", "subtitle": "Key pitfalls of transcallosal surgery and strategies for neurological preservation.", "cards": [["Bridging Vein Avulsion & Venous Infarct", "Traction on parasagittal bridging veins can trigger superior sagittal sinus thrombosis; dissect arachnoid bands to mobilize veins."], ["Supplementary Motor Area (SMA) Syndrome", "Excessive retraction on medial frontal lobe produces contralateral akinesia and mutism; transient but distressing."], ["Callosal Disconnection Syndrome", "Extending callosotomy >2.5 cm or dividing splenium causes alexia without agraphia, tactile anomia, or interhemispheric transfer loss."], ["Forniceal Traction & Korsakoff Syndrome", "Bilateral forniceal contusion or ischemia at foramen of Monro causes permanent anterograde amnesia."]], "img_path": "enhanced_figures/fig_170_11_subependymoma_case.png", "caption_title": "FIG 170.11: RESECTION CAVITY & FORNIX PRESERVATION", "caption_body": "Operative view illustrating tumor bed following successful transcallosal resection, confirming anatomic integrity of forniceal columns.", "global_id": 27, "part": 1, "slide_in_part": 27, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "TRANSCORTICAL CORRIDORS • TRANSFRONTAL", "title": "Transfrontal Corticectomy & Transsulcal", "subtitle": "Alternative route to frontal horn and body, especially favored in marked ventriculomegaly or lateral tumor extension.", "cards": [["Middle Frontal Gyrus Corticectomy", "Transcortical incision placed in non-eloquent middle frontal gyrus (F2), anterior to motor strip and frontal eye fields."], ["Transsulcal Tubular Retractor Approach", "Dissection carried through the depth of the sulcus to enter the ventricle with minimal parenchymal disruption."], ["Advantages over Transcallosal", "Direct line of sight to lateral ventricular wall; avoids superior sagittal sinus bridging veins; superior for massively dilated ventricles."], ["Disadvantages & Seizure Risk", "Cortical incision carries higher post-operative epileptogenic potential (requires prophylactic anti-seizure medication) and porencephaly."]], "img_path": "enhanced_figures/fig_170_15_transfrontal_case.png", "caption_title": "FIG 170.15: TRANSFRONTAL TRANSVENTRICULAR ENTRY", "caption_body": "Complete labeled operative view from Chapter 170 showing transfrontal entry through the lateral ventricle into the foramen of Monro.", "global_id": 28, "part": 1, "slide_in_part": 28, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "ATRIAL APPROACHES • PARIETAL ROUTES", "title": "Transparietal: Intraparietal Sulcus", "subtitle": "Superior parietal lobule and intraparietal sulcal corridors for trigonal and atrial neoplasms.", "cards": [["Superior Parietal Lobule (SPL) Corridor", "Incision in non-dominant SPL above intraparietal sulcus; enters roof of atrium; minimizes visual field deficit."], ["Intraparietal Sulcus (IPS) Transsulcal Route", "Splits the IPS to enter the atrium; preserves parietal cortex and reduces visual pathway traction."], ["Optic Radiation (Sagittal Stratum) Avoidance", "Lateral temporal routes inevitably cross optic radiation; superior parietal approach passes superior to geniculocalcarine fibers."], ["Dominant Hemisphere Caution", "In dominant hemisphere, parietal corticectomy carries risk of Gerstmann syndrome (agraphia, acalculia, finger agnosia, left-right disorientation)."]], "img_path": "enhanced_figures/fig_170_17_transchoroidal_case.png", "caption_title": "FIG 170.17: TRANSCHOROIDAL ATRIAL EXPOSURE", "caption_body": "Full labeled interhemispheric transchoroidal approach to ventricular atrium from Chapter 170 avoiding neocortical corticectomy.", "global_id": 29, "part": 1, "slide_in_part": 29, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "TEMPORAL CORRIDORS • SUBTEMPORAL", "title": "Transtemporal vs. Subtemporal Routes", "subtitle": "Operative corridors targeting temporal horn and inferior atrial tumors.", "cards": [["Middle Temporal Gyrus (T2) Transtemporal", "Direct lateral entry into temporal horn; risks language disruption in dominant hemisphere and Meyer loop visual field deficit."], ["Inferior Temporal Gyrus (T3) / Sulcal", "Lower trajectory entering floor of temporal horn, reducing optic radiation exposure."], ["Subtemporal Approach", "Extradural or intradural elevation of inferior temporal surface; reaches medial temporal structures without traversing neocortex."], ["Vein of Labbé Vulnerability", "Subtemporal elevation is strictly constrained by the entry of the vein of Labbé into the transverse sinus; excessive traction risks venous stroke."]], "img_path": "enhanced_figures/fig_170_19_coz_case.png", "caption_title": "FIG 170.19: CRANIO-ORBITOZYGOMATIC EXPOSURE", "caption_body": "Subtemporal and anterolateral corridors from Chapter 170 utilized for deep medial temporal and periventricular exposure.", "global_id": 30, "part": 1, "slide_in_part": 30, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "content", "badge": "DECISION MATRIX • SURGICAL SELECTION", "title": "Lateral Ventricular Approach Selection", "subtitle": "Algorithmic decision framework synthesizing tumor location, ventriculomegaly, vascularity, and hemispheric dominance.", "cards": [["Frontal Horn & Body: Normal Ventricles", "Anterior Interhemispheric Transcallosal Approach is favored; provides midline direct access without cortical violation."], ["Frontal Horn & Body: Dilated Ventricles / Lateral Extent", "Transcortical (Middle Frontal Gyrus) or transsulcal port approach offers shorter working distance and wide angle of view."], ["Atrium (Trigone) Tumors", "Superior Parietal Lobule (SPL) corridor for non-dominant tumors; Interhemispheric Transprecuneal or Transchoroidal for dominant side."], ["Temporal Horn Tumors", "Subtemporal route for medial pathology; Transtemporal (T2/T3) for non-dominant lateral tumors with existing visual deficit."]], "img_path": "enhanced_figures/fig_170_10_surgical_approaches.png", "caption_title": "FIG 170.10: SURGICAL CORRIDOR SUMMARY MATRIX", "caption_body": "Chapter 170 master diagram illustrating trajectories of anterior transcallosal, transcortical, and posterior corridors.", "global_id": 31, "part": 1, "slide_in_part": 31, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "summary", "badge": "YOUMANS & WINN MASTERCLASS • PART 1 SUMMARY", "title": "Mastery of Lateral Ventricular Corridors", "subtitle": "Key anatomical and surgical pearls summarizing Part 1 of the Ventricular Tumors curriculum.", "cards": [["Anatomy Dictates Corridors", "Deep familiarity with the 5 sectors of the lateral ventricle and choroidal fissure enables corridor selection tailored to tumor margins."], ["Venous Angle as True Compass", "The junction of thalamostriate and septal veins reliably marks foramen of Monro and safeguards internal cerebral veins."], ["Tractography Sparing", "Preoperative DTI integration is essential to navigate past internal capsule genu, forniceal columns, and Meyer's loop safely."], ["Transition to Part 2", "Part 2 covers the Third & Fourth Ventricles, Infratentorial approaches, and comprehensive WHO Histopathology & Molecular Stratification."]], "img_path": "assets_images/ventricular_system_3d.png", "caption_title": "3D VENTRICULAR SYSTEM • PROCEED TO PART 2", "caption_body": "Comprehensive 3D reconstruction of ventricular cavities linking lateral ventricles to the third and fourth ventricular systems.", "global_id": 32, "part": 1, "slide_in_part": 32, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "thankyou", "badge": "END OF PART 1 • MASTERCLASS LECTURE SERIES", "title": "Thank You for Your Attention!", "subtitle": "Up Next in Part 2: Third & Fourth Ventricles, Infratentorial Approaches & Histopathology.", "cards": [["Masterclass Milestones Completed", "Comprehensive mastery of lateral ventricular sectors, neurovascular landmarks, limbic preservation, and operative corridors."], ["What's Coming in Part 2?", "Third ventricle 5-layer roof dissection, transchoroidal (Wen) technique, pineal region, fourth ventricle telovelar approach, and WHO tumor pathology."], ["Interactive Review Available", "Use the Knowledge Quiz (top right) to test your clinical retention or explore the Slide Overview drawer."], ["Questions & Discussion", "Let's take initial questions on lateral ventricular corridors before advancing to the deep diencephalic system."]], "img_path": "assets_images/part1_thankyou.jpg", "caption_title": "ARTISTIC LECTURE ARTWORK: SEE YOU IN PART 2!", "caption_body": "Special educational masterclass illustration: Up next is Part 2 covering the third and fourth ventricles!", "global_id": 33, "part": 1, "slide_in_part": 33, "part_title": "Part 1: Lateral Ventricles & Approaches"}, {"type": "title", "badge": "YOUMANS & WINN COMPREHENSIVE MASTERCLASS • PART 2", "title": "Third & Fourth Ventricles:\nApproaches & Histopathology", "subtitle": "Transchoroidal corridors, telovelar microsurgery, and specific tumor biological classification.", "img_path": "assets_images/third_ventricle.jpg", "credits": ["Source: Youmans & Winn Neurological Surgery (Chapter 170: Ventricular Tumors)", "Curriculum: Third & Fourth Ventricular Corridors, Pineal Region & Telovelar Microsurgery", "Pathology: WHO CNS Classification, Molecular Stratification & Surgical Resection Outcomes"], "global_id": 34, "part": 2, "slide_in_part": 1, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "SURGICAL TOPOGRAPHY • THIRD VENTRICLE", "title": "Third Ventricular Core Boundaries", "subtitle": "Midline cleft nestled between bilateral thalami and hypothalami, connecting anterior and posterior CSF pathways.", "cards": [["Lateral Walls & Hypothalamic Sulcus", "Formed by medial surfaces of bilateral thalami superiorly and hypothalami inferiorly; demarcated by hypothalamic sulcus."], ["Massa Intermedia (Interthalamic Adhesion)", "Traverses ventricular cavity connecting bilateral thalami in 75% of individuals; may be divided safely if obstructing view."], ["Ventral Floor & Recesses", "Extends from optic chiasm anteriorly through infundibular recess, tuber cinereum, mamillary bodies, and posterior perforated substance."], ["Anterior & Posterior Limits", "Anterior: Lamina terminalis and anterior commissure; Posterior: Pineal recess, posterior commissure, and aqueduct of Sylvius."]], "img_path": "enhanced_figures/fig_170_7_third_ventricle.png", "caption_title": "FIG 170.7: MIDSAGITTAL THIRD VENTRICLE & SURROUNDING ROOF", "caption_body": "Enlarged sagittal view from Chapter 170 showing third ventricle boundaries, recesses, floor structures, and aqueduct of Sylvius.", "global_id": 35, "part": 2, "slide_in_part": 2, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "DIENCEPHALIC ANATOMY • ROOF ARCHITECTURE", "title": "The Five Layers of the Third Ventricle Roof", "subtitle": "The surgical gateway into the third ventricle consists of five distinct micro-anatomical layers.", "cards": [["Layer 1: Body of the Fornix", "Paired forniceal bodies united in the midline raphe, forming the superior structural arch of the roof."], ["Layer 2: Superior Leaf of Tela Choroidea", "Dorsal pial membrane adhering intimately to the inferior surface of the fornices and hippocampal commissure."], ["Layer 3: Velum Interpositum Space", "Vascular space containing paired internal cerebral veins (ICVs) and medial posterior choroidal arteries (MPChA)."], ["Layer 4 & 5: Inferior Leaf & Choroid Plexus", "Layer 4: Ventral pial membrane forming ventricular ceiling; Layer 5: Paired choroid plexus ribbons hanging into third ventricle."]], "img_path": "enhanced_figures/fig_170_7_third_ventricle.png", "caption_title": "FIG 170.7: THE FIVE ROOF LAYERS & VELUM INTERPOSITUM", "caption_body": "Global sagittal view from Chapter 170 illustrating the 5-layer stratification of the third ventricular roof and velum interpositum.", "global_id": 36, "part": 2, "slide_in_part": 3, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "VASCULAR TOPOGRAPHY • VELUM INTERPOSITUM", "title": "Velum Interpositum Vascular Complex", "subtitle": "Critical neurovascular bundle traversing the roof of the third ventricle.", "cards": [["Internal Cerebral Veins (ICVs)", "Paired veins course side-by-side beneath fornices in anterior roof, diverging posterolaterally around pineal recess before uniting."], ["Great Cerebral Vein of Galen Union", "ICVs join basal veins of Rosenthal beneath splenium of corpus callosum to form the vein of Galen in quadrigeminal cistern."], ["Medial Posterior Choroidal Arteries (MPChA)", "Course anteriorly within velum interpositum, giving fine perforating feeders to third ventricle choroid and pineal body."], ["Surgical Hazard: ICV Spasm or Thrombosis", "Excessive traction on roof layers causes ICV thrombosis, leading to fatal bilateral thalamic infarction and coma."]], "img_path": "enhanced_figures/fig_170_5_tela_choroidea.png", "caption_title": "FIG 170.5: INTERNAL CEREBRAL VEINS IN ROOF & TELA CHOROIDEA", "caption_body": "Chapter 170 dissection with lateral ventricle body opened, displaying ICVs and MPChA traversing the velum interpositum.", "global_id": 37, "part": 2, "slide_in_part": 4, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE CORRIDORS • TRANSFORAMINAL", "title": "Transforaminal Route & Foraminoplasty", "subtitle": "Natural orifice entry through the foramen of Monro into the anterior and middle third ventricle.", "cards": [["Natural Orifice Access", "Enters third ventricle without dividing neural tissue; ideal for colloid cysts and small tumors presenting with hydrocephalus."], ["Foraminoplasty Technique", "Enlarges constricted foramen of Monro by coagulating and transecting the anterior septal vein proximal to venous angle."], ["Posterior Extension (Tenia Fornicis)", "Extending incision posteriorly along choroidal fissure (tenia fornicis) expands working aperture up to 1.5 cm without forniceal traction."], ["Limitations", "Working trajectory is confined to anterior and middle third ventricle; poor visualization of posterior third and pineal region."]], "img_path": "enhanced_figures/fig_170_12_third_ventricle_approaches.png", "caption_title": "FIG 170.12: THIRD VENTRICLE APPROACHES (TRANSFORAMINAL & TRANSCHOROIDAL)", "caption_body": "Chapter 170 diagram of transforaminal corridor via anterior transcallosal approach, showing entry through foramen of Monro.", "global_id": 38, "part": 2, "slide_in_part": 5, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE CORRIDORS • TRANSCHOROIDAL", "title": "Transchoroidal Approach (Wen Technique)", "subtitle": "Incision through the choroidal fissure between fornix and choroid plexus provides wide atraumatic access.", "cards": [["Tenia Fornicis Incision", "Sharp incision along the tenia fornicis (medial attachment of choroid plexus to fornix), sweeping choroid plexus laterally."], ["Internal Cerebral Vein Splitting", "Dissection carried between the paired ICVs within the velum interpositum, entering the roof of the third ventricle."], ["Forniceal Preservation Advantage", "Avoids any direct traction or manipulation of the anterior forniceal columns, significantly reducing risk of postoperative amnesia."], ["Wide Coronal Exposure", "Provides expansive visualization of anterior, middle, and posterior third ventricular cavity through a single lateral corridor."]], "img_path": "enhanced_figures/fig_170_12_third_ventricle_approaches.png", "caption_title": "FIG 170.12: TRANSCHOROIDAL CORRIDOR & CHOROIDAL FISSURE OPENING", "caption_body": "Chapter 170 schematic of transchoroidal dissection opening tenia fornicis to reach third ventricle beneath forniceal body.", "global_id": 39, "part": 2, "slide_in_part": 6, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE COMPARISON • CHOROIDAL ROUTES", "title": "Subchoroidal vs. Transchoroidal Corridors", "subtitle": "Anatomical nuances between entering medial vs. lateral to the choroid plexus ribbon.", "cards": [["Transchoroidal (Tenia Fornicis)", "Entered medial to choroid plexus; mobilizes plexus laterally with thalamus; provides wider exposure of contralateral third ventricle."], ["Subchoroidal (Tenia Choroidea)", "Entered lateral to choroid plexus along stria terminalis/thalamus; keeps fornix and plexus medially; provides direct ipsilateral floor view."], ["Neurovascular Risk Profile", "Subchoroidal route runs closer to thalamostriate vein and thalamus; transchoroidal route runs closer to forniceal body and ICVs."], ["Selection Rationale", "Transchoroidal is favored for midline or contralateral third ventricular masses; subchoroidal for lesions with prominent lateral thalamic extension."]], "img_path": "enhanced_figures/fig_170_17_transchoroidal_case.png", "caption_title": "FIG 170.17: INTERHEMISPHERIC TRANSCHOROIDAL CASE OUTCOME", "caption_body": "Pre- and postoperative neuroimaging from Chapter 170 demonstrating complete resection of a third ventricular mass via transchoroidal route.", "global_id": 40, "part": 2, "slide_in_part": 7, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE CORRIDORS • INTERFORNICEAL", "title": "The Interforniceal Approach (Busch)", "subtitle": "Direct midline entry dividing the raphe between bilateral forniceal bodies.", "cards": [["Midline Raphe Division", "Incision placed strictly in midline between paired bodies of fornix beneath the septum pellucidum."], ["Direct Symmetrical Exposure", "Provides direct, orthogonal visualization into the center of the third ventricle; excellent for giant colloid cysts and hypothalamic hamartomas."], ["Risk of Severe Memory Loss", "Excessive posterior dissection (>1.5 cm) or bilateral lateral retraction causes irreversible damage to hippocampal commissure and forniceal tracts."], ["Current Surgical Consensus", "Largely superseded by transchoroidal approach due to significantly lower risk of bilateral limbic memory impairment."]], "img_path": "enhanced_figures/fig_170_2_fornix.png", "caption_title": "FIG 170.2: BILATERAL FORNIX BODY & COMMISSURAL ANATOMY", "caption_body": "Anatomy of paired forniceal bodies in relation to third ventricle roof, emphasizing the narrow margin of safety during interforniceal entry.", "global_id": 41, "part": 2, "slide_in_part": 8, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "ANTERIOR ROUTES • SKULL BASE", "title": "Subfrontal & Cranio-Orbital Corridors", "subtitle": "Anterior cranial base approaches targeting suprasellar tumors extending into the anterior third ventricle.", "cards": [["Subfrontal Trans-Lamina Terminalis", "Unilateral or bifrontal craniotomy; optic chiasm and ACom complex visualized; lamina terminalis opened to enter anterior floor."], ["Cranio-Orbital (Frontotemporal-Orbital)", "Orbital osteotomy lowers approach angle by 10–15°, minimizing frontal lobe retraction and improving superior visualization."], ["Indications", "Craniopharyngiomas, pituitary macroadenomas, tuberculum sellae meningiomas, and optic pathway gliomas invading third ventricle."], ["Hypothalamic Preservation", "Critical to preserve anterior communicating artery perforators supplying the optic chiasm, hypothalamus, and lamina terminalis."]], "img_path": "enhanced_figures/fig_170_14_cranioorbital_case.png", "caption_title": "FIG 170.14: CRANIO-ORBITAL RESECTION CASE", "caption_body": "Chapter 170 case illustration of cranio-orbital subfrontal approach for resection of a large retrochiasmatic suprasellar lesion.", "global_id": 42, "part": 2, "slide_in_part": 9, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "SKULL BASE ENDOSCOPY • ENDONASAL", "title": "Expanded Endoscopic Endonasal (EEA)", "subtitle": "Transsphenoidal, transtuberculum, and transplanum routes into the anterior and ventral third ventricle.", "cards": [["Transtuberculum / Transplanum Corridor", "Removal of planum sphenoidale and tuberculum sellae; provides direct ventral access without brain retraction."], ["Direct In-Line Ventral Visualization", "Direct line of sight to retrochiasmatic space, optic chiasm undersurface, pituitary stalk, and third ventricular floor."], ["Vascular Considerations", "Must identify and protect internal carotid arteries laterally and anterior communicating artery complex superiorly."], ["Vascularized Nasoseptal Flap (Hadad-Bassagasteguy)", "Essential for skull base reconstruction to prevent high-flow postoperative CSF fistulas and bacterial meningitis."]], "img_path": "enhanced_figures/fig_170_13_endonasal_case.png", "caption_title": "FIG 170.13: EXPANDED ENDONASAL TRANSCLIVAL / TRANSSPHENIDAL CASE", "caption_body": "Chapter 170 endoscopic endonasal transsphenoidal resection of a giant third ventricular adenoma with pituitary stalk preservation.", "global_id": 43, "part": 2, "slide_in_part": 10, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "DECISION MATRIX • THIRD VENTRICLE", "title": "Third Ventricular Approach Selection", "subtitle": "Algorithm stratifying corridor selection based on tumor origin, growth axis, and foramen of Monro patency.", "cards": [["Roof / Foramen of Monro Lesions (Colloid Cyst)", "Transcallosal Transforaminal or Transchoroidal approach; highly direct with low morbidity."], ["Intraventricular with Ventriculomegaly", "Transfrontal Transcortical approach into lateral ventricle then transforaminal into third ventricle."], ["Retrochiasmatic / Suprasellar Origin (Craniopharyngioma)", "Expanded Endoscopic Endonasal (EEA) or Subfrontal/Cranio-orbital approach."], ["Posterior Third / Pineal Region Tumors", "Infratentorial Supracerebellar (Krause) or Occipital Transtentorial (Jamieson/Poppen) approach."]], "img_path": "enhanced_figures/fig_170_15_transfrontal_case.png", "caption_title": "FIG 170.15: TRANSFRONTAL TRANSFORAMINAL CASE CORRIDOR", "caption_body": "Pre- and postoperative MRI from Chapter 170 demonstrating complete removal of a third ventricular mass via transfrontal transforaminal corridor.", "global_id": 44, "part": 2, "slide_in_part": 11, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "PINEAL REGION • QUADRIGEMINAL CISTERN", "title": "Pineal & Quadrigeminal Relationships", "subtitle": "Anatomical crossroads bordered by splenium, quadrigeminal plate, culmen of cerebellum, and the Galenic venous confluence.", "cards": [["Anterior & Inferior Boundaries", "Anterior: Third ventricle posterior wall and habenular commissure; Inferior: Superior and inferior colliculi (tectal plate)."], ["Superior & Posterior Boundaries", "Superior: Splenium of corpus callosum; Posterior: Culmen of cerebellar vermis and straight sinus."], ["Neurovascular Convergence", "Enclosed by the Great Vein of Galen, basal veins of Rosenthal, internal cerebral veins, and trochlear nerves (CN IV)."], ["Surgical Challenges", "Deep narrow working corridors; high density of critical deep veins; high sensitivity of tectal plate to surgical manipulation."]], "img_path": "assets_images/pineal_gland_wiki.jpg", "caption_title": "PINEAL GLAND & DORSAL MIDBRAIN ANATOMY", "caption_body": "Midsagittal dissection highlighting pineal gland, quadrigeminal cistern, and venous relations beneath the splenium.", "global_id": 45, "part": 2, "slide_in_part": 12, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "POSTERIOR CORRIDORS • SUPRACEREBELLAR", "title": "Supracerebellar Infratentorial (Krause)", "subtitle": "The standard suboccipital infratentorial corridor accessing the pineal region and posterior third ventricle.", "cards": [["Patient Positioning Options", "Sitting (optimal gravity drainage and venous decompression, but risk of air embolism) or Concorde / Prone Concorde position."], ["Suboccipital Infratentorial Trajectory", "Follows superior surface of cerebellar culmen beneath tentorium into quadrigeminal cistern; entirely below deep veins."], ["Arachnoid & Bridging Vein Division", "Release of supracerebellar bridging veins allows cerebellum to relax downward, opening natural corridor to pineal tumor."], ["Deep Vein Topography", "Tumor is approached ventral to the vein of Galen and internal cerebral veins, protecting these vessels from traction."]], "img_path": "enhanced_figures/fig_170_10_surgical_approaches.png", "caption_title": "FIG 170.10: SUPRACEREBELLAR INFRATENTORIAL TRAJECTORY", "caption_body": "Chapter 170 schematic illustrating the infratentorial trajectory following the cerebellar surface to the posterior third ventricle.", "global_id": 46, "part": 2, "slide_in_part": 13, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "APPROACH SELECTION • TENTORIAL ANGLE", "title": "The Torcular-to-Pineal Line Rule", "subtitle": "The slope of the tentorium cerebelli dictates selection between supracerebellar and occipital transtentorial routes.", "cards": [["Torcular-to-Pineal Line Concept", "Straight line drawn on sagittal MRI from torcular Herophili to pineal gland determines approach trajectory clearance."], ["Flat / Shallow Tentorium (<45°)", "Favors Infratentorial Supracerebellar Approach; provides generous trajectory over cerebellar culmen into posterior third ventricle."], ["Steep / High-Slope Tentorium (>45°)", "Infratentorial view is obstructed by tentorial steepness; favors Occipital Transtentorial Approach to reach superior tumor pole."], ["Tumor Projection Vector", "Tumors extending superiorly into velum interpositum favor occipital transtentorial; lesions extending into fourth ventricle favor supracerebellar."]], "img_path": "assets_images/fourth_ventricle.jpg", "caption_title": "TENTORIAL SLOPE & INFRATENTORIAL SPACE", "caption_body": "Sagittal neuroanatomy demonstrating the relationship between the straight sinus, tentorial angle, and cerebellar culmen.", "global_id": 47, "part": 2, "slide_in_part": 14, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "POSTERIOR CORRIDORS • TRANSTENTORIAL", "title": "Occipital Transtentorial Route (Jamieson)", "subtitle": "Supratentorial paramedian occipital approach with tentorial incision for superiorly projecting pineal lesions.", "cards": [["Patient Positioning & Craniotomy", "Prone or modified three-quarters prone; right occipital craniotomy extending to superior sagittal and transverse sinuses."], ["Occipital Lobe Retraction", "Medial occipital lobe gently retracted laterally; bridging veins to straight sinus divided if necessary."], ["Tentorial Incision (Tentoriotomy)", "Tentorium incised parallel to straight sinus (1–1.5 cm lateral), exposing dorsal midbrain, pineal region, and ambient cistern."], ["Key Advantage", "Provides superior-to-inferior visualization of tumors extending above internal cerebral veins into the splenium or velum interpositum."]], "img_path": "enhanced_figures/fig_170_10_surgical_approaches.png", "caption_title": "FIG 170.10: OCCIPITAL TRANSTENTORIAL ROUTE", "caption_body": "Chapter 170 surgical approach schematic demonstrating the supratentorial corridor across the incised tentorium.", "global_id": 48, "part": 2, "slide_in_part": 15, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "FOURTH VENTRICLE • RHOMBOID FOSSA", "title": "Rhomboid Fossa Floor Anatomy", "subtitle": "The delicate floor of the fourth ventricle houses critical cranial nerve nuclei and autonomic centers.", "cards": [["Median Sulcus & Sulcus Limitans", "Median sulcus divides floor into halves; Sulcus limitans separates medial motor trigones from lateral sensory vestibular areas."], ["Facial Colliculus (Motor Genu)", "Prominence in lower pontine floor formed by facial nerve (CN VII) fibers looping over abducens nucleus (CN VI); must NEVER be touched."], ["Striae Medullares & Acoustic Tubercle", "Transverse acoustic fibers dividing pontine and medullary halves of floor; key anatomical orientation landmark."], ["Hypoglossal & Vagal Trigones", "Inferior medullary floor triangles: Hypoglossal trigone (CN XII) medially, Vagal trigone (CN X autonomic centers) laterally."]], "img_path": "enhanced_figures/fig_170_8_fourth_ventricle_floor.png", "caption_title": "FIG 170.8A: FOURTH VENTRICULAR FLOOR (RHOMBOID FOSSA)", "caption_body": "Chapter 170 dorsal dissection of fourth ventricular floor detailing facial colliculus, striae medullares, and hypoglossal/vagal trigones.", "global_id": 49, "part": 2, "slide_in_part": 16, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "FOURTH VENTRICLE • TENT-LIKE ROOF", "title": "Tent-Like Roof Segments", "subtitle": "Anatomical division into superior velar, fastigial, and inferior velo-tonsillar compartments.", "cards": [["Superior (Cranial) Roof Segment", "Formed by superior cerebellar peduncles (brachia conjunctiva) and superior medullary velum; projects to the fastigium apex."], ["The Fastigium (Tentorial Apex)", "Sharp angular junction of cranial and caudal roof segments, projecting deeply into cerebellar vermis."], ["Inferior (Caudal) Roof Segment", "Formed by inferior medullary velum, tela choroidea, and paired tonsils of the cerebellum."], ["Foramina of Luschka & Magendie", "Lateral apertures (Luschka) at cerebellopontine angles; Midline aperture (Magendie) draining into cisterna magna."]], "img_path": "enhanced_figures/fig_170_8_fourth_ventricle_floor.png", "caption_title": "FIG 170.8: FOURTH VENTRICLE ROOF & VELAR ARCHITECTURE", "caption_body": "Dorsal view from Chapter 170 showing the fastigial apex, inferior medullary velum, and tela choroidea roof architecture.", "global_id": 50, "part": 2, "slide_in_part": 17, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "VASCULAR TOPOGRAPHY • PICA SEGMENTS", "title": "Five Segments of the PICA", "subtitle": "The posterior inferior cerebellar artery (PICA) has the most complex course of any intracranial artery.", "cards": [["1. Anterior Medullary Segment", "Originates from vertebral artery; courses along anterior medulla past hypoglossal nerve rootlets."], ["2. Lateral Medullary Segment", "Runs along lateral medulla, passing glossopharyngeal, vagus, and accessory (CN IX, X, XI) rootlets."], ["3. Tonsillomedullary Segment", "Loops inferiorly around cerebellar tonsil (infratonsillar loop) toward foramen magnum."], ["4. Telovelomedullary Segment", "Ascends along inferior medullary velum into fourth ventricle roof (supratonsillar loop) to supply choroid plexus."], ["5. Cortical Branches", "Bifurcates into vermian and hemispheric branches supplying inferior vermis and cerebellar cortex."]], "img_path": "enhanced_figures/fig_170_9_pica_segments.png", "caption_title": "FIG 170.9: PICA ANATOMIC SEGMENTS & TELOVELAR VASCULAR RELATIONS", "caption_body": "Lateral neurovascular dissection from Chapter 170 showing the complex loops of PICA in relation to medulla, tonsils, and roof.", "global_id": 51, "part": 2, "slide_in_part": 18, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE TECHNIQUE • TELOVELAR", "title": "Telovelar Approach (Matsushima)", "subtitle": "The modern standard corridor to fourth ventricular tumors utilizing natural anatomical clefts.", "cards": [["Suboccipital Craniotomy & Cisterna Magna Opening", "Suboccipital midline exposure; arachnoid of cisterna magna opened widely to release CSF and decompress posterior fossa."], ["Uvulotonsillar Space Mobilization", "Gentle lateral elevation of cerebellar tonsils away from the uvula and medulla without resecting or splitting neural tissue."], ["Tela Choroidea & Inferior Velum Incision", "Opening the transparent tela choroidea and inferior medullary velum provides direct panoramic access to fourth ventricle."], ["Full Floor & Apex Visualization", "Exposes from foramen of Magendie inferiorly to the fastigium and aqueduct superiorly through bilateral telovelar opening."]], "img_path": "enhanced_figures/fig_170_20_telovelar_ependymoma_case.png", "caption_title": "FIG 170.20: TELOVELAR CORRIDOR & OPERATIVE VIEWS", "caption_body": "Operative view from Chapter 170 showing telovelar entry, tonsillar mobilization, and tumor dissection in the fourth ventricle.", "global_id": 52, "part": 2, "slide_in_part": 19, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "OPERATIVE COMPARISON • POSTERIOR FOSSA", "title": "Telovelar vs. Transvermian Approach", "subtitle": "Overcoming the historical morbidity of vermian split through anatomical corridor development.", "cards": [["Historical Transvermian Approach", "Splits the inferior cerebellar vermis (nodule, uvula) to reach fourth ventricle roof; damages fastigial and dentate efferents."], ["Cerebellar Mutism Syndrome (CMS)", "Dividing inferior vermis causes postoperative transient or permanent mutism, emotional lability, and profound ataxia (seen in up to 25% of children)."], ["Telovelar Approach (Vermis-Sparing)", "Obtains equivalent or superior exposure exclusively through natural clefts (tela choroidea / velum) without dividing any vermis."], ["Surgical Consensus", "The transvermian approach is now largely obsolete; telovelar entry is the standard of care for fourth ventricular neoplasms."]], "img_path": "enhanced_figures/fig_170_20_telovelar_ependymoma_case.png", "caption_title": "FIG 170.20: INFERIOR VERMIAN PRESERVATION IN TELOVELAR APPROACH", "caption_body": "Post-resection inspection confirming anatomical preservation of the vermis and bilateral tonsils following telovelar dissection.", "global_id": 53, "part": 2, "slide_in_part": 20, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "FLOOR SAFETY • NUCLEAR PRECAUTIONS", "title": "Fourth Ventricle Floor Precautions", "subtitle": "Rigid microsurgical rules to prevent fatal autonomic and cranial nerve dysfunction.", "cards": [["Pia-Ependyma Dissection Plane", "Dissect strictly within the tumor-ependyma pseudocapsule; never pull or avulse tumor nodules adherent to rhomboid fossa floor."], ["Subtotal Resection Over Infiltrated Floor", "If ependymoma or glioma directly invades the floor nuclei, leave a thin residual cuff; complete resection causes fatal apnea or vegetative state."], ["Safe Entry Zones into Brainstem", "Suprafacial and infrafacial triangles permit limited entry into deep intrinsic pontine lesions, avoiding CN VI/VII nuclei."], ["Floor Retraction Avoidance", "Never place cottonoids or blade retractors directly against the floor; use gentle irrigation and soft suction on tumor capsule only."]], "img_path": "enhanced_figures/fig_170_8_fourth_ventricle_floor.png", "caption_title": "FIG 170.8: RHOMBOID FOSSA NUCLEAR DANGER ZONES & ENTRY PRECAUTIONS", "caption_body": "Rhomboid fossa landmarks from Chapter 170 highlighting facial colliculus, striae medullares, and nuclear danger zones.", "global_id": 54, "part": 2, "slide_in_part": 21, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "HISTOPATHOLOGY SPECTRUM • WHO GRADING", "title": "WHO Grading of Ventricular Neoplasms", "subtitle": "Modern CNS tumor classification incorporates histological morphology and integrated molecular diagnostics.", "cards": [["WHO Grade I (Benign / Indolent)", "Subependymoma, Pilocytic Astrocytoma, Choroid Plexus Papilloma, Intraventricular Meningioma; cured by gross total resection."], ["WHO Grade II (Intermediate / Recurrence Risk)", "Central Neurocytoma, Classic Ependymoma, Atypical Choroid Plexus Papilloma; require vigilant long-term surveillance."], ["WHO Grade III (Malignant Neoplasms)", "Anaplastic Ependymoma, Choroid Plexus Carcinoma; high propensity for leptomeningeal CSF seeding; mandate adjuvant chemoradiation."], ["Integrated Molecular Classification", "DNA methylation profiling and genetic alterations (e.g., ZFTA-RELA, YAP1, PFA/PFB) supersede traditional histology for prognosis."]], "img_path": "assets_images/ependymoma.jpg", "caption_title": "WHO VENTRICULAR HISTOPATHOLOGY SPECTRUM", "caption_body": "Microscopic spectrum of neuroepithelial ventricular neoplasms demonstrating characteristic cellular architecture and rosettes.", "global_id": 55, "part": 2, "slide_in_part": 22, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "TUMOR PATHOLOGY • EPENDYMOMA", "title": "Ependymoma: Biology & Morphology", "subtitle": "Glial neoplasm arising from radial glia / ependymal lining cells of the ventricular system.", "cards": [["Perivascular Pseudorosettes", "Pathognomonic hallmark: Tumor cell processes radiating toward central blood vessels, creating an anuclear perivascular fibrillary cuff."], ["True Ependymal Rosettes", "Tumor cells arranged radially around a central lumen lined by microvilli and cilia; diagnostic but less commonly encountered."], ["Immunohistochemistry Profile", "Strongly positive for GFAP (in perivascular processes), Vimentin, S100, and characteristic dot-like or ring-like EMA perinuclear positivity."], ["Surgical Objective", "Gross total resection is the single most powerful prognostic factor for event-free and overall survival across all age groups."]], "img_path": "assets_images/ependymoma.jpg", "caption_title": "EPENDYMOMA: PERIVASCULAR PSEUDOROSETTES", "caption_body": "High-power H&E histology displaying classic perivascular pseudorosettes with dense radiating fibrillary glial processes around central capillaries.", "global_id": 56, "part": 2, "slide_in_part": 23, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "MOLECULAR SUBGROUPS • EPENDYMOMA", "title": "Ependymoma: Molecular Stratification", "subtitle": "Current WHO classification divides ependymomas into distinct anatomical, epigenetic, and oncogenic subgroups.", "cards": [["Posterior Fossa Group A (PF-EPN-A)", "Infants and young children; H3K27me3 global loss of trimethylation; aggressive course; high recurrence and seeding rates."], ["Posterior Fossa Group B (PF-EPN-B)", "Older children and adults; retained H3K27me3; indolent clinical course; high rate of cure following gross total resection."], ["Supratentorial ZFTA (RELA) Fusion", "ZFTA-RELA gene fusion activates oncogenic NF-κB pathway; frequent cystic/solid presentation with poor outcome if subtotal."], ["Supratentorial YAP1 Fusion", "Young children; YAP1-MAMLD1 gene fusions; favorable prognosis following complete surgical resection."]], "img_path": "enhanced_figures/fig_170_20_telovelar_ependymoma_case.png", "caption_title": "FIG 170.20: FOURTH VENTRICULAR EPENDYMOMA MRI & RESECTION", "caption_body": "Chapter 170 case showing gross total resection of a fourth ventricular ependymoma with re-established CSF pathways.", "global_id": 57, "part": 2, "slide_in_part": 24, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "TUMOR PATHOLOGY • SUBEPENDYMOMA", "title": "Subependymoma (WHO Grade I)", "subtitle": "Benign, slow-growing ependymal neoplasm typically discovered incidentally in older adults.", "cards": [["Histopathological Hallmark", "Nodular clusters of uniform, isomorphic nuclei embedded within an abundant dense fibrillary glial background with microcystic degeneration."], ["Common Locations", "Fourth ventricle (50–60%) and frontal horns / septum pellucidum near the foramen of Monro (30–40%)."], ["Radiological Features", "Well-circumscribed, lobular, non-enhancing or minimally enhancing mass on T1 post-contrast MRI; low T2/FLAIR edema."], ["Prognosis & Management", "Surgical cure achieved via gross total resection; asymptomatic incidental lesions can be safely observed with serial imaging."]], "img_path": "assets_images/subependymoma.jpg", "caption_title": "SUBEPENDYMOMA: CLUSTERED NUCLEI & GLIA", "caption_body": "Histology of subependymoma displaying islands of uniform round nuclei set in a dense, acellular fibrillary matrix with microcysts.", "global_id": 58, "part": 2, "slide_in_part": 25, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "TUMOR PATHOLOGY • NEUROCYTOMA", "title": "Central Neurocytoma (WHO Grade II)", "subtitle": "Neuronal intraventricular neoplasm typically presenting in young adults (20–40 years of age).", "cards": [["Classic Location & Septal Attachment", "Arises almost exclusively in anterior lateral ventricle attached to septum pellucidum near foramen of Monro."], ["Histology: 'Fried-Egg' Appearance", "Uniform round cells with clear perinuclear halos and delicate chromatin; easily misdiagnosed as oligodendroglioma or ependymoma."], ["Immunohistochemical Differentiation", "Diffusely and strongly positive for Synaptophysin, NeuN, and MAP2; GFAP is negative in tumor cells (only positive in reactive astrocytes)."], ["MIB-1 / Ki-67 Proliferation Index", "Ki-67 <2% indicates classic indolent course; Ki-67 >3% ('Atypical Central Neurocytoma') portends higher recurrence risk requiring adjuvant radiation."]], "img_path": "assets_images/central_neurocytoma.jpg", "caption_title": "CENTRAL NEUROCYTOMA: MRI & FRIED-EGG CELLS", "caption_body": "Axial MR image showing characteristic bubbly, heterogeneous intraventricular mass at foramen of Monro with septal attachment.", "global_id": 59, "part": 2, "slide_in_part": 26, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "PEDIATRIC GLIOMAS • PILOCYTIC ASTROCYTOMA", "title": "Pilocytic Astrocytoma (WHO Grade I)", "subtitle": "The most common pediatric brain tumor; frequently presents in cerebellum, optic pathway, and ventricular walls.", "cards": [["Biphasic Histological Pattern", "Alternating compact piloid areas (elongated bipolar astrocytes) and loose, microcystic, hypocellular regions."], ["Rosenthal Fibers & EGBs", "Eosinophilic corkscrew-shaped protein aggregates (Rosenthal fibers) in astrocytic processes and eosinophilic granular bodies (EGBs)."], ["Molecular Driver: BRAF Alteration", "KIAA1549-BRAF gene duplication/fusion in >70% of cases, constitutively activating MAPK/ERK signaling pathway."], ["Surgical Strategy & Outcome", "Gross total resection is curative (>95% 10-year survival); BRAF/MEK inhibitors (e.g., trametinib) effective in unresectable lesions."]], "img_path": "assets_images/pilocytic_astrocytoma.jpg", "caption_title": "PILOCYTIC ASTROCYTOMA: ROSENTHAL FIBERS", "caption_body": "Microscopic smear showing brightly eosinophilic, refractile Rosenthal fibers embedded within elongated, hair-like piloid glial processes.", "global_id": 60, "part": 2, "slide_in_part": 27, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "CHOROID NEOPLASMS • PLEXUS PAPILLOMA", "title": "Choroid Papilloma vs. Carcinoma", "subtitle": "Epithelial tumors arising from the secretory epithelium of the choroid plexus.", "cards": [["Choroid Plexus Papilloma (WHO Grade I)", "Benign papillary fronds lined by single layer of cuboidal epithelium surrounding delicate fibrovascular cores; 'cauliflower' gross appearance."], ["Choroid Plexus Carcinoma (WHO Grade III)", "Malignant, destructive tumor; frank parenchymal invasion, mitotic figures (>5/10 HPF), nuclear pleomorphism, necrosis; TP53 mutations common."], ["Age & Anatomical Distribution", "Children: Lateral ventricle atrium (glomus); Adults: Fourth ventricle floor/roof and cerebellopontine angle."], ["CSF Hyperproduction & Hydrocephalus", "Causes severe communicating hydrocephalus via active CSF hypersecretion as well as mechanical pathway obstruction."]], "img_path": "assets_images/choroid_papilloma.jpg", "caption_title": "CHOROID PLEXUS PAPILLOMA MACRO/MICRO", "caption_body": "Characteristic papillary architecture consisting of finger-like projections lined by uniform epithelial cells around vascular fibrovascular stalks.", "global_id": 61, "part": 2, "slide_in_part": 28, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "ATRIAL NEOPLASMS • MENINGIOMA", "title": "Intraventricular Meningioma Tenets", "subtitle": "Arise from arachnoid cap cells of the stroma of the tela choroidea, typically residing in the atrium (trigone).", "cards": [["Female Predilection & Age", "Account for 1–2% of all intracranial meningiomas; strong female preponderance (3:1 ratio); peak incidence 4th–6th decades."], ["Histology: Whorls & Psammoma Bodies", "Syncytial or transitional morphology featuring concentric cellular whorls and laminating calcifications ('psammoma bodies')."], ["Massive Arterial Parasitization", "Fed aggressively by anterior choroidal artery and lateral posterior choroidal arteries; late intense homogeneous contrast enhancement on MRI."], ["Operative Devitalisation Principle", "Preoperative DSA embolization or early microscopic ligation of choroidal arterial pedicles is mandatory before attempting mobilization."]], "img_path": "assets_images/meningioma.jpg", "caption_title": "INTRAVENTRICULAR MENINGIOMA: PSAMMOMA BODIES", "caption_body": "Radiological and histological presentation displaying sharp circumscription, intense enhancement, and calcified psammoma whorls.", "global_id": 62, "part": 2, "slide_in_part": 29, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "CONGENITAL INCLUSIONS • EPIDERMOID", "title": "Epidermoid Cysts: 'Pearly Tumors'", "subtitle": "Congenital inclusion cysts resulting from entrapped ectodermal tissue during neural tube closure.", "cards": [["Gross Appearance ('Pearly Tumor')", "Glistening, iridescent pearly white capsule filled with desquamated keratin flakes and waxy cholesterol crystals."], ["Creeping Insinuating Growth Pattern", "Grow slowly by linear accretion; insinuate between cranial nerves, basilar artery branches, and ventricular recesses without displacing them."], ["Pathognomonic MRI Signal: DWI Restriction", "Iso-to-hypointense on T1, hyperintense on T2 (mimics CSF), but crucially shows marked bright RESTRICTED DIFFUSION on DWI / ADC maps."], ["Surgical Goal: Capsule vs. Nerve Safety", "Evacuate keratin contents gently; avoid aggressive traction on capsule tightly adherent to basilar perforators or brainstem."]], "img_path": "assets_images/epidermoid_cyst.jpg", "caption_title": "EPIDERMOID CYST: DWI RESTRICTION & PEARL CAPSULE", "caption_body": "High-resolution specimen showing the classic stratified squamous epithelial lining and iridescent keratin flakes characteristic of epidermoid cyst.", "global_id": 63, "part": 2, "slide_in_part": 30, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "content", "badge": "CONGENITAL INCLUSIONS • DERMOID", "title": "Dermoid Cysts & Rupture Sequelae", "subtitle": "Complex ectodermal inclusion cysts containing dermal appendages (hair follicles, sebaceous glands).", "cards": [["Dermal Appendages & Lipid Content", "Contain stratified squamous lining along with hair shafts, sweat glands, and sebaceous elements producing thick, oily, lipid-rich contents."], ["Neuroimaging Characteristics", "Markedly hypodense on CT (<0 Hounsfield Units, fat density); bright hyperintense on T1 MRI without contrast enhancement."], ["Catastrophic Spontaneous Rupture", "Spontaneous or iatrogenic rupture releases lipid droplets into ventricular CSF and subarachnoid spaces, causing severe chemical meningitis."], ["Rupture Management", "Aggressive intraoperative saline irrigation to wash out spilled lipid; systemic corticosteroids to suppress chemical arachnoiditis."]], "img_path": "assets_images/davinci_ventricles.jpg", "caption_title": "INTRACRANIAL DERMOID CYST ARCHITECTURE", "caption_body": "Anatomical mapping of inclusion cyst topography in midline ventricles and cisterns showing characteristic multilocular lipid architecture.", "global_id": 64, "part": 2, "slide_in_part": 31, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "summary", "badge": "YOUMANS & WINN MASTERCLASS SUMMARY", "title": "Mastery of Ventricular Surgery", "subtitle": "Synthesized operative tenets for the successful management of ventricular and periventricular neoplasms.", "cards": [["1. Natural Corridors Over Corticectomy", "Prioritize interhemispheric transchoroidal and telovelar corridors; avoid destructive transcortical incisions and vermian splitting."], ["2. Deep Venous System Inviolability", "The internal cerebral veins, basal vein of Rosenthal, and vein of Galen cannot be sacrificed; always preserve collateral venous channels."], ["3. Adhere to Safe Entry Zones", "In fourth ventricular tumors, respect the facial colliculus, striae medullares, and hypoglossal/vagal trigones; never pull on adherent floor tumor."], ["4. Integrated Molecular Resection Strategy", "Tailor surgical aggressiveness to molecular biology: gross total resection for ependymoma/central neurocytoma; biopsy for germinoma/lymphoma."]], "img_path": "enhanced_figures/fig_170_10_surgical_approaches.png", "caption_title": "FIG 170.10: COMPREHENSIVE VENTRICULAR SURGICAL CORRIDORS", "caption_body": "Master schematic from Youmans & Winn Chapter 170 summarizing safe anatomical entry points and microsurgical corridors.", "global_id": 65, "part": 2, "slide_in_part": 32, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}, {"type": "thankyou", "badge": "COMPLETION OF MASTERCLASS • QUESTIONS & ANSWERS", "title": "Thank You for Your Engagement!", "subtitle": "Mastery of Ventricular Tumors: Microanatomy, Surgical Corridors & Pathology.", "cards": [["Masterclass Completed!", "Full mastery achieved across both Part 1 (Lateral Ventricles) and Part 2 (Third & Fourth Ventricles, Surgical Approaches, WHO Pathology)."], ["Key Tenets to Remember", "Respect deep veins (ICV, Galen), spare the vermis with telovelar entry, protect rhomboid fossa floor, and tailor resection to tumor histology."], ["Interactive Knowledge Quiz", "Test your comprehension with the interactive 10-question masterclass board examination quiz!"], ["Open Discussion & Questions", "Floor is now open for clinical questions, surgical case discussions, and technical dissection considerations."]], "img_path": "assets_images/part2_thankyou.jpg", "caption_title": "ARTISTIC LECTURE ARTWORK: CONGRATULATIONS!", "caption_body": "Special educational masterclass illustration: Congratulations on completing the Ventricular Tumors Masterclass!", "global_id": 66, "part": 2, "slide_in_part": 33, "part_title": "Part 2: Third & Fourth Ventricles, Approaches & Pathology"}];
+
+    let currentIndex = 0;
+    let currentFilter = 'all'; // 'all', 'part1', 'part2'
+    let filteredIndices = SLIDES_DATA.map((_, i) => i);
+    
+    // Manual Click-by-Click Element Reveal State
+    let stepModeEnabled = true;
+    let currentStep = 0;
+    let totalStepsForSlide = 0;
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.part-pill').forEach(p => p.classList.remove('active'));
+      
+      if (filter === 'all') {
+        document.getElementById('pillAll').classList.add('active');
+        filteredIndices = SLIDES_DATA.map((_, i) => i);
+      } else if (filter === 'part1') {
+        document.getElementById('pillPart1').classList.add('active');
+        filteredIndices = SLIDES_DATA.map((s, i) => s.part === 1 ? i : -1).filter(i => i !== -1);
+      } else if (filter === 'part2') {
+        document.getElementById('pillPart2').classList.add('active');
+        filteredIndices = SLIDES_DATA.map((s, i) => s.part === 2 ? i : -1).filter(i => i !== -1);
+      }
+
+      currentIndex = filteredIndices[0];
+      currentStep = 0;
+      renderSlide('forward');
+      renderDrawerGrid();
+    }
+
+    function toggleStepMode() {
+      stepModeEnabled = !stepModeEnabled;
+      const btn = document.getElementById('btnStepMode');
+      btn.classList.toggle('active-mode', stepModeEnabled);
+      renderSlide('none');
+    }
+
+    function navigateStepOrSlide(direction) {
+      if (!stepModeEnabled) {
+        navigateSlide(direction);
+        return;
+      }
+
+      if (direction > 0) {
+        if (currentStep < totalStepsForSlide) {
+          currentStep++;
+          applyStepVisibility();
+        } else {
+          navigateSlide(1);
+        }
+      } else {
+        if (currentStep > 0) {
+          currentStep--;
+          applyStepVisibility();
+        } else {
+          navigateSlide(-1, 'end');
+        }
+      }
+    }
+
+    function navigateSlide(delta, targetStep = 'start') {
+      const pos = filteredIndices.indexOf(currentIndex);
+      const nextPos = pos + delta;
+      if (nextPos >= 0 && nextPos < filteredIndices.length) {
+        const direction = delta > 0 ? 'forward' : 'backward';
+        currentIndex = filteredIndices[nextPos];
+        currentStep = (targetStep === 'end') ? 999 : 0;
+        renderSlide(direction);
+      }
+    }
+
+    function handleSlideBoxClick(e) {
+      if (e.target.closest('.image-viewport') || e.target.closest('button')) return;
+      navigateStepOrSlide(1);
+    }
+
+    function applyStepVisibility() {
+      const stepElements = document.querySelectorAll('[data-step-order]');
+      totalStepsForSlide = stepElements.length;
+
+      if (!stepModeEnabled) {
+        stepElements.forEach(el => {
+          el.classList.remove('step-hidden');
+          el.classList.add('step-active');
+        });
+        document.getElementById('stepIndicator').textContent = "Build: All Visible";
+        document.getElementById('nextBtnLabel').textContent = "Next Slide";
+        return;
+      }
+
+      if (currentStep > totalStepsForSlide) currentStep = totalStepsForSlide;
+
+      stepElements.forEach(el => {
+        const order = parseInt(el.getAttribute('data-step-order'), 10);
+        if (order <= currentStep) {
+          el.classList.remove('step-hidden');
+          el.classList.add('step-active');
+        } else {
+          el.classList.add('step-hidden');
+          el.classList.remove('step-active');
+        }
+      });
+
+      const indicator = document.getElementById('stepIndicator');
+      const nextLabel = document.getElementById('nextBtnLabel');
+
+      if (totalStepsForSlide === 0) {
+        indicator.textContent = "Title View";
+        nextLabel.textContent = "Next Slide";
+      } else if (currentStep < totalStepsForSlide) {
+        indicator.textContent = `Point ${currentStep} / ${totalStepsForSlide}`;
+        nextLabel.textContent = (currentStep === totalStepsForSlide - 1) ? "Reveal Image" : "Next Point";
+      } else {
+        indicator.textContent = "Slide Complete ✓";
+        nextLabel.textContent = "Next Slide";
+      }
+    }
+
+    function renderSlide(direction = 'forward') {
+      const slide = SLIDES_DATA[currentIndex];
+      const box = document.getElementById('slideBox');
+      const pos = filteredIndices.indexOf(currentIndex);
+
+      document.getElementById('slideCounter').textContent = `Slide ${pos + 1} / ${filteredIndices.length}`;
+      document.getElementById('btnPrev').disabled = (pos === 0 && currentStep === 0);
+      document.getElementById('btnNext').disabled = (pos === filteredIndices.length - 1 && currentStep >= totalStepsForSlide);
+
+      const pct = ((pos + 1) / filteredIndices.length) * 100;
+      document.getElementById('progressBar').style.width = pct + '%';
+
+      const animClass = direction === 'forward' ? 'slide-forward' : (direction === 'backward' ? 'slide-backward' : '');
+
+      if (slide.type === 'title') {
+        const creditsHtml = (slide.credits || []).map(c => `<li>${c}</li>`).join('');
+        box.innerHTML = `
+          <div class="slide-content-container ${animClass}">
+            <div class="title-slide-container">
+              <div class="title-left">
+                <div class="slide-category-badge">${slide.badge}</div>
+                <h1 class="slide-title">${slide.title.replace(/\n/g, '<br>')}</h1>
+                <p class="slide-subtitle">${slide.subtitle}</p>
+                <div class="credits-box">
+                  <div class="credits-heading">REFERENCE TEXT & CURRICULUM</div>
+                  <ul class="credits-list">
+                    ${creditsHtml}
+                  </ul>
+                </div>
+              </div>
+              <div class="image-panel" data-step-order="1">
+                <div class="image-viewport" onclick="openLightbox('${slide.img_path}', '${slide.title.replace(/\n/g, ' ')}')">
+                  <img src="${slide.img_path}" alt="${slide.title}">
+                  <div class="zoom-hint-badge">🔍 Zoom Ultra-Res (300 DPI)</div>
+                </div>
+                <div class="caption-card">
+                  <div class="caption-title">3D VENTRICULAR PROJECTION</div>
+                  <div class="caption-text">High-resolution reconstruction of cerebral ventricular cavities from Youmans & Winn.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        const isSummary = (slide.type === 'summary');
+        const isThankYou = (slide.type === 'thankyou');
+        const cards = slide.cards || [];
+        
+        let badgeClass = '';
+        let cardClass = '';
+        if (isSummary) {
+          badgeClass = 'badge-emerald';
+          cardClass = 'card-emerald';
+        } else if (isThankYou) {
+          badgeClass = 'badge-purple thankyou-badge';
+          cardClass = 'card-purple';
+        }
+
+        const cardsHtml = cards.map((c, i) => `
+          <div class="lecture-card ${cardClass}" data-step-order="${i + 1}">
+            <div class="card-heading">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:0.8;"></span>
+              ${c[0]}
+            </div>
+            <div class="card-text">${c[1]}</div>
+          </div>
+        `).join('');
+
+        const imgStepOrder = cards.length + 1;
+
+        box.innerHTML = `
+          <div class="slide-content-container ${animClass}">
+            <div class="slide-header">
+              <div class="slide-category-badge ${badgeClass}">${slide.badge}</div>
+              <h2 class="slide-title">${slide.title.replace(/\n/g, '<br>')}</h2>
+              <p class="slide-subtitle">${slide.subtitle}</p>
+            </div>
+            <div class="slide-body-grid">
+              <div class="cards-column">
+                ${cardsHtml}
+              </div>
+              <div class="image-panel" data-step-order="${imgStepOrder}">
+                <div class="image-viewport" onclick="openLightbox('${slide.img_path}', '${slide.caption_title}: ${slide.caption_body}')">
+                  <img src="${slide.img_path}" alt="${slide.title}">
+                  <div class="zoom-hint-badge">🔍 Zoom Ultra-Res (300 DPI)</div>
+                </div>
+                <div class="caption-card">
+                  <div class="caption-title" style="${isSummary ? 'color: var(--emerald);' : (isThankYou ? 'color: var(--purple);' : '')}">${slide.caption_title}</div>
+                  <div class="caption-text">${slide.caption_body}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      applyStepVisibility();
+    }
+
+    // Drawer Functions
+    function toggleDrawer() {
+      const overlay = document.getElementById('drawerOverlay');
+      overlay.classList.toggle('active');
+      if (overlay.classList.contains('active')) {
+        renderDrawerGrid();
+        document.getElementById('drawerSearch').focus();
+      }
+    }
+
+    function renderDrawerGrid(filterText = '') {
+      const grid = document.getElementById('drawerGrid');
+      const query = filterText.toLowerCase();
+
+      grid.innerHTML = SLIDES_DATA.map((s, idx) => {
+        const matches = s.title.toLowerCase().includes(query) || 
+                        s.subtitle.toLowerCase().includes(query) ||
+                        s.badge.toLowerCase().includes(query) ||
+                        (s.caption_body && s.caption_body.toLowerCase().includes(query));
+        if (!matches) return '';
+
+        const isActive = (idx === currentIndex);
+        return `
+          <div class="drawer-card ${isActive ? 'active-slide' : ''}" onclick="jumpToSlide(${idx})">
+            <div class="drawer-card-thumb">
+              <img src="${s.img_path}" alt="${s.title}" loading="lazy">
+            </div>
+            <div class="drawer-card-meta">
+              <span>SLIDE ${idx + 1}</span>
+              <span>PART ${s.part}</span>
+            </div>
+            <div class="drawer-card-title">${s.title.replace(/\n/g, ' ')}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterDrawerSlides() {
+      const query = document.getElementById('drawerSearch').value;
+      renderDrawerGrid(query);
+    }
+
+    function jumpToSlide(idx) {
+      currentIndex = idx;
+      currentStep = 0;
+      toggleDrawer();
+      renderSlide('forward');
+    }
+
+    // ULTRA-CLEAR HIGH-POWER LIGHTBOX ZOOM IMPLEMENTATION
+    let zoomScale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startMouseX = 0;
+    let startMouseY = 0;
+
+    function openLightbox(src, caption) {
+      const modal = document.getElementById('lightboxModal');
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxCap').textContent = caption;
+      resetZoom();
+      modal.classList.add('active');
+    }
+
+    function toggleLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      modal.classList.remove('active');
+      resetZoom();
+    }
+
+    function updateTransform() {
+      const wrapper = document.getElementById('lightboxWrapper');
+      wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomScale})`;
+      document.getElementById('zoomLevelBadge').textContent = `Zoom: ${Math.round(zoomScale * 100)}%`;
+    }
+
+    function adjustZoom(delta) {
+      zoomScale = Math.max(0.6, Math.min(5, zoomScale + delta));
+      updateTransform();
+    }
+
+    function setZoomLevel(level) {
+      zoomScale = level;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    }
+
+    function resetZoom() {
+      zoomScale = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    }
+
+    function handleWheelZoom(e) {
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.2 : 0.2;
+      adjustZoom(delta);
+    }
+
+    function startDrag(e) {
+      if (e.target.tagName === 'BUTTON') return;
+      isDragging = true;
+      startMouseX = e.clientX - panX;
+      startMouseY = e.clientY - panY;
+      const vp = document.getElementById('lightboxViewport');
+      vp.classList.add('is-dragging');
+
+      window.addEventListener('mousemove', onDragMove);
+      window.addEventListener('mouseup', onDragEnd);
+    }
+
+    function onDragMove(e) {
+      if (!isDragging) return;
+      panX = e.clientX - startMouseX;
+      panY = e.clientY - startMouseY;
+      updateTransform();
+    }
+
+    function onDragEnd() {
+      isDragging = false;
+      const vp = document.getElementById('lightboxViewport');
+      vp.classList.remove('is-dragging');
+      window.removeEventListener('mousemove', onDragMove);
+      window.removeEventListener('mouseup', onDragEnd);
+    }
+
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen().catch(err => console.log(err));
+      }
+    }
+
+    // ==========================================================================
+    // 10 HIGH-YIELD NEUROSURGICAL BOARD EXAMINATION QUESTIONS
+    // ==========================================================================
+    const QUIZ_QUESTIONS = [
+      {
+        q: "What anatomical landmark reliably identifies the posterior margin of the foramen of Monro?",
+        options: [
+          "The stria terminalis crossing the pulvinar",
+          "The venous angle formed by anterior septal and thalamostriate veins",
+          "The anterior choroidal artery entry point",
+          "The massa intermedia of the thalamus"
+        ],
+        answer: 1,
+        explanation: "In normal anatomy, the venous angle (junction of anterior septal and thalamostriate veins) lies within 5.5 mm of the posterior margin of the foramen of Monro and safeguards the internal cerebral veins."
+      },
+      {
+        q: "Which specific roof layer of the third ventricle harbors the paired internal cerebral veins (ICVs)?",
+        options: [
+          "Layer 1: Midline raphe of the forniceal bodies",
+          "Layer 2: Superior leaf of the tela choroidea",
+          "Layer 3: Velum interpositum space",
+          "Layer 5: Inferior choroid plexus ribbons"
+        ],
+        answer: 2,
+        explanation: "The velum interpositum (Layer 3) is a vascular space enclosed between the superior and inferior pial leaves of the tela choroidea, containing the ICVs and medial posterior choroidal arteries."
+      },
+      {
+        q: "In the transchoroidal approach (Wen technique) to the third ventricle, where is the micro-incision placed?",
+        options: [
+          "Directly through the anterior forniceal column",
+          "Along the tenia fornicis (medial attachment of choroid plexus to fornix)",
+          "Transcortically through the superior parietal lobule",
+          "Across the rostrum of the corpus callosum"
+        ],
+        answer: 1,
+        explanation: "The transchoroidal approach enters via the tenia fornicis, sweeping the choroid plexus laterally and avoiding direct traction or trauma to the forniceal columns, preventing severe amnesia."
+      },
+      {
+        q: "Why is the telovelar approach preferred over the traditional transvermian approach for fourth ventricular tumors?",
+        options: [
+          "It completely avoids splitting the inferior cerebellar vermis, preventing post-operative cerebellar mutism syndrome",
+          "It does not require opening the cisterna magna",
+          "It permits routine sacrifice of the PICA artery",
+          "It enables supratentorial visualization of the splenium"
+        ],
+        answer: 0,
+        explanation: "The telovelar approach mobilizes cerebellar tonsils and incises the inferior medullary velum and tela choroidea, fully sparing the vermian nodule and dentate pathways, eliminating postoperative cerebellar mutism."
+      },
+      {
+        q: "Which cranial nerve nucleus prominence on the rhomboid fossa floor must NEVER be manipulated or coagulated?",
+        options: [
+          "Facial colliculus (facial motor genu wrapping around abducens CN VI nucleus)",
+          "Hypoglossal trigone",
+          "Vagal trigone",
+          "Area postrema"
+        ],
+        answer: 0,
+        explanation: "The facial colliculus in the lower pontine floor contains CN VII motor fibers looping over the CN VI nucleus. Direct manipulation causes irreversible abducens palsy and facial diplegia."
+      },
+      {
+        q: "Which pathognomonic histological hallmark is characteristic of ependymoma (WHO Grade II/III)?",
+        options: [
+          "Rosenthal fibers and eosinophilic granular bodies",
+          "Perivascular pseudorosettes with radiating anuclear fibrillary cuffs",
+          "Psammoma bodies with concentric syncytial whorls",
+          "Perinuclear clear halos producing a 'fried-egg' appearance"
+        ],
+        answer: 1,
+        explanation: "Perivascular pseudorosettes (tumor cell processes radiating toward central capillaries, leaving an anuclear fibrillary cuff) represent the diagnostic hallmark of ependymomas."
+      },
+      {
+        q: "In posterior fossa ependymoma molecular stratification, which group carries a poor prognosis and loss of H3K27me3?",
+        options: [
+          "Posterior Fossa Group A (PF-EPN-A)",
+          "Posterior Fossa Group B (PF-EPN-B)",
+          "Supratentorial YAP1 fusion",
+          "Subependymoma (WHO Grade I)"
+        ],
+        answer: 0,
+        explanation: "PF-EPN-A ependymomas occur predominantly in infants/young children, display global loss of H3K27me3 histone trimethylation, and carry high recurrence and dissemination rates."
+      },
+      {
+        q: "Central neurocytoma (WHO Grade II) is strongly differentiated from oligodendroglioma by which marker?",
+        options: [
+          "IDH1 R132H mutation positivity",
+          "Diffusely and strongly positive for Synaptophysin and NeuN",
+          "GFAP strong diffuse cytoplasmic reactivity in all tumor cells",
+          "Cytokeratin AE1/AE3 positivity"
+        ],
+        answer: 1,
+        explanation: "Central neurocytoma cells are uniform round cells that mimic oligodendroglioma ('fried egg'), but are strongly and diffusely positive for neuronal markers Synaptophysin and NeuN."
+      },
+      {
+        q: "On magnetic resonance imaging, which sequence definitively differentiates an epidermoid cyst from an arachnoid cyst?",
+        options: [
+          "T1-weighted post-gadolinium enhancement",
+          "T2-weighted spin-echo sequence",
+          "Diffusion-Weighted Imaging (DWI) showing marked restricted diffusion",
+          "Magnetic resonance angiography (MRA) arterial phase"
+        ],
+        answer: 2,
+        explanation: "Epidermoid cysts show marked hyperintensity on DWI with low ADC values (restricted diffusion due to dense keratin flakes), whereas arachnoid cysts follow free CSF signal and do not restrict."
+      },
+      {
+        q: "Which segment of the PICA artery courses along the inferior medullary velum into the fourth ventricle roof?",
+        options: [
+          "Anterior medullary segment",
+          "Lateral medullary segment",
+          "Tonsillomedullary segment",
+          "Telovelomedullary segment (giving rise to the supratonsillar loop)"
+        ],
+        answer: 3,
+        explanation: "The telovelomedullary segment of PICA ascends along the tela choroidea and inferior medullary velum, creating the supratonsillar loop before branching into the vermian and hemispheric cortical arteries."
+      }
+    ];
+
+    // ==========================================================================
+    // INTERACTIVE LIVE AUDIENCE QUIZ ENGINE (HOST BACKBONE)
+    // ==========================================================================
+    const QUIZ_STORAGE_KEY = 'ventricular_tumors_quiz_results_v2';
+    const ROOM_ID = 'VENTRICLE';
+    const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
+    const TOPIC = `neurosurg/ventricular-quiz/${ROOM_ID}`;
+
+    let quizArenaMode = 'live'; // 'live' or 'solo'
+    let hostState = 'LOBBY'; // 'LOBBY', 'LOCKED', 'QUESTION', 'REVEAL', 'PODIUM'
+    let currentQIdx = 0;
+    let questionTimerVal = 60;
+    let questionTimerInterval = null;
+    let revealTimerVal = 5;
+    let revealTimerInterval = null;
+    let isRevealTimerPaused = false;
+
+    // Registered Participants: { id: { name, avatar, score: 0, answers: {}, isBot: false } }
+    let participants = {};
+    let botSimulationTimers = [];
+
+    let hostMqttClient = null;
+    let hostBroadcastChannel = null;
+
+    // Solo Mode State
+    let soloAnswers = {};
+    let soloScore = 0;
+
+    function getPlayerUrl() {
+      const loc = window.location;
+      let base = loc.href.split('?')[0].split('#')[0];
+      if (base.endsWith('/index.html') || base.endsWith('/interactive_lecture.html')) {
+        base = base.replace(/\/index\.html$/, '/quiz_player.html').replace(/\/interactive_lecture\.html$/, '/quiz_player.html');
+      } else if (base.endsWith('/')) {
+        base += 'quiz_player.html';
+      } else if (!base.endsWith('.html')) {
+        base += '/quiz_player.html';
+      } else {
+        base = base.substring(0, base.lastIndexOf('/') + 1) + 'quiz_player.html';
+      }
+      return base + '?room=' + ROOM_ID;
+    }
+
+    function initHostSync() {
+      // 1. BroadcastChannel API for 0ms local tabs
+      try {
+        if (window.BroadcastChannel) {
+          hostBroadcastChannel = new BroadcastChannel(`ventricular_quiz_${ROOM_ID}`);
+          hostBroadcastChannel.onmessage = (e) => {
+            handleHostIncomingMessage(e.data);
+          };
+        }
+      } catch(err) {
+        console.log('BroadcastChannel not supported:', err);
+      }
+
+      // 2. LocalStorage storage event fallback
+      window.addEventListener('storage', (e) => {
+        if (e.key === `vq_msg_to_host_${ROOM_ID}` && e.newValue) {
+          try { handleHostIncomingMessage(JSON.parse(e.newValue)); } catch(err){}
+        }
+      });
+
+      // 3. MQTT over WebSockets
+      try {
+        const hostId = `vqh_${Math.random().toString(16).substring(2, 8)}`;
+        hostMqttClient = mqtt.connect(MQTT_BROKER, {
+          clientId: hostId,
+          clean: true,
+          connectTimeout: 5000,
+          reconnectPeriod: 3000
+        });
+
+        hostMqttClient.on('connect', () => {
+          updateArenaConnectionStatus(true, 'Broker Online');
+          hostMqttClient.subscribe(TOPIC, { qos: 1 });
+          broadcastHostSync();
+        });
+
+        hostMqttClient.on('message', (topic, message) => {
+          try {
+            const data = JSON.parse(message.toString());
+            handleHostIncomingMessage(data);
+          } catch(e){}
+        });
+
+        hostMqttClient.on('offline', () => {
+          updateArenaConnectionStatus(false, 'Broker Offline');
+        });
+
+        hostMqttClient.on('error', () => {
+          updateArenaConnectionStatus(false, 'Local Sync Mode');
+        });
+      } catch(err) {
+        console.warn('MQTT init failed, falling back to Local Tab Broadcast:', err);
+        updateArenaConnectionStatus(true, 'Local Sync Mode');
+      }
+    }
+
+    function updateArenaConnectionStatus(online, label) {
+      const dot = document.getElementById('arenaConnDot');
+      const text = document.getElementById('arenaConnLabel');
+      if (dot && text) {
+        dot.style.background = online ? 'var(--emerald)' : 'var(--rose)';
+        text.textContent = label;
+      }
+    }
+
+    function broadcastToPlayers(payload) {
+      const msg = { ...payload, sender: 'HOST', timestamp: Date.now() };
+      if (hostBroadcastChannel) {
+        try { hostBroadcastChannel.postMessage(msg); } catch(e){}
+      }
+      try {
+        localStorage.setItem(`vq_msg_to_player_${ROOM_ID}`, JSON.stringify(msg));
+      } catch(e){}
+      if (hostMqttClient && hostMqttClient.connected) {
+        try {
+          hostMqttClient.publish(TOPIC, JSON.stringify(msg));
+        } catch(e){}
+      }
+    }
+
+    function broadcastHostSync() {
+      const ranks = calculateRanks();
+      broadcastToPlayers({
+        type: 'HOST_SYNC',
+        state: hostState,
+        questionIndex: currentQIdx,
+        totalQuestions: QUIZ_QUESTIONS.length,
+        timeRemaining: questionTimerVal,
+        correctAnswer: (hostState === 'REVEAL' || hostState === 'PODIUM') ? QUIZ_QUESTIONS[currentQIdx].answer : null,
+        ranks: ranks,
+        participantCount: Object.keys(participants).length
+      });
+    }
+
+    function handleHostIncomingMessage(msg) {
+      if (!msg || !msg.type || msg.sender === 'HOST') return;
+
+      if (msg.type === 'PLAYER_JOIN_REQUEST') {
+        // REGISTRATION LOCK CHECK:
+        if (hostState !== 'LOBBY') {
+          // Registration is locked!
+          broadcastToPlayers({
+            type: 'HOST_PLAYER_REJECTED',
+            targetPlayerId: msg.playerId,
+            reason: 'REGISTRATION_LOCKED'
+          });
+          return;
+        }
+
+        // Accept user
+        if (!participants[msg.playerId]) {
+          participants[msg.playerId] = {
+            id: msg.playerId,
+            name: msg.name || 'Anonymous Surgeon',
+            avatar: msg.avatar || '🧠',
+            score: 0,
+            answers: {},
+            isBot: false
+          };
+          broadcastToPlayers({
+            type: 'HOST_PLAYER_ACCEPTED',
+            targetPlayerId: msg.playerId
+          });
+          broadcastHostSync();
+          if (document.getElementById('quizOverlay').classList.contains('active') && hostState === 'LOBBY') {
+            renderLobbyScreen();
+          }
+        }
+      } else if (msg.type === 'PLAYER_PING') {
+        if (participants[msg.playerId]) {
+          broadcastHostSync();
+        }
+      } else if (msg.type === 'PLAYER_SUBMIT_ANSWER') {
+        if (hostState !== 'QUESTION') return;
+        if (msg.questionIndex === currentQIdx && participants[msg.playerId]) {
+          participants[msg.playerId].answers[currentQIdx] = {
+            choice: msg.choice,
+            timeRemaining: msg.timeRemaining || 0
+          };
+
+          updateRespondentBar();
+
+          // Check if all registered participants have answered!
+          if (haveAllParticipantsAnswered()) {
+            revealQuestionResult();
+          }
+        }
+      }
+    }
+
+    function haveAllParticipantsAnswered() {
+      const list = Object.values(participants);
+      if (list.length === 0) return false;
+      return list.every(p => p.answers[currentQIdx] !== undefined);
+    }
+
+    function getSubmittedCount() {
+      return Object.values(participants).filter(p => p.answers[currentQIdx] !== undefined).length;
+    }
+
+    function updateRespondentBar() {
+      const count = getSubmittedCount();
+      const total = Object.keys(participants).length;
+      const pct = total > 0 ? (count / total) * 100 : 0;
+      
+      const countEl = document.getElementById('arenaRespCount');
+      const barEl = document.getElementById('arenaRespBar');
+      if (countEl) countEl.textContent = `${count} / ${total} Answered`;
+      if (barEl) barEl.style.width = `${pct}%`;
+    }
+
+    function calculateRanks() {
+      const list = Object.values(participants);
+      list.sort((a, b) => b.score - a.score);
+      const ranks = {};
+      list.forEach((p, idx) => {
+        ranks[p.id] = { score: p.score, rank: idx + 1, name: p.name, avatar: p.avatar };
+      });
+      return ranks;
+    }
+
+    function toggleQuiz() {
+      const overlay = document.getElementById('quizOverlay');
+      overlay.classList.toggle('active');
+      if (overlay.classList.contains('active')) {
+        if (!hostMqttClient && !hostBroadcastChannel) {
+          initHostSync();
+        }
+        renderCurrentArenaScreen();
+      }
+    }
+
+    function setQuizArenaMode(mode) {
+      quizArenaMode = mode;
+      document.getElementById('btnModeLive').classList.toggle('active', mode === 'live');
+      document.getElementById('btnModeSolo').classList.toggle('active', mode === 'solo');
+      renderCurrentArenaScreen();
+    }
+
+    function renderCurrentArenaScreen() {
+      if (quizArenaMode === 'solo') {
+        renderSoloScreen();
+        return;
+      }
+
+      if (hostState === 'LOBBY') {
+        renderLobbyScreen();
+      } else if (hostState === 'QUESTION') {
+        renderQuestionScreen();
+      } else if (hostState === 'REVEAL') {
+        renderRevealScreen();
+      } else if (hostState === 'PODIUM') {
+        renderPodiumScreen();
+      }
+    }
+
+    // -------------------------------------------------------------
+    // LOBBY RENDERING & SIMULATION BOT LOGIC
+    // -------------------------------------------------------------
+    function renderLobbyScreen() {
+      const body = document.getElementById('quizArenaBody');
+      const playerUrl = getPlayerUrl();
+      const pList = Object.values(participants);
+
+      body.innerHTML = `
+        <div class="lobby-grid">
+          <div class="qr-card-container">
+            <div class="qr-box" id="arenaQrCode">
+              <!-- QR Code Render Target -->
+            </div>
+            <div class="qr-instruction-title">Scan on Mobile to Join</div>
+            <div class="qr-instruction-desc">
+              Point your smartphone camera at the QR code to open your audience controller. No apps or sign-ups required.
+            </div>
+            <div class="join-link-box" id="playerUrlDisplay">${playerUrl}</div>
+            <div class="lobby-action-row">
+              <button class="btn-secondary-sm" onclick="copyPlayerUrl()">📋 Copy Link</button>
+              <button class="btn-secondary-sm" onclick="openPlayerTab()">📱 Open Player Tab</button>
+            </div>
+          </div>
+
+          <div class="participants-column">
+            <div class="roster-header">
+              <div>
+                <div style="font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">LOBBY REGISTRATION</div>
+                <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">Audience Roster</div>
+              </div>
+              <div class="roster-count-badge" id="rosterCounter">${pList.length} Registered</div>
+            </div>
+
+            <div class="participants-grid" id="rosterGrid">
+              ${pList.length === 0 ? `
+                <div class="empty-roster-msg">
+                  <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📱</div>
+                  <div style="font-weight: 700; font-size: 1.05rem;">Waiting for attendees to scan & join...</div>
+                  <div style="font-size: 0.85rem; margin-top: 0.35rem; color: var(--text-dim);">
+                    Participants will appear here in real time as they enter their names.
+                  </div>
+                </div>
+              ` : pList.map(p => `
+                <div class="participant-chip">
+                  <span class="chip-avatar">${p.avatar}</span>
+                  <span class="chip-name">${p.name}</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="lobby-controls-strip">
+              <button class="btn-start-arena" id="btnStartArena" onclick="startLiveQuiz()" ${pList.length === 0 ? '' : ''}>
+                <span>▶ START QUIZ (Lock Registration)</span>
+              </button>
+              <button class="btn-sim-bots" onclick="simulateAttendees()">
+                <span>🤖 Simulate 5 Attendees</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Render crisp QR code using local qrcode.min.js
+      setTimeout(() => {
+        const qrEl = document.getElementById('arenaQrCode');
+        if (qrEl) {
+          qrEl.innerHTML = '';
+          try {
+            if (typeof QRCode !== 'undefined') {
+              new QRCode(qrEl, {
+                text: playerUrl,
+                width: 190,
+                height: 190,
+                colorDark: '#0b1120',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.M
+              });
+            } else {
+              // Fallback image tag
+              qrEl.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(playerUrl)}" alt="QR Code">`;
+            }
+          } catch(e) {
+            qrEl.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=190x190&data=${encodeURIComponent(playerUrl)}" alt="QR Code">`;
+          }
+        }
+      }, 50);
+    }
+
+    function copyPlayerUrl() {
+      const url = getPlayerUrl();
+      navigator.clipboard.writeText(url).then(() => {
+        alert('Player URL copied to clipboard: ' + url);
+      }).catch(() => {
+        prompt('Copy Player URL:', url);
+      });
+    }
+
+    function openPlayerTab() {
+      window.open(getPlayerUrl(), '_blank');
+    }
+
+    // Simulate Attendees Helper
+    function simulateAttendees() {
+      const bots = [
+        { name: 'Dr. Harvey Cushing', avatar: '🎩', accuracy: 0.95 },
+        { name: 'Dr. Walter Dandy', avatar: '🔬', accuracy: 0.90 },
+        { name: 'Dr. Gazi Yasargil', avatar: '👁️', accuracy: 0.92 },
+        { name: 'Dr. Albert Rhoton', avatar: '🧠', accuracy: 0.98 },
+        { name: 'Dr. Hung Tzeng Wen', avatar: '⚡', accuracy: 0.88 }
+      ];
+
+      bots.forEach((b, i) => {
+        const botId = `bot_${i + 1}`;
+        participants[botId] = {
+          id: botId,
+          name: b.name,
+          avatar: b.avatar,
+          score: 0,
+          answers: {},
+          accuracy: b.accuracy,
+          isBot: true
+        };
+      });
+
+      broadcastHostSync();
+      renderLobbyScreen();
+    }
+
+    function startLiveQuiz() {
+      // If 0 participants, automatically add simulation attendees for immediate smooth presentation
+      if (Object.keys(participants).length === 0) {
+        simulateAttendees();
+      }
+
+      // LOCK REGISTRATION
+      hostState = 'QUESTION';
+      currentQIdx = 0;
+      startQuestionRound(0);
+    }
+
+    // -------------------------------------------------------------
+    // QUESTION ROUND LOGIC (60s Timer + Auto-Reveal)
+    // -------------------------------------------------------------
+    function startQuestionRound(qIdx) {
+      hostState = 'QUESTION';
+      currentQIdx = qIdx;
+      questionTimerVal = 60;
+      clearInterval(questionTimerInterval);
+      clearInterval(revealTimerInterval);
+      clearBotTimers();
+
+      renderQuestionScreen();
+      broadcastHostSync();
+
+      // Schedule simulated bot answers with realistic randomized delays (2s to 12s)
+      scheduleBotAnswers(qIdx);
+
+      questionTimerInterval = setInterval(() => {
+        questionTimerVal--;
+        updateQuestionTimerUI();
+
+        if (questionTimerVal <= 0) {
+          clearInterval(questionTimerInterval);
+          revealQuestionResult();
+        }
+      }, 1000);
+    }
+
+    function scheduleBotAnswers(qIdx) {
+      const correctAns = QUIZ_QUESTIONS[qIdx].answer;
+      Object.values(participants).forEach(p => {
+        if (p.isBot) {
+          // Bot randomized answer delay
+          const delayMs = Math.floor(Math.random() * 8000) + 2000;
+          const timerId = setTimeout(() => {
+            if (hostState === 'QUESTION' && currentQIdx === qIdx) {
+              const isCorrect = Math.random() < (p.accuracy || 0.9);
+              let choice = correctAns;
+              if (!isCorrect) {
+                const wrongs = [0, 1, 2, 3].filter(c => c !== correctAns);
+                choice = wrongs[Math.floor(Math.random() * wrongs.length)];
+              }
+              p.answers[qIdx] = {
+                choice: choice,
+                timeRemaining: questionTimerVal
+              };
+              updateRespondentBar();
+              if (haveAllParticipantsAnswered()) {
+                revealQuestionResult();
+              }
+            }
+          }, delayMs);
+          botSimulationTimers.push(timerId);
+        }
+      });
+    }
+
+    function clearBotTimers() {
+      botSimulationTimers.forEach(id => clearTimeout(id));
+      botSimulationTimers = [];
+    }
+
+    function updateQuestionTimerUI() {
+      const timerEl = document.getElementById('arenaQuestionTimer');
+      if (timerEl) {
+        timerEl.textContent = `⏱ ${questionTimerVal}s`;
+        if (questionTimerVal <= 10) {
+          timerEl.classList.add('urgent');
+        } else {
+          timerEl.classList.remove('urgent');
+        }
+      }
+    }
+
+    function renderQuestionScreen() {
+      const body = document.getElementById('quizArenaBody');
+      const item = QUIZ_QUESTIONS[currentQIdx];
+      const count = getSubmittedCount();
+      const total = Object.keys(participants).length;
+      const pct = total > 0 ? (count / total) * 100 : 0;
+      const letters = ['A', 'B', 'C', 'D'];
+
+      body.innerHTML = `
+        <div class="arena-status-bar">
+          <div class="arena-q-index">Question ${currentQIdx + 1} of ${QUIZ_QUESTIONS.length}</div>
+          <div class="arena-timer-pill ${questionTimerVal <= 10 ? 'urgent' : ''}" id="arenaQuestionTimer">
+            ⏱ ${questionTimerVal}s
+          </div>
+          <div class="respondent-tracker">
+            <div class="resp-bar-wrap">
+              <div class="resp-bar-fill" id="arenaRespBar" style="width: ${pct}%;"></div>
+            </div>
+            <div class="resp-text" id="arenaRespCount">${count} / ${total} Answered</div>
+          </div>
+          <button class="btn-secondary-sm" onclick="revealQuestionResult()" style="flex: none; padding: 6px 14px; font-weight: 800;">
+            Reveal Answers Now ⏭
+          </button>
+        </div>
+
+        <div class="arena-question-card">
+          <div class="arena-question-prompt">
+            ${currentQIdx + 1}. ${item.q}
+          </div>
+
+          <div class="arena-options-container">
+            ${item.options.map((opt, oIdx) => `
+              <div class="arena-option-card">
+                <div class="arena-opt-top">
+                  <div class="arena-opt-letter let-${letters[oIdx].toLowerCase()}">${letters[oIdx]}</div>
+                  <div class="arena-opt-text">${opt}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // REVEAL LOGIC (5s Countdown with Pause/Resume)
+    // -------------------------------------------------------------
+    function revealQuestionResult() {
+      clearInterval(questionTimerInterval);
+      clearBotTimers();
+      hostState = 'REVEAL';
+
+      // Grade participants and calculate scores
+      const correctAns = QUIZ_QUESTIONS[currentQIdx].answer;
+      Object.values(participants).forEach(p => {
+        const resp = p.answers[currentQIdx];
+        if (resp && resp.choice === correctAns) {
+          // 100 points base + time bonus up to 20 pts
+          const speedBonus = Math.round((resp.timeRemaining / 60) * 20);
+          p.score += (100 + speedBonus);
+        }
+      });
+
+      // Count votes per choice
+      const voteCounts = [0, 0, 0, 0];
+      Object.values(participants).forEach(p => {
+        const resp = p.answers[currentQIdx];
+        if (resp && resp.choice !== undefined) {
+          voteCounts[resp.choice]++;
+        }
+      });
+
+      renderRevealScreen(voteCounts);
+      broadcastHostSync();
+
+      // Start 5-second countdown to next question
+      revealTimerVal = 5;
+      isRevealTimerPaused = false;
+      clearInterval(revealTimerInterval);
+
+      revealTimerInterval = setInterval(() => {
+        if (!isRevealTimerPaused) {
+          revealTimerVal--;
+          updateRevealTimerUI();
+          if (revealTimerVal <= 0) {
+            clearInterval(revealTimerInterval);
+            advanceToNextQuestion();
+          }
+        }
+      }, 1000);
+    }
+
+    function togglePauseRevealTimer() {
+      isRevealTimerPaused = !isRevealTimerPaused;
+      const btn = document.getElementById('btnPauseReveal');
+      if (btn) {
+        btn.textContent = isRevealTimerPaused ? '▶ Resume Countdown' : '⏸ Pause Countdown';
+      }
+    }
+
+    function updateRevealTimerUI() {
+      const el = document.getElementById('revealTimerCount');
+      if (el) {
+        el.textContent = `${revealTimerVal}s`;
+      }
+    }
+
+    function advanceToNextQuestion() {
+      clearInterval(revealTimerInterval);
+      if (currentQIdx < QUIZ_QUESTIONS.length - 1) {
+        startQuestionRound(currentQIdx + 1);
+      } else {
+        showGrandPodium();
+      }
+    }
+
+    function renderRevealScreen(voteCounts) {
+      const body = document.getElementById('quizArenaBody');
+      const item = QUIZ_QUESTIONS[currentQIdx];
+      const letters = ['A', 'B', 'C', 'D'];
+      const totalVotes = Object.values(participants).length;
+
+      // If voteCounts not passed, calculate from state
+      if (!voteCounts) {
+        voteCounts = [0, 0, 0, 0];
+        Object.values(participants).forEach(p => {
+          const resp = p.answers[currentQIdx];
+          if (resp && resp.choice !== undefined) {
+            voteCounts[resp.choice]++;
+          }
+        });
+      }
+
+      body.innerHTML = `
+        <div class="arena-status-bar">
+          <div class="arena-q-index">Question ${currentQIdx + 1} Results</div>
+          <div class="countdown-pill">
+            <span>Next Question in: <strong id="revealTimerCount">${revealTimerVal}s</strong></span>
+          </div>
+          <div class="reveal-actions">
+            <button class="btn-secondary-sm" id="btnPauseReveal" onclick="togglePauseRevealTimer()">
+              ${isRevealTimerPaused ? '▶ Resume Countdown' : '⏸ Pause Countdown'}
+            </button>
+            <button class="btn-nav primary" onclick="advanceToNextQuestion()" style="padding: 6px 14px;">
+              ${currentQIdx < QUIZ_QUESTIONS.length - 1 ? 'Next Question ⏭' : 'View Final Podium 🏆'}
+            </button>
+          </div>
+        </div>
+
+        <div class="arena-question-card">
+          <div class="arena-question-prompt">
+            ${currentQIdx + 1}. ${item.q}
+          </div>
+
+          <div class="arena-options-container">
+            ${item.options.map((opt, oIdx) => {
+              const isCorrect = (oIdx === item.answer);
+              const votes = voteCounts[oIdx] || 0;
+              const pct = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+
+              return `
+                <div class="arena-option-card ${isCorrect ? 'correct' : 'dimmed'}">
+                  <div class="arena-opt-top">
+                    <div class="arena-opt-letter let-${letters[oIdx].toLowerCase()}">${letters[oIdx]}</div>
+                    <div class="arena-opt-text">${opt}</div>
+                    ${isCorrect ? '<span class="arena-correct-tag">✓ CORRECT</span>' : ''}
+                  </div>
+                  <div class="vote-bar-wrap">
+                    <div class="vote-bar-fill" style="width: ${pct}%; background: ${isCorrect ? 'var(--emerald)' : 'var(--accent-primary)'};"></div>
+                  </div>
+                  <div class="vote-stats-label">
+                    <span>${votes} Votes</span>
+                    <span>${pct}%</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <div class="arena-rationale-box">
+            <strong>Anatomical Rationale (Youmans & Winn Chapter 170):</strong><br>
+            ${item.explanation}
+          </div>
+        </div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // GRAND PODIUM & PERSISTENT LEADERBOARD SCREEN
+    // -------------------------------------------------------------
+    function showGrandPodium() {
+      clearInterval(questionTimerInterval);
+      clearInterval(revealTimerInterval);
+      clearBotTimers();
+      hostState = 'PODIUM';
+
+      const list = Object.values(participants);
+      list.sort((a, b) => b.score - a.score);
+
+      // Save to localStorage history
+      saveRoundHistory(list);
+      broadcastHostSync();
+      renderPodiumScreen(list);
+    }
+
+    function saveRoundHistory(rankedList) {
+      try {
+        const history = JSON.parse(localStorage.getItem(QUIZ_STORAGE_KEY) || '[]');
+        history.unshift({
+          date: new Date().toISOString(),
+          participantsCount: rankedList.length,
+          topScorer: rankedList[0] ? rankedList[0].name : 'N/A',
+          topScore: rankedList[0] ? rankedList[0].score : 0,
+          leaderboard: rankedList.map((p, idx) => ({
+            rank: idx + 1,
+            name: p.name,
+            score: p.score
+          }))
+        });
+        // Keep last 10 rounds
+        if (history.length > 10) history.pop();
+        localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(history));
+      } catch(e){}
+    }
+
+    function renderPodiumScreen(rankedList) {
+      if (!rankedList) {
+        rankedList = Object.values(participants);
+        rankedList.sort((a, b) => b.score - a.score);
+      }
+
+      const body = document.getElementById('quizArenaBody');
+      const first = rankedList[0] || { name: 'Winner', avatar: '🏆', score: 0 };
+      const second = rankedList[1] || { name: '2nd Place', avatar: '🥈', score: 0 };
+      const third = rankedList[2] || { name: '3rd Place', avatar: '🥉', score: 0 };
+
+      body.innerHTML = `
+        <div class="podium-arena-container">
+          <div class="podium-title-box">
+            <h2>🏆 Neurosurgical Board Examination Podium</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              Masterclass Chapter 170 Certified Results • Persistence Enabled
+            </p>
+          </div>
+
+          <div class="olympic-podium">
+            <!-- 2nd Place -->
+            <div class="podium-col">
+              <div class="podium-user-card">
+                <div class="podium-avatar">${second.avatar}</div>
+                <div class="podium-name">${second.name}</div>
+                <div class="podium-score">${second.score} pts</div>
+              </div>
+              <div class="podium-block second">
+                <span class="podium-rank-num">2</span>
+                <span class="podium-medal-icon">🥈</span>
+              </div>
+            </div>
+
+            <!-- 1st Place -->
+            <div class="podium-col">
+              <div class="podium-user-card">
+                <div class="podium-avatar">${first.avatar}</div>
+                <div class="podium-name">${first.name}</div>
+                <div class="podium-score">${first.score} pts</div>
+              </div>
+              <div class="podium-block first">
+                <span class="podium-rank-num">1</span>
+                <span class="podium-medal-icon">🥇</span>
+              </div>
+            </div>
+
+            <!-- 3rd Place -->
+            <div class="podium-col">
+              <div class="podium-user-card">
+                <div class="podium-avatar">${third.avatar}</div>
+                <div class="podium-name">${third.name}</div>
+                <div class="podium-score">${third.score} pts</div>
+              </div>
+              <div class="podium-block third">
+                <span class="podium-rank-num">3</span>
+                <span class="podium-medal-icon">🥉</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="leaderboard-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <h3 style="font-size: 1.1rem; font-weight: 800;">Complete Participant Leaderboard (${rankedList.length})</h3>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn-secondary-sm" onclick="downloadLeaderboardCSV()">📥 Export CSV</button>
+                <button class="btn-nav primary" onclick="restartArenaSession()" style="padding: 6px 14px;">🔄 Start New Round</button>
+              </div>
+            </div>
+
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th class="rank-cell">Rank</th>
+                  <th>Participant</th>
+                  <th>Total Score</th>
+                  <th>Accuracy</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rankedList.map((p, idx) => {
+                  const correctCount = Object.keys(p.answers).filter(qI => p.answers[qI].choice === QUIZ_QUESTIONS[qI].answer).length;
+                  const acc = QUIZ_QUESTIONS.length > 0 ? Math.round((correctCount / QUIZ_QUESTIONS.length) * 100) : 0;
+                  const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+
+                  return `
+                    <tr>
+                      <td class="rank-cell ${rankClass}">#${idx + 1}</td>
+                      <td style="display: flex; align-items: center; gap: 8px;">
+                        <span>${p.avatar}</span>
+                        <strong style="color: var(--text-main);">${p.name}</strong>
+                      </td>
+                      <td style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: var(--accent-primary);">${p.score}</td>
+                      <td style="font-family: 'JetBrains Mono', monospace;">${acc}% (${correctCount}/${QUIZ_QUESTIONS.length})</td>
+                      <td>
+                        <span style="font-size: 0.78rem; font-weight: 700; color: ${acc >= 70 ? 'var(--emerald)' : 'var(--amber)'};">
+                          ${acc >= 70 ? '✓ Board Certified' : 'Review Suggested'}
+                        </span>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadLeaderboardCSV() {
+      const list = Object.values(participants);
+      list.sort((a, b) => b.score - a.score);
+
+      let csv = 'Rank,Name,Score,CorrectAnswers,TotalQuestions,Date\n';
+      const dateStr = new Date().toISOString();
+      list.forEach((p, idx) => {
+        const correctCount = Object.keys(p.answers).filter(qI => p.answers[qI].choice === QUIZ_QUESTIONS[qI].answer).length;
+        csv += `${idx + 1},"${p.name}",${p.score},${correctCount},${QUIZ_QUESTIONS.length},"${dateStr}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ventricular_quiz_results_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+
+    function restartArenaSession() {
+      hostState = 'LOBBY';
+      participants = {};
+      currentQIdx = 0;
+      broadcastHostSync();
+      renderLobbyScreen();
+    }
+
+    // -------------------------------------------------------------
+    // SOLO BOARD PRACTICE MODE
+    // -------------------------------------------------------------
+    function renderSoloScreen() {
+      const body = document.getElementById('quizArenaBody');
+      const answeredCount = Object.keys(soloAnswers).length;
+      const totalCount = QUIZ_QUESTIONS.length;
+      const isComplete = (answeredCount === totalCount);
+
+      let scoreHtml = '';
+      if (isComplete || answeredCount > 0) {
+        const pct = Math.round((soloScore / totalCount) * 100);
+        scoreHtml = `
+          <div class="arena-status-bar" style="margin-bottom: 1.5rem;">
+            <div>
+              <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">SOLO BOARD SCORE</div>
+              <div style="font-size: 1.6rem; font-weight: 800; color: var(--accent-primary); font-family: 'JetBrains Mono', monospace;">
+                ${soloScore} / ${totalCount} <span style="font-size: 1rem; color: var(--text-muted);">(${pct}%)</span>
+              </div>
+            </div>
+            <div>
+              <button class="btn-secondary-sm" onclick="restartSoloQuiz()">🔄 Restart Solo Practice</button>
+            </div>
+          </div>
+        `;
+      }
+
+      body.innerHTML = scoreHtml + QUIZ_QUESTIONS.map((item, qIdx) => {
+        const userAnswer = soloAnswers[qIdx];
+        const isAnswered = (userAnswer !== undefined);
+
+        return `
+          <div class="arena-question-card" style="margin-bottom: 1.25rem;">
+            <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 0.85rem;">
+              ${qIdx + 1}. ${item.q}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              ${item.options.map((opt, oIdx) => {
+                let style = 'padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); font-weight: 600; text-align: left; cursor: pointer; display: flex; justify-content: space-between;';
+                if (isAnswered) {
+                  if (oIdx === item.answer) {
+                    style += ' border-color: var(--emerald); background: rgba(16, 185, 129, 0.15); color: var(--emerald); font-weight: 800;';
+                  } else if (oIdx === userAnswer) {
+                    style += ' border-color: var(--rose); background: rgba(239, 68, 68, 0.15); color: var(--rose);';
+                  }
+                }
+                return `
+                  <button style="${style}" ${isAnswered ? 'disabled' : ''} onclick="answerSoloQuestion(${qIdx}, ${oIdx})">
+                    <span>${opt}</span>
+                    ${isAnswered && oIdx === item.answer ? '<span>✓ Correct</span>' : (isAnswered && oIdx === userAnswer ? '<span>✗ Your Choice</span>' : '')}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+            ${isAnswered ? `
+              <div class="arena-rationale-box">
+                <strong>Anatomical Rationale:</strong> ${item.explanation}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function answerSoloQuestion(qIdx, optIdx) {
+      if (soloAnswers[qIdx] !== undefined) return;
+      soloAnswers[qIdx] = optIdx;
+      if (optIdx === QUIZ_QUESTIONS[qIdx].answer) {
+        soloScore++;
+      }
+      renderSoloScreen();
+    }
+
+    function restartSoloQuiz() {
+      soloAnswers = {};
+      soloScore = 0;
+      renderSoloScreen();
+    }
+
+    // Master Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('drawerOverlay').classList.contains('active')) {
+        if (e.key === 'Escape') toggleDrawer();
+        return;
+      }
+      if (document.getElementById('lightboxModal').classList.contains('active')) {
+        if (e.key === 'Escape') toggleLightbox();
+        if (e.key === '+' || e.key === '=') adjustZoom(0.35);
+        if (e.key === '-' || e.key === '_') adjustZoom(-0.35);
+        if (e.key === '0') resetZoom();
+        return;
+      }
+      if (document.getElementById('quizOverlay').classList.contains('active')) {
+        if (e.key === 'Escape') toggleQuiz();
+        return;
+      }
+
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault();
+        navigateStepOrSlide(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        navigateStepOrSlide(-1);
+      } else if (e.key.toLowerCase() === 'b') {
+        toggleStepMode();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      } else if (e.key.toLowerCase() === 'o') {
+        toggleDrawer();
+      } else if (e.key.toLowerCase() === 'q') {
+        toggleQuiz();
+      } else if (e.key.toLowerCase() === 't') {
+        toggleTheme();
+      }
+    });
+
+    // URL param support for direct slide jump, quiz states, and lightbox zoom
+    const urlParams = new URLSearchParams(window.location.search);
+    const slideParam = urlParams.get('slide');
+    if (slideParam) {
+      const targetIdx = parseInt(slideParam, 10) - 1;
+      if (targetIdx >= 0 && targetIdx < SLIDES_DATA.length) {
+        currentIndex = targetIdx;
+      }
+    }
+    const stepParam = urlParams.get('step');
+    if (stepParam === 'all') {
+      currentStep = 999;
+    }
+    const quizParam = urlParams.get('quiz');
+    if (quizParam === 'open' || quizParam === 'lobby') {
+      toggleQuiz();
+    } else if (quizParam === 'start') {
+      toggleQuiz();
+      simulateAttendees();
+      startLiveQuiz();
+    } else if (quizParam === 'reveal') {
+      toggleQuiz();
+      simulateAttendees();
+      startLiveQuiz();
+      revealQuestionResult();
+    } else if (quizParam === 'podium') {
+      toggleQuiz();
+      simulateAttendees();
+      showGrandPodium();
+    }
+    const zoomParam = urlParams.get('zoom');
+    if (zoomParam) {
+      openLightbox(zoomParam, '300 DPI High-Resolution Microanatomy Inspection');
+    }
+
+    // Initialize first slide on load
+    renderSlide('forward');
+  </script>
+</body>
+</html>

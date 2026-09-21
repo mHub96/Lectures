@@ -1,0 +1,430 @@
+[
+  {
+    "slide": 1,
+    "texts": [
+      "YOUMANS & WINN COMPREHENSIVE MASTERCLASS • PART 1",
+      "Ventricular Tumors: Microsurgical Anatomy & Lateral Approaches",
+      "Surgical corridors, neurovascular orientation, and operative strategies for lateral ventricular pathology."
+    ]
+  },
+  {
+    "slide": 2,
+    "texts": [
+      "HISTORICAL PERSPECTIVES",
+      "Pioneering Milestones in Ventricular Surgery",
+      "3rd Century BC",
+      "Herophilos",
+      "Described four cerebral ventricles.",
+      "1504",
+      "Da Vinci",
+      "First wax cast ventriculography.",
+      "1764",
+      "Cotugno",
+      "First anatomical CSF definition.",
+      "1918–1933",
+      "Walter Dandy",
+      "First lateral ventricular resection."
+    ]
+  },
+  {
+    "slide": 3,
+    "texts": [
+      "EPIDEMIOLOGIC LANDSCAPE",
+      "Incidence and Primary vs. Secondary Classification",
+      "Pecker Schema: Primary tumors originate within the lining; secondary lesions invade across ventricular boundaries.",
+      "1.6%",
+      "All intracranial neoplasms",
+      "Primary",
+      "Ependyma, choroid plexus, tela",
+      "Secondary",
+      "Paraventricular exophytic growth"
+    ]
+  },
+  {
+    "slide": 4,
+    "texts": [
+      "CLINICAL MANIFESTATIONS",
+      "The Symptom Triad of Ventricular Neoplasms",
+      "Local Tissue Invasion",
+      "Focal motor or memory disruption.",
+      "Mass Effect",
+      "Progressive headache and lethargy.",
+      "CSF Obstruction",
+      "Acute ventriculomegaly and herniation."
+    ]
+  },
+  {
+    "slide": 5,
+    "texts": [
+      "DEMOGRAPHICS",
+      "Pediatric vs. Adult Presentation Patterns",
+      "Pediatric & Infant Signs",
+      "Adult Manifestations",
+      "Calvarial Expansion: Accelerating head circumference.",
+      "Fontanelle Tension: Full or bulging anterior fontanelle.",
+      "Developmental Signs: Failure to thrive and milestone loss.",
+      "Hakim-like Triad: Gait instability, dementia, and headache.",
+      "Cognitive Changes: Short-term memory consolidation loss.",
+      "Intracranial Pressure: Positional nausea and papilledema."
+    ]
+  },
+  {
+    "slide": 6,
+    "texts": [
+      "SYNDROMIC PATTERNS",
+      "Mesencephalic Tectal & Parinaud Syndrome",
+      "Classic Clinical Features",
+      "Aqueductal Occlusion",
+      "Tectal lesions cause rapid noncommunicating hydrocephalus via sylvian aqueduct stenosis.",
+      "Up-Gaze Paralysis: Dorsal midbrain tectal compression.",
+      "Collier Sign: Retraction of upper eyelids.",
+      "Nystagmus: Convergence-retraction on attempted up-gaze.",
+      "Pupils: Light-near pupillary dissociation."
+    ]
+  },
+  {
+    "slide": 7,
+    "texts": [
+      "MEDICAL MANAGEMENT",
+      "Pathologies Responsive to Nonoperative Therapy",
+      "Intracranial Germinoma",
+      "Prolactin-Secreting Adenoma",
+      "Diagnostic Biomarkers: CSF and serum AFP / β-hCG testing.",
+      "Therapeutic Sensitivity: Exquisite response to radiation.",
+      "Surgical Avoidance: Resection rarely indicated.",
+      "Endocrine Diagnosis: Serum prolactin >200 ng/mL.",
+      "Medical Reversal: Dopamine agonists (Cabergoline).",
+      "Rapid Involution: Tumor shrinkage and chiasm relief."
+    ]
+  },
+  {
+    "slide": 8,
+    "texts": [
+      "HYDROCEPHALUS STRATEGY",
+      "CSF Diversion vs. Direct Tumor Resection",
+      "Direct Resection Indication",
+      "Young, medically fit patients where tumor extirpation restores natural CSF channels permanently.",
+      "Diversion-Only Indication",
+      "Medically frail elderly patients with obstructive hydrocephalus: ETV or shunt safely resolves symptoms."
+    ]
+  },
+  {
+    "slide": 9,
+    "texts": [
+      "DIAGNOSTIC IMAGING",
+      "High-Resolution MR Sequences in Planning",
+      "CISS / FIESTA",
+      "Assesses ETV floor patency.",
+      "3D-SPACE / CUBE",
+      "Maps cranial nerve displacement.",
+      "DTI Tractography",
+      "Visualizes optic radiation courses."
+    ]
+  },
+  {
+    "slide": 10,
+    "texts": [
+      "PREOPERATIVE ANGIOGRAPHY",
+      "Dynamic CTA & Catheter DSA Integration",
+      "Phased Vascular Interrogation",
+      "Surgical Corridors",
+      "Directing craniotomy toward the arterial pedicle allows early devascularization before debulking.",
+      "Arterial Inflow: Distinguishes choroidal feeders from normal branches.",
+      "Mixed Phase: Reveals tumor capillary blush and nidus boundaries.",
+      "Venous Outflow: Delineates drainage into internal cerebral veins."
+    ]
+  },
+  {
+    "slide": 11,
+    "texts": [
+      "VENOUS TOPOGRAPHY",
+      "Critical Superficial Draining Veins",
+      "Superior Sagittal Bridging Veins",
+      "Vein of Labbé Vulnerability",
+      "Density: Highest in posterior frontal and parietal regions.",
+      "Infarction Risk: Sacrifice leads to venous hemorrhagic necrosis.",
+      "Strategy: Transcortical approach when bridging is dense.",
+      "Drainage: Dominant inferolateral temporal venous conduit.",
+      "Traction Danger: Subtemporal retraction causes venous rupture.",
+      "Sequelae: Wernicke region infarction and severe aphasia."
+    ]
+  },
+  {
+    "slide": 12,
+    "texts": [
+      "SURGICAL ANATOMY",
+      "The Five Sectors of the Lateral Ventricle",
+      "1. Frontal Horn",
+      "No choroid plexus present.",
+      "2. Body (Cella Media)",
+      "Striothalamic venous groove.",
+      "3. Atrium / Trigone",
+      "Choroid glomus confluence.",
+      "4. Temporal Horn",
+      "Inferior choroidal point end.",
+      "5. Occipital Horn",
+      "Calcar avis medial wall."
+    ]
+  },
+  {
+    "slide": 13,
+    "texts": [
+      "COMMISSURAL ANATOMY",
+      "Corpus Callosum: Anatomic Subdivisions",
+      "Rostrum",
+      "Floor of frontal horn.",
+      "Genu",
+      "Anterior curvature boundary.",
+      "Body",
+      "Safe 2 cm callosotomy zone.",
+      "Splenium",
+      "Disconnection syndrome risk."
+    ]
+  },
+  {
+    "slide": 14,
+    "texts": [
+      "LIMBIC ARCHITECTURE",
+      "The Five Segments of the Fornix",
+      "1. Alveus",
+      "Hippocampal subependymal sheet.",
+      "2. Fimbria",
+      "Medial hippocampal margin.",
+      "3. Crus",
+      "Arches under splenium.",
+      "4. Body",
+      "Fused midline raphe.",
+      "5. Columns",
+      "Monro margin to mammillary bodies."
+    ]
+  },
+  {
+    "slide": 15,
+    "texts": [
+      "SURGICAL ANATOMY",
+      "Frontal Horn Boundaries & Landmarks",
+      "Anatomic Boundaries",
+      "Choroid Absence",
+      "Frontal horns contain zero choroid plexus; the anterior septal vein serves as the primary orientation beacon.",
+      "Medial Wall: Transparent septum pellucidum leaves.",
+      "Lateral Wall: Bulging head of the caudate nucleus.",
+      "Roof & Floor: Genu and rostrum of corpus callosum."
+    ]
+  },
+  {
+    "slide": 16,
+    "texts": [
+      "VASCULAR ORIENTATION",
+      "The Venous Angle Distance Landmark",
+      "3–7 mm",
+      "Distance Posterior to the Foramen of Monro",
+      "Anastomosis of anterior septal and thalamostriate veins entering the internal cerebral vein."
+    ]
+  },
+  {
+    "slide": 17,
+    "texts": [
+      "MOTOR PATHWAYS",
+      "Internal Capsule Genu Spatial Relationship",
+      "Anatomic Danger Zone",
+      "The genu of the internal capsule lies directly lateral to the venous angle within the lateral ventricular wall.",
+      "Surgical Warning",
+      "Overaggressive lateral coagulation or traction at the striothalamic junction risks irreversible hemiplegia."
+    ]
+  },
+  {
+    "slide": 18,
+    "texts": [
+      "SURGICAL ANATOMY",
+      "Ventricular Body & Striothalamic Sulcus",
+      "Boundary Structures",
+      "Choroidal Fissure",
+      "Natural cleft between thalamus and fornix harboring the choroid plexus and medial posterior choroidal branches.",
+      "Roof: Body of the corpus callosum.",
+      "Lateral Wall: Slender body of caudate nucleus.",
+      "Floor: Dorsal thalamus and forniceal body."
+    ]
+  },
+  {
+    "slide": 19,
+    "texts": [
+      "ATRIAL ARCHITECTURE",
+      "Anatomic Elements of the Ventricular Trigone",
+      "Forceps Major",
+      "Superior medial wall bulge.",
+      "Calcar Avis",
+      "Deep calcarine prominence.",
+      "Tapetum",
+      "Lateral roof and wall fibers.",
+      "Choroid Glomus",
+      "Bulky choroid enlargement."
+    ]
+  },
+  {
+    "slide": 20,
+    "texts": [
+      "SURGICAL ANATOMY",
+      "The Occipital Horn: Anatomy & Trapping",
+      "Morphological Variability",
+      "The Trapped Horn",
+      "Atrial tumors frequently entrap the occipital horn, creating an isolated expanding fluid-filled cyst.",
+      "Asymmetry: Most anatomically variable ventricular sector.",
+      "Choroid Status: Devoid of choroid plexus lining.",
+      "Floor Boundary: Defined inferiorly by collateral trigone."
+    ]
+  },
+  {
+    "slide": 21,
+    "texts": [
+      "TEMPORAL ARCHITECTURE",
+      "Temporal Horn Key Relationships",
+      "Hippocampus",
+      "Medial floor elevation.",
+      "Collateral Eminence",
+      "Lateral sulcal floor ridge.",
+      "Inferior Choroidal Point",
+      "AChA arterial entry site."
+    ]
+  },
+  {
+    "slide": 22,
+    "texts": [
+      "VASCULAR SUPPLY",
+      "Arterial Supply to Lateral Ventricles",
+      "MPChA (P2 Branch)",
+      "Body and third roof supply.",
+      "LPChA (P2 Branch)",
+      "Atrial choroid glomus feeder.",
+      "AChA (ICA Branch)",
+      "Temporal horn plexus feeder."
+    ]
+  },
+  {
+    "slide": 23,
+    "texts": [
+      "DEEP DRAINAGE",
+      "Internal Cerebral Veins vs. Basal Vein",
+      "Internal Cerebral Veins (ICVs)",
+      "Basal Vein of Rosenthal (BVR)",
+      "Tributaries: Anterior septal, caudate, and thalamostriate veins.",
+      "Course: Dorsal roof inside the velum interpositum.",
+      "Termination: Converge behind splenium into Vein of Galen.",
+      "Tributaries: Inferior choroidal, inferior ventricular, amygdaloid veins.",
+      "Course: Wraps around the midbrain in ambient cistern.",
+      "Rule: Preservation imperative to avoid diencephalic stroke."
+    ]
+  },
+  {
+    "slide": 24,
+    "texts": [
+      "OPERATIVE TECHNOLOGY",
+      "Modern Intraoperative Surgical Adjuncts",
+      "Neuronavigation",
+      "Calculates long-axis approach trajectories.",
+      "Ultrasound",
+      "Compensates for intraoperative brain shift.",
+      "Angled Scopes",
+      "Inspects occult microscopic recesses."
+    ]
+  },
+  {
+    "slide": 25,
+    "texts": [
+      "ELECTROPHYSIOLOGY",
+      "Comprehensive Intraoperative Monitoring",
+      "SSEPs",
+      "Alerts against cerebral ischemia.",
+      "MEPs",
+      "Monitors pyramidal tract integrity.",
+      "BAERs",
+      "Tracks brainstem auditory tracts.",
+      "EMG",
+      "Identifies entrapped cranial nerves."
+    ]
+  },
+  {
+    "slide": 26,
+    "texts": [
+      "MIDLINE CORRIDORS",
+      "Anterior Interhemispheric Transcallosal",
+      "Surgical Technique",
+      "Parenchymal Sparing",
+      "Follows the natural midline interhemispheric fissure without requiring cortical transgression.",
+      "Coronal Line: Position craniotomy 3–4 cm anterior to suture.",
+      "Arterial Landmark: Trace pericallosal arteries beneath cingulate.",
+      "Callosotomy Size: 2 cm incision placed strictly behind genu."
+    ]
+  },
+  {
+    "slide": 27,
+    "texts": [
+      "OPERATIVE HAZARDS",
+      "Transcallosal Complications & Avoidance",
+      "Bilateral Cingulate Injury",
+      "Disconnection Syndrome",
+      "Etiology: Retractor pressure against paired cinguli.",
+      "Clinical Deficit: Severe akinetic mutism and abulia.",
+      "Prevention: Dynamic cottonoid retraction only.",
+      "Etiology: Sectioning through the callosal genu or splenium.",
+      "Clinical Deficit: Interhemispheric tactile and visual alexia.",
+      "Prevention: Confirmed neuronavigation callosal limits."
+    ]
+  },
+  {
+    "slide": 28,
+    "texts": [
+      "TRANSCORTICAL CORRIDORS",
+      "Transfrontal Corticectomy & Transsulcal",
+      "Operative Tenets",
+      "Transcortical Morbidity",
+      "Elevated seizure risk, transient mutism, and lack of contralateral ventricular reach.",
+      "Ventriculomegaly: Dilated ventricles create a direct surgical corridor.",
+      "Entry Point: Middle frontal gyrus or superior frontal sulcus.",
+      "Dominant Caution: Spares supplementary motor area."
+    ]
+  },
+  {
+    "slide": 29,
+    "texts": [
+      "ATRIAL APPROACHES",
+      "Transparietal: Intraparietal Sulcus",
+      "Operative Target",
+      "Indicated for massive tumors within the lateral atrium or trigone.",
+      "Neurological Hazards",
+      "Entry Zone: Superior parietal lobule or intraparietal sulcus.",
+      "Tumor Corridors: Direct trajectory into the dilated atrium.",
+      "Visual Radiations: Inferior quadrantanopia.",
+      "Gerstmann Syndrome: Dominant angular gyrus injury."
+    ]
+  },
+  {
+    "slide": 30,
+    "texts": [
+      "TEMPORAL CORRIDORS",
+      "Transtemporal vs. Subtemporal Routes",
+      "Transtemporal Technique",
+      "Subtemporal Technique",
+      "Trajectory: Short reach to temporal horn tumors.",
+      "Pedicle Access: Early devascularization of AChA.",
+      "Dominant Hazard: Receptive aphasia risk (Wernicke).",
+      "Trajectory: Inferior entry avoiding Meyer's loop.",
+      "Patient Position: Vertex-down park-bench gravity drop.",
+      "Labbé Precaution: Retraction limits prevent venous infarct."
+    ]
+  },
+  {
+    "slide": 31,
+    "texts": [
+      "DECISION MATRIX",
+      "Lateral Ventricular Approach Selection"
+    ]
+  },
+  {
+    "slide": 32,
+    "texts": [
+      "END OF PART 1",
+      "Proceed to Part 2",
+      "Third and fourth ventricular corridors, telovelar dissection, and full histopathological spectrum."
+    ]
+  }
+]

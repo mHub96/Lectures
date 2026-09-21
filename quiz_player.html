@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Live Audience Quiz Controller • Ventricular Tumors Masterclass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="mqtt.min.js"></script>
+  <style>
+    :root {
+      --bg-base: #070d18;
+      --bg-surface: #0f1a2e;
+      --bg-card: #18263f;
+      --border-color: #223759;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --btn-a: #ef4444;
+      --btn-b: #0284c7;
+      --btn-c: #f59e0b;
+      --btn-d: #10b981;
+      --emerald: #10b981;
+      --rose: #ef4444;
+      --gold: #fbbf24;
+      --purple: #a855f7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Bar */
+    header.player-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .brand-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .conn-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--rose);
+      transition: background 0.3s;
+    }
+
+    .conn-dot.online {
+      background: var(--emerald);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    /* Container for dynamic screens */
+    main.player-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0.85rem;
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+      justify-content: center;
+    }
+
+    /* Screen: Join / Registration */
+    .join-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .join-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .join-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .join-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background: var(--bg-base);
+      color: var(--text-main);
+      outline: none;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s;
+      text-align: center;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Screen: Waiting Room */
+    .waiting-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .user-avatar-badge {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #030712;
+      font-size: 2.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+    }
+
+    .pulse-ring {
+      position: relative;
+      display: inline-block;
+    }
+
+    .pulse-ring::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      animation: pulseRipple 2s ease-out infinite;
+    }
+
+    @keyframes pulseRipple {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    /* Locked Out Notice */
+    .locked-notice {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--rose);
+      color: #fca5a5;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      line-height: 1.4;
+    }
+
+    /* Screen: Question Answering (Strictly A, B, C, D) */
+    .answering-screen {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      width: 100%;
+      height: 100%;
+    }
+
+    .answering-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 0.85rem 1.15rem;
+    }
+
+    .q-badge {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .timer-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--gold);
+      background: rgba(245, 158, 11, 0.15);
+      padding: 3px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .timer-badge.urgent {
+      color: var(--rose);
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--rose);
+      animation: blinkTimer 0.8s infinite;
+    }
+
+    @keyframes blinkTimer {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-banner {
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 0.65rem 1rem;
+      text-align: center;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .status-banner.submitted {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+    }
+
+    /* 4 Giant Button Cards (A, B, C, D) */
+    .choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 0.9rem;
+      flex: 1;
+      min-height: 380px;
+    }
+
+    .btn-choice {
+      border: none;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: inherit;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.12s, box-shadow 0.12s, filter 0.2s, opacity 0.2s;
+    }
+
+    .btn-choice:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .btn-choice .choice-letter {
+      font-size: 3.5rem;
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-choice .choice-shape {
+      font-size: 1.2rem;
+      margin-top: 0.4rem;
+      opacity: 0.85;
+    }
+
+    .btn-choice.opt-a {
+      background: linear-gradient(145deg, #ef4444, #dc2626);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+    }
+    .btn-choice.opt-b {
+      background: linear-gradient(145deg, #0284c7, #0369a1);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+    }
+    .btn-choice.opt-c {
+      background: linear-gradient(145deg, #f59e0b, #d97706);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+    }
+    .btn-choice.opt-d {
+      background: linear-gradient(145deg, #10b981, #059669);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+    }
+
+    /* Selected state */
+    .btn-choice.selected {
+      filter: brightness(1.2);
+      outline: 5px solid #ffffff;
+      outline-offset: -5px;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+      transform: scale(1.02);
+    }
+
+    .btn-choice:disabled:not(.selected) {
+      opacity: 0.4;
+      filter: grayscale(0.5);
+      cursor: default;
+    }
+
+    /* Reveal Screen / Score Display */
+    .feedback-card {
+      background: var(--bg-surface);
+      border-radius: 20px;
+      padding: 1.75rem 1.5rem;
+      text-align: center;
+      border: 2px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .feedback-card.correct {
+      border-color: var(--emerald);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.15), var(--bg-surface));
+    }
+
+    .feedback-card.wrong {
+      border-color: var(--rose);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.15), var(--bg-surface));
+    }
+
+    .feedback-title {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-correct {
+      color: var(--emerald);
+    }
+
+    .feedback-wrong {
+      color: var(--rose);
+    }
+
+    .feedback-stats-row {
+      display: flex;
+      justify-content: space-around;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: var(--bg-base);
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-box {
+      text-align: center;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-val {
+      font-size: 1.7rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      margin-top: 0.2rem;
+    }
+
+    /* Podium / Game Over */
+    .podium-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .podium-rank {
+      font-size: 3.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .rank-text {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="player-header">
+    <div class="brand-group">
+      <span class="brand-badge">LIVE QUIZ</span>
+      <span class="brand-title">Ventricular Tumors</span>
+    </div>
+    <div class="conn-status">
+      <span class="conn-dot" id="connDot"></span>
+      <span id="connLabel">Connecting...</span>
+    </div>
+  </header>
+
+  <main class="player-main" id="playerMain">
+    <!-- Rendered dynamically by JavaScript -->
+  </main>
+
+  <script>
+    // Configuration & Session State
+    const urlParams = new URLSearchParams(window.location.search);
+    const ROOM_ID = (urlParams.get('room') || 'VENTRICLE').toUpperCase();
+    const MQTT_BROKER = 'wss://broker.emqx.io:8084/mqtt';
+    const TOPIC = `neurosurg/ventricular-quiz/${ROOM_ID}`;
+
+    let playerId = localStorage.getItem('vq_player_id');
+    if (!playerId) {
+      playerId = 'p_' + Math.random().toString(36).substring(2, 9);
+      localStorage.setItem('vq_player_id', playerId);
+    }
+
+    let playerName = localStorage.getItem('vq_player_name') || '';
+    let playerAvatar = localStorage.getItem('vq_player_avatar') || '🧠';
+    let currentScore = 0;
+    let currentRank = '-';
+    let totalParticipants = 0;
+
+    let gameState = {
+      state: 'LOBBY', // 'LOBBY', 'LOCKED', 'QUESTION', 'REVEAL', 'PODIUM'
+      questionIndex: 0,
+      totalQuestions: 10,
+      timeRemaining: 60,
+      timerDuration: 60,
+      correctAnswer: null,
+      selectedChoice: null,
+      submitted: false,
+      ranks: {}
+    };
+
+    let client = null;
+    let broadcastChannel = null;
+    let timerInterval = null;
+
+    // Setup Local BroadcastChannel for same-origin tabs (immediate offline test capability)
+    try {
+      if (window.BroadcastChannel) {
+        broadcastChannel = new BroadcastChannel(`ventricular_quiz_${ROOM_ID}`);
+        broadcastChannel.onmessage = (e) => {
+          handleIncomingMessage(e.data);
+        };
+      }
+    } catch(err) {
+      console.log('BroadcastChannel not available:', err);
+    }
+
+    // Connect to MQTT Broker
+    function connectMqtt() {
+      try {
+        const clientId = `vqp_${playerId}_${Math.random().toString(16).substring(2, 6)}`;
+        client = mqtt.connect(MQTT_BROKER, {
+          clientId: clientId,
+          clean: true,
+          connectTimeout: 5000,
+          reconnectPeriod: 2500
+        });
+
+        client.on('connect', () => {
+          setConnectionStatus(true, 'Online');
+          client.subscribe(TOPIC, { qos: 1 }, (err) => {
+            if (!err) {
+              // If we already have a name, announce our presence
+              if (playerName) {
+                sendToHost({
+                  type: 'PLAYER_PING',
+                  playerId: playerId,
+                  name: playerName
+                });
+              }
+            }
+          });
+        });
+
+        client.on('message', (topic, message) => {
+          try {
+            const data = JSON.parse(message.toString());
+            handleIncomingMessage(data);
+          } catch(e) {
+            console.error('MQTT parse error:', e);
+          }
+        });
+
+        client.on('offline', () => {
+          setConnectionStatus(false, 'Offline (Reconnecting)');
+        });
+
+        client.on('error', (err) => {
+          console.log('MQTT error:', err);
+          setConnectionStatus(false, 'Local Tab Mode');
+        });
+      } catch (err) {
+        console.warn('MQTT init error, using Local BroadcastChannel:', err);
+        setConnectionStatus(true, 'Local Tab Mode');
+      }
+    }
+
+    function setConnectionStatus(online, label) {
+      const dot = document.getElementById('connDot');
+      const text = document.getElementById('connLabel');
+      if (dot && text) {
+        dot.className = online ? 'conn-dot online' : 'conn-dot';
+        text.textContent = label;
+      }
+    }
+
+    function sendToHost(data) {
+      const payload = { ...data, sender: playerId, timestamp: Date.now() };
+      // 1. Send via BroadcastChannel (local 0ms latency)
+      if (broadcastChannel) {
+        try { broadcastChannel.postMessage(payload); } catch(e){}
+      }
+      // 2. Send via LocalStorage fallback
+      try {
+        localStorage.setItem(`vq_msg_to_host_${ROOM_ID}`, JSON.stringify(payload));
+      } catch(e){}
+      // 3. Send via MQTT over WebSockets
+      if (client && client.connected) {
+        try {
+          client.publish(TOPIC, JSON.stringify(payload));
+        } catch(e){}
+      }
+    }
+
+    // Listen to localStorage events (same-window/origin fallback)
+    window.addEventListener('storage', (e) => {
+      if (e.key === `vq_msg_to_player_${ROOM_ID}` && e.newValue) {
+        try {
+          handleIncomingMessage(JSON.parse(e.newValue));
+        } catch(err){}
+      }
+    });
+
+    // Handle Messages from Host
+    function handleIncomingMessage(msg) {
+      if (!msg || !msg.type) return;
+
+      // Ignore messages sent by self
+      if (msg.sender === playerId) return;
+
+      if (msg.type === 'HOST_SYNC' || msg.type === 'HOST_ANNOUNCE') {
+        const prevState = gameState.state;
+        const prevQ = gameState.questionIndex;
+
+        gameState.state = msg.state;
+        gameState.questionIndex = msg.questionIndex !== undefined ? msg.questionIndex : gameState.questionIndex;
+        gameState.totalQuestions = msg.totalQuestions || 10;
+        totalParticipants = msg.participantCount || totalParticipants;
+
+        // Check if registration locked while on registration screen
+        if (msg.state !== 'LOBBY' && !playerName) {
+          renderLockedOut();
+          return;
+        }
+
+        // Question transition
+        if (msg.state === 'QUESTION') {
+          if (prevState !== 'QUESTION' || prevQ !== msg.questionIndex) {
+            gameState.selectedChoice = null;
+            gameState.submitted = false;
+            gameState.correctAnswer = null;
+            startQuestionTimer(msg.timeRemaining || 60);
+          }
+          renderQuestionScreen();
+        } else if (msg.state === 'REVEAL') {
+          gameState.correctAnswer = msg.correctAnswer;
+          if (msg.ranks && msg.ranks[playerId]) {
+            currentScore = msg.ranks[playerId].score;
+            currentRank = msg.ranks[playerId].rank;
+          }
+          renderRevealScreen();
+        } else if (msg.state === 'PODIUM') {
+          if (msg.ranks && msg.ranks[playerId]) {
+            currentScore = msg.ranks[playerId].score;
+            currentRank = msg.ranks[playerId].rank;
+          }
+          renderPodiumScreen();
+        } else if (msg.state === 'LOBBY') {
+          if (playerName) {
+            renderWaitingScreen();
+          } else {
+            renderJoinScreen();
+          }
+        }
+      } else if (msg.type === 'HOST_PLAYER_REJECTED') {
+        if (msg.targetPlayerId === playerId) {
+          renderLockedOut();
+        }
+      } else if (msg.type === 'HOST_PLAYER_ACCEPTED') {
+        if (msg.targetPlayerId === playerId) {
+          renderWaitingScreen();
+        }
+      }
+    }
+
+    function startQuestionTimer(seconds) {
+      clearInterval(timerInterval);
+      gameState.timeRemaining = seconds;
+      timerInterval = setInterval(() => {
+        gameState.timeRemaining--;
+        updateTimerDisplay();
+        if (gameState.timeRemaining <= 0) {
+          clearInterval(timerInterval);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const badge = document.getElementById('playerTimerBadge');
+      if (badge) {
+        badge.textContent = `${Math.max(0, gameState.timeRemaining)}s`;
+        if (gameState.timeRemaining <= 10) {
+          badge.classList.add('urgent');
+        } else {
+          badge.classList.remove('urgent');
+        }
+      }
+    }
+
+    // Screens Rendering
+    function renderJoinScreen() {
+      const container = document.getElementById('playerMain');
+      container.innerHTML = `
+        <div class="join-card">
+          <div class="join-icon">🧠</div>
+          <h1 class="join-title">Join Audience Quiz</h1>
+          <p class="join-subtitle">Enter your name or callsign to participate in the live surgical board examination.</p>
+          
+          <input type="text" id="nameInput" class="input-field" placeholder="e.g. Dr. Cushing" maxlength="25" autofocus value="${playerName}">
+          
+          <button class="btn-primary" id="btnJoin" onclick="submitJoin()">Join Session</button>
+        </div>
+      `;
+
+      document.getElementById('nameInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitJoin();
+      });
+    }
+
+    function renderLockedOut() {
+      const container = document.getElementById('playerMain');
+      container.innerHTML = `
+        <div class="join-card">
+          <div class="join-icon">🔒</div>
+          <h1 class="join-title">Registration Closed</h1>
+          <p class="join-subtitle">The quiz has already begun, and new registrations are locked for this round.</p>
+          <div class="locked-notice">
+            Please follow along on the lecture hall projection screen!
+          </div>
+        </div>
+      `;
+    }
+
+    function submitJoin() {
+      const input = document.getElementById('nameInput');
+      const val = (input ? input.value : '').trim();
+      if (!val) {
+        alert('Please enter your name to participate.');
+        return;
+      }
+      playerName = val;
+      localStorage.setItem('vq_player_name', playerName);
+
+      sendToHost({
+        type: 'PLAYER_JOIN_REQUEST',
+        playerId: playerId,
+        name: playerName,
+        avatar: playerAvatar
+      });
+
+      renderWaitingScreen();
+    }
+
+    function renderWaitingScreen() {
+      const container = document.getElementById('playerMain');
+      container.innerHTML = `
+        <div class="waiting-card">
+          <div class="pulse-ring">
+            <div class="user-avatar-badge">${playerAvatar}</div>
+          </div>
+          <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.35rem;">Welcome, ${playerName}!</h2>
+          <div style="font-size: 0.9rem; color: var(--accent); font-weight: 700; margin-bottom: 1.5rem;">
+            Room: ${ROOM_ID}
+          </div>
+          <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+            You are registered and ready. When the presenter starts the quiz, your answer buttons will appear here automatically.
+          </div>
+        </div>
+      `;
+    }
+
+    // THE 4-BUTTON TOUCH SCREEN: STRICTLY A, B, C, D (NO QUESTION TEXT)
+    function renderQuestionScreen() {
+      const container = document.getElementById('playerMain');
+      const isLocked = gameState.submitted || gameState.timeRemaining <= 0;
+
+      container.innerHTML = `
+        <div class="answering-screen">
+          <div class="answering-header">
+            <div class="q-badge">Question ${gameState.questionIndex + 1} / ${gameState.totalQuestions}</div>
+            <div class="timer-badge ${gameState.timeRemaining <= 10 ? 'urgent' : ''}" id="playerTimerBadge">${gameState.timeRemaining}s</div>
+          </div>
+
+          <div class="status-banner ${gameState.submitted ? 'submitted' : ''}">
+            ${gameState.submitted ? '✓ Choice Locked In • Waiting for reveal...' : 'Tap your answer choice below:'}
+          </div>
+
+          <div class="choice-grid">
+            <button class="btn-choice opt-a ${gameState.selectedChoice === 0 ? 'selected' : ''}" 
+                    ${isLocked ? 'disabled' : ''} onclick="submitAnswer(0)">
+              <span class="choice-letter">A</span>
+              <span class="choice-shape">▲</span>
+            </button>
+
+            <button class="btn-choice opt-b ${gameState.selectedChoice === 1 ? 'selected' : ''}" 
+                    ${isLocked ? 'disabled' : ''} onclick="submitAnswer(1)">
+              <span class="choice-letter">B</span>
+              <span class="choice-shape">◆</span>
+            </button>
+
+            <button class="btn-choice opt-c ${gameState.selectedChoice === 2 ? 'selected' : ''}" 
+                    ${isLocked ? 'disabled' : ''} onclick="submitAnswer(2)">
+              <span class="choice-letter">C</span>
+              <span class="choice-shape">●</span>
+            </button>
+
+            <button class="btn-choice opt-d ${gameState.selectedChoice === 3 ? 'selected' : ''}" 
+                    ${isLocked ? 'disabled' : ''} onclick="submitAnswer(3)">
+              <span class="choice-letter">D</span>
+              <span class="choice-shape">■</span>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function submitAnswer(choiceIdx) {
+      if (gameState.submitted || gameState.timeRemaining <= 0) return;
+
+      gameState.selectedChoice = choiceIdx;
+      gameState.submitted = true;
+
+      // Haptic feedback if supported on mobile
+      if (navigator.vibrate) navigator.vibrate(50);
+
+      sendToHost({
+        type: 'PLAYER_SUBMIT_ANSWER',
+        playerId: playerId,
+        name: playerName,
+        questionIndex: gameState.questionIndex,
+        choice: choiceIdx,
+        timeRemaining: gameState.timeRemaining
+      });
+
+      renderQuestionScreen();
+    }
+
+    function renderRevealScreen() {
+      const container = document.getElementById('playerMain');
+      const isCorrect = (gameState.selectedChoice !== null && gameState.selectedChoice === gameState.correctAnswer);
+      const letters = ['A', 'B', 'C', 'D'];
+
+      // Haptic feedback
+      if (navigator.vibrate) {
+        if (isCorrect) navigator.vibrate([100, 50, 100]);
+        else navigator.vibrate(200);
+      }
+
+      container.innerHTML = `
+        <div class="feedback-card ${isCorrect ? 'correct' : 'wrong'}">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">${isCorrect ? '🎉' : '❌'}</div>
+          <h2 class="feedback-title ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}">
+            ${isCorrect ? 'CORRECT!' : 'INCORRECT'}
+          </h2>
+          <p style="font-size: 0.95rem; color: var(--text-muted);">
+            ${isCorrect ? '+100 Neurosurgical Mastery Points' : `Correct Answer was: <strong>${letters[gameState.correctAnswer]}</strong>`}
+          </p>
+
+          <div class="feedback-stats-row">
+            <div class="stat-box">
+              <div class="stat-label">Your Score</div>
+              <div class="stat-val">${currentScore}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Current Rank</div>
+              <div class="stat-val">#${currentRank}</div>
+            </div>
+          </div>
+
+          <div style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.4;">
+            👀 Next question starting shortly... Look at the presentation screen for the anatomical rationale!
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPodiumScreen() {
+      const container = document.getElementById('playerMain');
+      let medal = '🏅';
+      if (currentRank === 1) medal = '🥇';
+      else if (currentRank === 2) medal = '🥈';
+      else if (currentRank === 3) medal = '🥉';
+
+      container.innerHTML = `
+        <div class="podium-card">
+          <div class="podium-rank">${medal}</div>
+          <h2 class="rank-text">Examination Complete!</h2>
+          <div style="font-size: 1.1rem; color: var(--accent); font-weight: 800; margin-bottom: 1.25rem;">
+            You placed Rank #${currentRank}
+          </div>
+
+          <div class="feedback-stats-row">
+            <div class="stat-box">
+              <div class="stat-label">Final Score</div>
+              <div class="stat-val">${currentScore}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Total Questions</div>
+              <div class="stat-val">${gameState.totalQuestions}</div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-top: 1rem;">
+            Congratulations on completing the Chapter 170 Masterclass board examination.
+          </p>
+        </div>
+      `;
+    }
+
+    // Startup Initialization
+    connectMqtt();
+    const previewParam = urlParams.get('preview');
+    if (previewParam === 'question') {
+      gameState.state = 'QUESTION';
+      gameState.questionIndex = 0;
+      gameState.timeRemaining = 45;
+      renderQuestionScreen();
+    } else if (previewParam === 'reveal') {
+      gameState.state = 'REVEAL';
+      gameState.questionIndex = 0;
+      gameState.selectedChoice = 1;
+      gameState.correctAnswer = 1;
+      currentScore = 115;
+      currentRank = 1;
+      renderRevealScreen();
+    } else if (previewParam === 'podium') {
+      currentScore = 950;
+      currentRank = 1;
+      renderPodiumScreen();
+    } else if (playerName) {
+      renderWaitingScreen();
+    } else {
+      renderJoinScreen();
+    }
+  </script>
+</body>
+</html>
