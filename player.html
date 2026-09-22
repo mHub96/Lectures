@@ -479,6 +479,133 @@
       font-weight: 800;
       margin-bottom: 0.5rem;
     }
+
+    /* Header Exit Button */
+    .btn-player-exit {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+
+    .btn-player-exit:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #f87171;
+    }
+
+    /* Waiting Screen Action Buttons */
+    .waiting-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+      margin-top: 1.25rem;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.85rem 1.15rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--bg-surface);
+    }
+
+    .btn-withdraw {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 0.85rem 1.15rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-withdraw:hover {
+      background: rgba(239, 68, 68, 0.22);
+      border-color: #f87171;
+    }
+
+    .withdraw-bar {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .btn-withdraw-link {
+      background: none;
+      border: none;
+      color: #f87171;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: underline;
+      cursor: pointer;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+
+    .btn-withdraw-link:hover {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      header.player-header {
+        padding: 0.65rem 0.85rem;
+      }
+      .brand-title {
+        display: none !important;
+      }
+      .btn-player-exit {
+        padding: 4px 10px;
+        font-size: 0.76rem;
+      }
+      .conn-status {
+        font-size: 0.72rem;
+      }
+      .waiting-card {
+        padding: 2rem 1.15rem;
+      }
+      .waiting-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .btn-secondary, .btn-withdraw {
+        width: 100%;
+        padding: 0.8rem 1rem;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -488,9 +615,14 @@
       <span class="brand-badge">LIVE QUIZ</span>
       <span class="brand-title">Ventricular Tumors</span>
     </div>
-    <div class="conn-status">
-      <span class="conn-dot" id="connDot"></span>
-      <span id="connLabel">Connecting...</span>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="conn-status">
+        <span class="conn-dot" id="connDot"></span>
+        <span id="connLabel">Connecting...</span>
+      </div>
+      <button class="btn-player-exit" id="btnPlayerExit" onclick="playerRequestExit()" style="display: none;" title="Exit Quiz or Withdraw">
+        🚪 Exit
+      </button>
     </div>
   </header>
 
@@ -689,6 +821,8 @@
             renderJoinScreen();
           }
         }
+      } else if (msg.type === 'HOST_QUIZ_ENDED') {
+        renderHostEndedScreen(msg);
       } else if (msg.type === 'HOST_PLAYER_REJECTED') {
         if (msg.targetPlayerId === playerId) {
           clearInterval(joinHeartbeatTimer);
@@ -727,8 +861,186 @@
       }
     }
 
+
+    // -------------------------------------------------------------
+    // CHANGE NAME, LOGOUT & WITHDRAWAL HANDLERS
+    // -------------------------------------------------------------
+    function promptChangeName() {
+      const current = playerName || '';
+      const newName = prompt('Enter your updated name or callsign:', current);
+      if (newName === null) return;
+      const trimmed = newName.trim();
+      if (!trimmed || trimmed === current) return;
+
+      playerName = trimmed;
+      localStorage.setItem('vq_player_name', playerName);
+
+      // Notify host of updated name immediately
+      sendToHost({
+        type: 'PLAYER_JOIN_REQUEST',
+        playerId: playerId,
+        name: playerName,
+        avatar: playerAvatar
+      });
+
+      renderWaitingScreen();
+    }
+
+    function playerLogoutBeforeStart() {
+      if (!confirm('Are you sure you want to withdraw and remove yourself from this quiz session?')) return;
+
+      // 1. Notify host to remove from lobby roster
+      sendToHost({
+        type: 'PLAYER_LEAVE',
+        playerId: playerId,
+        name: playerName
+      });
+
+      // 2. Clear state
+      clearInterval(joinHeartbeatTimer);
+      playerName = '';
+      localStorage.removeItem('vq_player_name');
+      isAcceptedByHost = false;
+
+      // 3. Return to join screen
+      renderJoinScreen();
+    }
+
+    function playerRequestExit() {
+      const isRunning = (gameState.state === 'QUESTION' || gameState.state === 'REVEAL');
+      if (!isRunning) {
+        playerLogoutBeforeStart();
+      } else {
+        if (!confirm('Withdraw from exam? You will receive your results up to this question and exit the examination.')) return;
+        withdrawFromExam();
+      }
+    }
+
+    function withdrawFromExam() {
+      // 1. Notify host of withdrawal
+      sendToHost({
+        type: 'PLAYER_WITHDRAW',
+        playerId: playerId,
+        name: playerName,
+        finalScore: currentScore
+      });
+
+      // 2. Stop timers
+      clearInterval(timerInterval);
+      clearInterval(joinHeartbeatTimer);
+
+      // 3. Render Withdrawn Summary with Results
+      renderWithdrawnScreen();
+    }
+
+    function renderWithdrawnScreen() {
+      const exitBtn = document.getElementById('btnPlayerExit');
+      if (exitBtn) exitBtn.style.display = 'none';
+      const container = document.getElementById('playerMain');
+      const answeredCount = Object.keys(userAnswersHistory).length;
+
+      container.innerHTML = `
+        <div class="podium-card">
+          <div class="podium-rank" style="background: rgba(239, 68, 68, 0.18); border-color: var(--rose);">🚪</div>
+          <h2 class="rank-text" style="color: var(--rose);">Examination Withdrawn</h2>
+          <div style="font-size: 1.05rem; color: var(--accent); font-weight: 800; margin-bottom: 1.25rem;">
+            Candidate: ${playerName}
+          </div>
+
+          <div class="feedback-stats-row">
+            <div class="stat-box">
+              <div class="stat-label">Score Earned</div>
+              <div class="stat-val" style="color: var(--gold);">${currentScore}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Questions Answered</div>
+              <div class="stat-val">${answeredCount} / ${gameState.totalQuestions}</div>
+            </div>
+          </div>
+
+          <div class="feedback-stats-row" style="margin-top: 0.75rem;">
+            <div class="stat-box" style="width: 100%;">
+              <div class="stat-label">Rank at Exit</div>
+              <div class="stat-val" style="font-size: 1.4rem;">#${currentRank}</div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin: 1.25rem 0;">
+            You have officially withdrawn from the live examination session. Your accumulated score and responses have been logged.
+          </p>
+
+          <button class="btn-primary" onclick="playerExitFinal()" style="margin-top: 0.5rem;">
+            Complete Exit &amp; Return to Home
+          </button>
+        </div>
+      `;
+    }
+
+    function renderHostEndedScreen(msg) {
+      clearInterval(timerInterval);
+      clearInterval(joinHeartbeatTimer);
+      const exitBtn = document.getElementById('btnPlayerExit');
+      if (exitBtn) exitBtn.style.display = 'none';
+      const container = document.getElementById('playerMain');
+
+      if (msg && msg.ranks && msg.ranks[playerId]) {
+        currentScore = msg.ranks[playerId].score;
+        currentRank = msg.ranks[playerId].rank;
+      }
+      const answeredCount = Object.keys(userAnswersHistory).length;
+
+      container.innerHTML = `
+        <div class="podium-card">
+          <div class="podium-rank" style="background: rgba(245, 158, 11, 0.18); border-color: var(--gold);">🛑</div>
+          <h2 class="rank-text" style="color: var(--gold);">Quiz Concluded by Presenter</h2>
+          <div style="font-size: 1.05rem; color: var(--accent); font-weight: 800; margin-bottom: 1.25rem;">
+            Candidate: ${playerName}
+          </div>
+
+          <div class="feedback-stats-row">
+            <div class="stat-box">
+              <div class="stat-label">Final Score</div>
+              <div class="stat-val" style="color: var(--gold);">${currentScore}</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Questions Completed</div>
+              <div class="stat-val">${answeredCount} / ${gameState.totalQuestions}</div>
+            </div>
+          </div>
+
+          <div class="feedback-stats-row" style="margin-top: 0.75rem;">
+            <div class="stat-box" style="width: 100%;">
+              <div class="stat-label">Final Rank</div>
+              <div class="stat-val" style="font-size: 1.4rem;">#${currentRank}</div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin: 1.25rem 0;">
+            The presenter has ended the live quiz session. Thank you for participating in the Chapter 170 Masterclass.
+          </p>
+
+          <button class="btn-primary" onclick="playerExitFinal()" style="margin-top: 0.5rem;">
+            Return to Home
+          </button>
+        </div>
+      `;
+    }
+
+    function playerExitFinal() {
+      playerName = '';
+      localStorage.removeItem('vq_player_name');
+      isAcceptedByHost = false;
+      userAnswersHistory = {};
+      gameState.state = 'LOBBY';
+      gameState.selectedChoice = null;
+      gameState.submitted = false;
+      renderJoinScreen();
+    }
+
     // Screens Rendering
     function renderJoinScreen() {
+      const exitBtn = document.getElementById('btnPlayerExit');
+      if (exitBtn) exitBtn.style.display = 'none';
       const container = document.getElementById('playerMain');
       container.innerHTML = `
         <div class="join-card">
@@ -798,6 +1110,8 @@
     }
 
     function renderWaitingScreen() {
+      const exitBtn = document.getElementById('btnPlayerExit');
+      if (exitBtn) exitBtn.style.display = 'inline-flex';
       const container = document.getElementById('playerMain');
       container.innerHTML = `
         <div class="waiting-card">
@@ -805,11 +1119,20 @@
             <div class="user-avatar-badge">${playerAvatar}</div>
           </div>
           <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.35rem;">Welcome, ${playerName}!</h2>
-          <div style="font-size: 0.9rem; color: var(--accent); font-weight: 700; margin-bottom: 1.5rem;">
+          <div style="font-size: 0.9rem; color: var(--accent); font-weight: 700; margin-bottom: 1.25rem;">
             Room: ${ROOM_ID}
           </div>
-          <p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5;">
+          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.25rem;">
             You are registered and ready. When the presenter starts the quiz, your answer buttons will appear here automatically.
+          </p>
+
+          <div class="waiting-actions">
+            <button class="btn-secondary" onclick="promptChangeName()" title="Change your name before quiz starts">
+              ✏️ Change Name
+            </button>
+            <button class="btn-withdraw" onclick="playerLogoutBeforeStart()" title="Withdraw and leave this session">
+              🚪 Withdraw / Logout
+            </button>
           </div>
         </div>
       `;
@@ -817,6 +1140,8 @@
 
     // THE 4-BUTTON TOUCH SCREEN: STRICTLY A, B, C, D (NO QUESTION TEXT)
     function renderQuestionScreen() {
+      const exitBtn = document.getElementById('btnPlayerExit');
+      if (exitBtn) exitBtn.style.display = 'inline-flex';
       const container = document.getElementById('playerMain');
       const isLocked = gameState.submitted || gameState.timeRemaining <= 0;
 
@@ -856,15 +1181,21 @@
               <span class="choice-shape">■</span>
             </button>
           </div>
+          <div class="withdraw-bar">
+            <button class="btn-withdraw-link" onclick="playerRequestExit()">🚪 Withdraw from Exam &amp; View Results</button>
+          </div>
         </div>
       `;
     }
+
+    let userAnswersHistory = {};
 
     function submitAnswer(choiceIdx) {
       if (gameState.submitted || gameState.timeRemaining <= 0) return;
 
       gameState.selectedChoice = choiceIdx;
       gameState.submitted = true;
+      userAnswersHistory[gameState.questionIndex] = choiceIdx;
 
       // Haptic feedback if supported on mobile
       if (navigator.vibrate) navigator.vibrate(50);
@@ -973,6 +1304,24 @@
       currentScore = 950;
       currentRank = 1;
       renderPodiumScreen();
+    } else if (previewParam === 'waiting') {
+      playerName = 'Dr. Neuro Resident';
+      playerAvatar = '🧠';
+      renderWaitingScreen();
+    } else if (previewParam === 'withdrawn') {
+      playerName = 'Dr. Neuro Resident';
+      playerAvatar = '🧠';
+      currentScore = 480;
+      currentRank = 3;
+      userAnswersHistory = { 0: 1, 1: 2, 2: 0, 3: 3 };
+      renderWithdrawnScreen();
+    } else if (previewParam === 'host_ended') {
+      playerName = 'Dr. Neuro Resident';
+      playerAvatar = '🧠';
+      currentScore = 650;
+      currentRank = 2;
+      userAnswersHistory = { 0: 1, 1: 2, 2: 0, 3: 3, 4: 1 };
+      renderHostEndedScreen({ ranks: { [playerId]: { score: 650, rank: 2 } } });
     } else {
       const nameParam = urlParams.get('name');
       if (nameParam) {

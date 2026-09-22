@@ -2037,6 +2037,30 @@
       border-color: rgba(239, 68, 68, 0.5);
     }
 
+
+    .btn-exit-quiz {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #f87171;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      margin-right: 6px;
+    }
+
+    .btn-exit-quiz:hover {
+      background: rgba(239, 68, 68, 0.28);
+      border-color: #f87171;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
+    }
+
     /* Responsive */
     @media (max-width: 1100px) {
       .slide-body-grid {
@@ -2237,7 +2261,8 @@
             <button class="quiz-mode-btn active" id="btnModeLive" onclick="setQuizArenaMode('live')">Live Audience Mode</button>
             <button class="quiz-mode-btn" id="btnModeSolo" onclick="setQuizArenaMode('solo')">Solo Board Mode</button>
           </div>
-          <button class="btn-icon" onclick="toggleQuiz()">✕</button>
+          <button class="btn-exit-quiz" id="btnExitQuizAdmin" onclick="adminExitQuiz()" title="Exit Quiz & End Session for All">🛑 Exit Quiz</button>
+          <button class="btn-icon" onclick="toggleQuiz()" title="Close Quiz View">✕</button>
         </div>
       </div>
 
@@ -2956,6 +2981,30 @@
     function handleHostIncomingMessage(msg) {
       if (!msg || !msg.type || msg.sender === 'HOST') return;
 
+      // ATTENDEE WITHDRAWAL / LOGOUT BEFORE EXAM
+      if (msg.type === 'PLAYER_LEAVE') {
+        if (participants[msg.playerId]) {
+          delete participants[msg.playerId];
+          if (document.getElementById('quizOverlay').classList.contains('active') && hostState === 'LOBBY') {
+            renderLobbyScreen();
+          }
+          broadcastHostSync();
+        }
+        return;
+      }
+
+      // ATTENDEE WITHDRAWAL AFTER EXAM START
+      if (msg.type === 'PLAYER_WITHDRAW') {
+        if (participants[msg.playerId]) {
+          participants[msg.playerId].withdrawn = true;
+          updateRespondentBar();
+          if (haveAllParticipantsAnswered()) {
+            revealQuestionResult();
+          }
+        }
+        return;
+      }
+
       if (msg.type === 'PLAYER_JOIN_REQUEST' || (msg.type === 'PLAYER_PING' && hostState === 'LOBBY')) {
         // REGISTRATION LOCK CHECK:
         if (hostState !== 'LOBBY' && !participants[msg.playerId]) {
@@ -3017,24 +3066,56 @@
     }
 
     function haveAllParticipantsAnswered() {
-      const list = Object.values(participants);
+      const list = Object.values(participants).filter(p => !p.withdrawn);
       if (list.length === 0) return false;
       return list.every(p => p.answers[currentQIdx] !== undefined);
     }
 
     function getSubmittedCount() {
-      return Object.values(participants).filter(p => p.answers[currentQIdx] !== undefined).length;
+      return Object.values(participants).filter(p => !p.withdrawn && p.answers[currentQIdx] !== undefined).length;
     }
 
     function updateRespondentBar() {
       const count = getSubmittedCount();
-      const total = Object.keys(participants).length;
+      const activeList = Object.values(participants).filter(p => !p.withdrawn);
+      const total = activeList.length;
       const pct = total > 0 ? (count / total) * 100 : 0;
       
       const countEl = document.getElementById('arenaRespCount');
       const barEl = document.getElementById('arenaRespBar');
       if (countEl) countEl.textContent = `${count} / ${total} Answered`;
       if (barEl) barEl.style.width = `${pct}%`;
+    }
+
+    function adminExitQuiz() {
+      const isRunning = (hostState === 'QUESTION' || hostState === 'REVEAL');
+      const confirmMsg = isRunning
+        ? 'Are you sure you want to STOP the exam? All attendee devices will receive their results and be exited.'
+        : 'Are you sure you want to exit the live quiz session?';
+
+      if (!confirm(confirmMsg)) return;
+
+      // 1. Broadcast QUIZ_ENDED to all attendee devices
+      const ranks = calculateRanks();
+      broadcastToPlayers({
+        type: 'HOST_QUIZ_ENDED',
+        ranks: ranks,
+        questionIndex: currentQIdx,
+        totalQuestions: QUIZ_QUESTIONS.length,
+        reason: 'ADMIN_STOPPED'
+      });
+
+      // 2. Clear all timers
+      clearInterval(questionTimerInterval);
+      clearInterval(revealTimerInterval);
+      clearBotTimers();
+
+      // 3. Reset host state back to LOBBY
+      hostState = 'LOBBY';
+      participants = {};
+
+      // 4. Close quiz overlay
+      toggleQuiz();
     }
 
     function calculateRanks() {
@@ -3320,6 +3401,9 @@
           <button class="btn-secondary-sm" onclick="revealQuestionResult()" style="flex: none; padding: 6px 14px; font-weight: 800;">
             Reveal Answers Now ⏭
           </button>
+          <button class="btn-exit-quiz" onclick="adminExitQuiz()" style="flex: none;" title="Stop Quiz for All Attendees">
+            🛑 Exit Quiz
+          </button>
         </div>
 
         <div class="arena-question-card">
@@ -3442,6 +3526,9 @@
             </button>
             <button class="btn-nav primary" onclick="advanceToNextQuestion()" style="padding: 6px 14px;">
               ${currentQIdx < QUIZ_QUESTIONS.length - 1 ? 'Next Question ⏭' : 'View Final Podium 🏆'}
+            </button>
+            <button class="btn-exit-quiz" onclick="adminExitQuiz()" style="margin-left: 6px;" title="Stop Quiz for All Attendees">
+              🛑 Exit Quiz
             </button>
           </div>
         </div>
