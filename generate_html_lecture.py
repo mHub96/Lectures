@@ -19,7 +19,7 @@ for idx, s in enumerate(DECK2_SLIDES):
     slide_copy['global_id'] = len(DECK1_SLIDES) + idx + 1
     slide_copy['part'] = 2
     slide_copy['slide_in_part'] = idx + 1
-    slide_copy['part_title'] = "Part 2: Third & Fourth Ventricles, Approaches & Pathology"
+    slide_copy['part_title'] = "Part 2: Tumors of the Brain Ventricles"
     ALL_SLIDES.append(slide_copy)
 
 slides_json = json.dumps(ALL_SLIDES, ensure_ascii=False)
@@ -319,6 +319,291 @@ html_content = f"""<!DOCTYPE html>
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }}
 
+    /* ---- VARIED SLIDE ANIMATION STYLES ---- */
+    @keyframes slideInFadeScale {{
+      from {{ opacity: 0; transform: scale(0.96); }}
+      to   {{ opacity: 1; transform: scale(1); }}
+    }}
+    @keyframes slideInBottom {{
+      from {{ opacity: 0; transform: translateY(30px); }}
+      to   {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @keyframes slideInTop {{
+      from {{ opacity: 0; transform: translateY(-30px); }}
+      to   {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @keyframes slideInLeft {{
+      from {{ opacity: 0; transform: translateX(-35px); }}
+      to   {{ opacity: 1; transform: translateX(0); }}
+    }}
+    @keyframes slideInRight {{
+      from {{ opacity: 0; transform: translateX(35px); }}
+      to   {{ opacity: 1; transform: translateX(0); }}
+    }}
+    @keyframes slideFlip {{
+      from {{ opacity: 0; transform: rotateY(12deg) scale(0.97); }}
+      to   {{ opacity: 1; transform: rotateY(0deg) scale(1); }}
+    }}
+    .anim-fade-scale  {{ animation: slideInFadeScale 0.38s cubic-bezier(0.16,1,0.3,1) forwards; }}
+    .anim-from-bottom {{ animation: slideInBottom    0.38s cubic-bezier(0.16,1,0.3,1) forwards; }}
+    .anim-from-top    {{ animation: slideInTop       0.38s cubic-bezier(0.16,1,0.3,1) forwards; }}
+    .anim-from-left   {{ animation: slideInLeft      0.38s cubic-bezier(0.16,1,0.3,1) forwards; }}
+    .anim-from-right  {{ animation: slideInRight     0.38s cubic-bezier(0.16,1,0.3,1) forwards; }}
+    .anim-flip        {{ animation: slideFlip        0.42s cubic-bezier(0.16,1,0.3,1) forwards; }}
+
+    /* ---- EDIT MODE STYLES ---- */
+    .btn-edit-mode.edit-active {{
+      background: rgba(245, 158, 11, 0.22) !important;
+      border-color: var(--amber) !important;
+      color: var(--amber) !important;
+    }}
+
+    body.edit-mode-active .slide-aspect-box {{
+      outline: 3px dashed var(--amber) !important;
+      outline-offset: 3px;
+    }}
+    body.edit-mode-active [contenteditable] {{
+      outline: 1px dashed rgba(245,158,11,0.5) !important;
+      border-radius: 4px;
+      cursor: text !important;
+    }}
+    body.edit-mode-active [contenteditable]:focus {{
+      outline: 2px solid var(--amber) !important;
+      background: rgba(245,158,11,0.07) !important;
+    }}
+
+    /* Edit toolbar that appears on image hover in edit mode */
+    body.edit-mode-active .image-edit-overlay {{
+      display: flex !important;
+    }}
+    .image-edit-overlay {{
+      display: none;
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      gap: 5px;
+      z-index: 10;
+      flex-wrap: wrap;
+    }}
+    .img-edit-btn {{
+      background: rgba(15,23,42,0.88);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }}
+    .img-edit-btn:hover {{ background: var(--amber); color: #000; }}
+    .img-edit-btn.danger:hover {{ background: var(--rose); }}
+
+    /* Edit Mode Banner */
+    .edit-mode-banner {{
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      background: rgba(245,158,11,0.95);
+      color: #030712;
+      padding: 5px 18px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 4px 16px rgba(245,158,11,0.5);
+      pointer-events: none;
+    }}
+    body.edit-mode-active .edit-mode-banner {{ display: block; }}
+
+    /* ---- QUIZ EDITOR STYLES ---- */
+    .quiz-editor-modal {{
+      position: fixed;
+      inset: 0;
+      background: rgba(3,7,18,0.85);
+      backdrop-filter: blur(10px);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }}
+    .quiz-editor-modal.active {{
+      opacity: 1;
+      pointer-events: auto;
+    }}
+    .quiz-editor-box {{
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      width: 92vw;
+      max-width: 880px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      animation: modalPop 0.25s cubic-bezier(0.16,1,0.3,1);
+    }}
+    .quiz-editor-header {{
+      padding: 1.1rem 1.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+    }}
+    .quiz-editor-body {{
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }}
+    .qe-question-card {{
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      position: relative;
+    }}
+    .qe-q-num {{
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }}
+    .qe-field-label {{
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }}
+    .qe-input, .qe-textarea {{
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.9rem;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }}
+    .qe-input:focus, .qe-textarea:focus {{
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px rgba(56,189,248,0.15);
+    }}
+    .qe-textarea {{ resize: vertical; min-height: 60px; }}
+    .qe-options-grid {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }}
+    .qe-option-row {{
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }}
+    .qe-opt-letter {{
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+    }}
+    .qe-opt-letter.let-a {{ background: #ef4444; }}
+    .qe-opt-letter.let-b {{ background: #0284c7; }}
+    .qe-opt-letter.let-c {{ background: #f59e0b; }}
+    .qe-opt-letter.let-d {{ background: #10b981; }}
+    .qe-correct-radio {{
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--emerald);
+      flex-shrink: 0;
+    }}
+    .qe-delete-btn {{
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: all 0.15s;
+    }}
+    .qe-delete-btn:hover {{ background: rgba(239,68,68,0.25); }}
+    .qe-add-btn {{
+      align-self: flex-start;
+      background: rgba(16,185,129,0.12);
+      border: 1px dashed rgba(16,185,129,0.4);
+      color: var(--emerald);
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+    .qe-add-btn:hover {{ background: rgba(16,185,129,0.22); }}
+    .qe-editor-footer {{
+      padding: 1rem 1.75rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      background: var(--bg-card);
+    }}
+
+    /* Image Add button in edit mode */
+    .img-add-zone {{
+      border: 2px dashed var(--amber);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      cursor: pointer;
+      color: var(--amber);
+      font-weight: 700;
+      font-size: 0.88rem;
+      gap: 8px;
+      transition: background 0.15s;
+    }}
+    .img-add-zone:hover {{ background: rgba(245,158,11,0.1); }}
+
+
     /* Slide Header Area */
     .slide-header {{
       margin-bottom: 1.25rem;
@@ -367,6 +652,115 @@ html_content = f"""<!DOCTYPE html>
       font-size: 0.96rem;
       color: var(--text-muted);
       font-weight: 500;
+    }}
+
+    /* ---- NEW IMAGE-CENTERED LAYOUT ---- */
+    .slide-body-image-centered {{
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-height: 0;
+      overflow: hidden;
+    }}
+
+    /* Central Hero Stage for 1 or more images */
+    .slide-image-hero {{
+      flex: 1.35;
+      display: flex;
+      gap: 1.15rem;
+      min-height: 0;
+      position: relative;
+      justify-content: center;
+      align-items: stretch;
+    }}
+
+    .slide-image-hero .image-panel {{
+      flex: 1;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      position: relative;
+    }}
+
+    .slide-image-hero .image-panel.multi-img {{
+      max-width: 48%;
+    }}
+
+    .slide-image-hero .image-viewport {{
+      flex: 1;
+      background: #020617;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: zoom-in;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }}
+
+    .slide-image-hero .image-viewport:hover {{
+      border-color: var(--accent-primary);
+      box-shadow: 0 6px 24px var(--accent-glow);
+    }}
+
+    .slide-image-hero .image-viewport img {{
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.25s ease;
+    }}
+
+    .slide-image-hero .caption-card {{
+      margin-top: 0.35rem;
+      padding: 0.4rem 0.8rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }}
+
+    .slide-image-hero .caption-title {{
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }}
+
+    .slide-image-hero .caption-text {{
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }}
+
+    /* Commentary cards strip below the central figure */
+    .slide-cards-strip {{
+      flex: 0.95;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 0.65rem;
+      min-height: 0;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }}
+
+    .slide-body-no-image {{
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      min-height: 0;
+      overflow-y: auto;
     }}
 
     /* Two Column Body Grid */
@@ -1837,70 +2231,74 @@ html_content = f"""<!DOCTYPE html>
       min-height: 0 !important;
     }}
 
-    :fullscreen .cards-column,
-    :-webkit-full-screen .cards-column,
-    body.is-fullscreen .cards-column {{
-      gap: clamp(0.85rem, 1.6vh, 1.5rem) !important;
+    :fullscreen .slide-body-image-centered,
+    :-webkit-full-screen .slide-body-image-centered,
+    body.is-fullscreen .slide-body-image-centered {{
+      flex: 1 !important;
+      gap: clamp(0.75rem, 1.5vh, 1.6rem) !important;
+      overflow: hidden !important;
     }}
 
-    :fullscreen .lecture-card,
-    :-webkit-full-screen .lecture-card,
-    body.is-fullscreen .lecture-card {{
-      padding: clamp(1rem, 1.8vh, 1.75rem) clamp(1.25rem, 2vw, 2.25rem) !important;
+    :fullscreen .slide-image-hero,
+    :-webkit-full-screen .slide-image-hero,
+    body.is-fullscreen .slide-image-hero {{
+      flex: 1.65 !important;
+      gap: clamp(1rem, 2vw, 2.5rem) !important;
+    }}
+
+    :fullscreen .slide-image-hero .caption-card,
+    :-webkit-full-screen .slide-image-hero .caption-card,
+    body.is-fullscreen .slide-image-hero .caption-card {{
+      padding: clamp(0.5rem, 1vh, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem) !important;
+    }}
+
+    :fullscreen .slide-image-hero .caption-title,
+    :-webkit-full-screen .slide-image-hero .caption-title,
+    body.is-fullscreen .slide-image-hero .caption-title {{
+      font-size: clamp(0.85rem, 1.1vw, 1.3rem) !important;
+    }}
+
+    :fullscreen .slide-image-hero .caption-text,
+    :-webkit-full-screen .slide-image-hero .caption-text,
+    body.is-fullscreen .slide-image-hero .caption-text {{
+      font-size: clamp(0.85rem, 1.0vw, 1.15rem) !important;
+      white-space: normal !important;
+    }}
+
+    :fullscreen .slide-cards-strip,
+    :-webkit-full-screen .slide-cards-strip,
+    body.is-fullscreen .slide-cards-strip {{
+      flex: 0.95 !important;
+      gap: clamp(0.65rem, 1.2vw, 1.25rem) !important;
+    }}
+
+    :fullscreen .slide-cards-strip .lecture-card,
+    :-webkit-full-screen .slide-cards-strip .lecture-card,
+    body.is-fullscreen .slide-cards-strip .lecture-card {{
+      padding: clamp(0.8rem, 1.4vh, 1.4rem) clamp(1rem, 1.5vw, 1.8rem) !important;
       border-radius: var(--radius-lg) !important;
       border-left-width: 5px !important;
     }}
 
-    :fullscreen .card-heading,
-    :-webkit-full-screen .card-heading,
-    body.is-fullscreen .card-heading {{
-      font-size: clamp(1.15rem, 1.45vw, 1.7rem) !important;
-      margin-bottom: 0.45rem !important;
+    :fullscreen .slide-cards-strip .card-heading,
+    :-webkit-full-screen .slide-cards-strip .card-heading,
+    body.is-fullscreen .slide-cards-strip .card-heading {{
+      font-size: clamp(1rem, 1.3vw, 1.5rem) !important;
+      margin-bottom: 0.35rem !important;
     }}
 
-    :fullscreen .card-text,
-    :-webkit-full-screen .card-text,
-    body.is-fullscreen .card-text {{
-      font-size: clamp(1.0rem, 1.25vw, 1.45rem) !important;
-      line-height: 1.55 !important;
-    }}
-
-    :fullscreen .image-panel,
-    :-webkit-full-screen .image-panel,
-    body.is-fullscreen .image-panel {{
-      height: 100% !important;
-      min-height: 0 !important;
-    }}
-
-    :fullscreen .image-viewport,
-    :-webkit-full-screen .image-viewport,
-    body.is-fullscreen .image-viewport {{
-      flex: 1 !important;
-      height: 100% !important;
-      border-radius: var(--radius-lg) !important;
-    }}
-
-    :fullscreen .caption-card,
-    :-webkit-full-screen .caption-card,
-    body.is-fullscreen .caption-card {{
-      margin-top: clamp(0.75rem, 1.4vh, 1.25rem) !important;
-      padding: clamp(0.75rem, 1.4vh, 1.25rem) clamp(1rem, 1.5vw, 1.75rem) !important;
-      border-radius: var(--radius-md) !important;
-    }}
-
-    :fullscreen .caption-title,
-    :-webkit-full-screen .caption-title,
-    body.is-fullscreen .caption-title {{
-      font-size: clamp(0.95rem, 1.15vw, 1.35rem) !important;
-    }}
-
-    :fullscreen .caption-text,
-    :-webkit-full-screen .caption-text,
-    body.is-fullscreen .caption-text {{
-      font-size: clamp(0.92rem, 1.1vw, 1.3rem) !important;
+    :fullscreen .slide-cards-strip .card-text,
+    :-webkit-full-screen .slide-cards-strip .card-text,
+    body.is-fullscreen .slide-cards-strip .card-text {{
+      font-size: clamp(0.9rem, 1.1vw, 1.3rem) !important;
       line-height: 1.5 !important;
     }}
 
+    :fullscreen .slide-body-no-image,
+    :-webkit-full-screen .slide-body-no-image,
+    body.is-fullscreen .slide-body-no-image {{
+      gap: clamp(0.85rem, 1.6vh, 1.5rem) !important;
+    }}
     /* Title slides in Fullscreen */
     :fullscreen .title-slide-container,
     :-webkit-full-screen .title-slide-container,
@@ -2124,9 +2522,9 @@ html_content = f"""<!DOCTYPE html>
     </div>
 
     <div class="header-center">
-      <button class="part-pill active" id="pillAll" onclick="setFilter('all')">All Slides (66)</button>
+      <button class="part-pill active" id="pillAll" onclick="setFilter('all')">All Slides (80)</button>
       <button class="part-pill" id="pillPart1" onclick="setFilter('part1')">Part 1: Lateral (33)</button>
-      <button class="part-pill" id="pillPart2" onclick="setFilter('part2')">Part 2: 3rd & 4th (33)</button>
+      <button class="part-pill" id="pillPart2" onclick="setFilter('part2')">Part 2: Ventricular Tumors (47)</button>
     </div>
 
     <div class="header-right">
@@ -2138,6 +2536,9 @@ html_content = f"""<!DOCTYPE html>
       </button>
       <button class="btn-icon btn-quiz-highlight" title="Interactive Live Audience Quiz (Press Q)" onclick="toggleQuiz()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+      <button class="btn-icon btn-edit-mode" id="btnEditMode" title="Edit Mode: Edit Slide Text &amp; Images (Press E)" onclick="toggleEditMode()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       </button>
       <button class="btn-icon" title="Toggle Light/Dark Theme (Press T)" onclick="toggleTheme()">
         <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -2165,7 +2566,7 @@ html_content = f"""<!DOCTYPE html>
     <button class="hud-btn" id="fsBtnPrev" onclick="navigateStepOrSlide(-1)" title="Previous (Left Arrow)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <span class="hud-counter" id="fsSlideCounter">Slide 1 / 66</span>
+    <span class="hud-counter" id="fsSlideCounter">Slide 1 / 80</span>
     <button class="hud-btn primary" id="fsBtnNext" onclick="navigateStepOrSlide(1)" title="Next Point (Space or Right Arrow)">
       <span id="fsNextLabel">Next</span>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
@@ -2202,7 +2603,7 @@ html_content = f"""<!DOCTYPE html>
       </button>
 
       <div class="step-indicator-pill" id="stepIndicator">Build: Ready</div>
-      <span class="slide-counter-badge" id="slideCounter">Slide 1 / 66</span>
+      <span class="slide-counter-badge" id="slideCounter">Slide 1 / 80</span>
 
       <button class="btn-nav primary" id="btnNext" onclick="navigateStepOrSlide(1)">
         <span id="nextBtnLabel">Next Point</span>
@@ -2221,9 +2622,9 @@ html_content = f"""<!DOCTYPE html>
             Slide Overview &amp; Visual Index
           </h2>
           <div class="drawer-filter-pills">
-            <button class="drawer-pill-btn active" id="drawerPillAll" onclick="setDrawerFilter('all', this)">All (66)</button>
+            <button class="drawer-pill-btn active" id="drawerPillAll" onclick="setDrawerFilter('all', this)">All (80)</button>
             <button class="drawer-pill-btn" id="drawerPill1" onclick="setDrawerFilter('1', this)">Part 1 (33)</button>
-            <button class="drawer-pill-btn" id="drawerPill2" onclick="setDrawerFilter('2', this)">Part 2 (33)</button>
+            <button class="drawer-pill-btn" id="drawerPill2" onclick="setDrawerFilter('2', this)">Part 2 (47)</button>
           </div>
         </div>
         <div class="drawer-header-right">
@@ -2287,6 +2688,7 @@ html_content = f"""<!DOCTYPE html>
             <button class="quiz-mode-btn active" id="btnModeLive" onclick="setQuizArenaMode('live')">Live Audience Mode</button>
             <button class="quiz-mode-btn" id="btnModeSolo" onclick="setQuizArenaMode('solo')">Solo Board Mode</button>
           </div>
+          <button class="btn-secondary-sm" onclick="openQuizEditor()" style="flex:initial; padding:6px 14px; font-size:0.8rem; font-weight:700; margin-right:6px;" title="Edit Questions, Choices &amp; Explanations">✏️ Edit Questions</button>
           <button class="btn-exit-quiz" id="btnExitQuizAdmin" onclick="adminExitQuiz()" title="Exit Quiz & End Session for All">🛑 Exit Quiz</button>
           <button class="btn-icon" onclick="toggleQuiz()" title="Close Quiz View">✕</button>
         </div>
@@ -2298,7 +2700,37 @@ html_content = f"""<!DOCTYPE html>
     </div>
   </div>
 
-  <script>
+  <!-- Edit Mode Banner -->
+  <div class="edit-mode-banner" id="editModeBanner">✏️ EDIT MODE ACTIVE — Click any text to edit • Click an image to manage it</div>
+
+  <!-- Hidden file input for image upload -->
+  <input type="file" id="imgUploadInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
+
+  <!-- QUIZ EDITOR MODAL -->
+  <div class="quiz-editor-modal" id="quizEditorModal" onclick="if(event.target===this) closeQuizEditor()">
+    <div class="quiz-editor-box">
+      <div class="quiz-editor-header">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:1.15rem;font-weight:800;">📝 Quiz Question Editor</span>
+          <span style="font-size:0.78rem;color:var(--text-muted);">Changes saved to browser storage automatically</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn-nav primary" onclick="saveQuizEdits()" style="padding:6px 14px;font-size:0.82rem;">💾 Save &amp; Apply</button>
+          <button class="btn-icon" onclick="closeQuizEditor()">✕</button>
+        </div>
+      </div>
+      <div class="quiz-editor-body" id="quizEditorBody">
+        <!-- rendered by JS -->
+      </div>
+      <div class="qe-editor-footer">
+        <button class="qe-add-btn" onclick="addNewQuestion()">➕ Add Question</button>
+        <button class="btn-nav" onclick="resetQuizToDefaults()">↺ Reset to Defaults</button>
+      </div>
+    </div>
+  </div>
+
+
+    <script>
     const SLIDES_DATA = {slides_json};
 
     let currentIndex = 0;
@@ -2423,8 +2855,78 @@ html_content = f"""<!DOCTYPE html>
       if (fsNextLabel) fsNextLabel.textContent = (nextLabel.textContent === 'Next Point') ? 'Next' : nextLabel.textContent;
     }}
 
+        // --- Varied animation styles cycling across slides ---
+    const SLIDE_ANIM_STYLES = [
+      'anim-fade-scale', 'anim-from-bottom', 'anim-from-right',
+      'anim-from-left', 'anim-from-top', 'anim-flip'
+    ];
+
+    // Card palette rotation for visual variety across 80 slides
+    const CARD_PALETTES = [
+      {{ badgeClass: '', cardClass: '' }},
+      {{ badgeClass: 'badge-emerald', cardClass: 'card-emerald' }},
+      {{ badgeClass: 'badge-purple', cardClass: 'card-purple' }},
+      {{ badgeClass: '', cardClass: '' }},
+      {{ badgeClass: 'badge-emerald', cardClass: 'card-emerald' }},
+      {{ badgeClass: 'badge-purple', cardClass: 'card-purple' }}
+    ];
+
+    function getSlideAnimClass(index, direction) {{
+      if (direction === 'none') return '';
+      const base = SLIDE_ANIM_STYLES[index % SLIDE_ANIM_STYLES.length];
+      if (direction === 'backward') {{
+        const mirror = {{
+          'anim-from-right': 'anim-from-left',
+          'anim-from-left': 'anim-from-right',
+          'anim-from-bottom': 'anim-from-top',
+          'anim-from-top': 'anim-from-bottom'
+        }};
+        return mirror[base] || base;
+      }}
+      return base;
+    }}
+
+    function makeImagePanelHtml(imgPath, captionTitle, captionBody, colorStyle, isMulti, imgIndex = 0) {{
+      if (!imgPath) return '';
+      const editOverlay = `
+        <div class="image-edit-overlay">
+          <button class="img-edit-btn" onclick="editImageReplace(this, '${{imgPath}}', ${{imgIndex}})" title="Replace image">🔄 Replace</button>
+          <button class="img-edit-btn" onclick="editImageAdd(this)" title="Add another image">➕ Add</button>
+          <button class="img-edit-btn danger" onclick="editImageRemove(this, ${{imgIndex}})" title="Remove image">🗑 Remove</button>
+        </div>`;
+
+      return `
+        <div class="image-panel${{isMulti ? ' multi-img' : ''}}" style="position:relative; min-height:0;">
+          <div class="image-viewport" onclick="handleImgClick(event, '${{imgPath}}', '${{captionTitle}}: ${{captionBody}}')">
+            <img src="${{imgPath}}" alt="${{captionTitle}}" onerror="this.style.opacity=0.3">
+            <div class="zoom-hint-badge">🔍 Zoom Ultra-Res (300 DPI)</div>
+            ${{editOverlay}}
+          </div>
+          <div class="caption-card">
+            <div class="caption-title" style="${{colorStyle}}" contenteditable="false" data-edit-key="caption_title" data-img-idx="${{imgIndex}}">${{captionTitle}}</div>
+            <div class="caption-text" contenteditable="false" data-edit-key="caption_body" data-img-idx="${{imgIndex}}">${{captionBody}}</div>
+          </div>
+        </div>`;
+    }}
+
+    function handleImgClick(e, src, caption) {{
+      if (document.body.classList.contains('edit-mode-active')) return;
+      if (e.target.closest('.image-edit-overlay')) return;
+      openLightbox(src, caption);
+    }}
+
+    function formatTitle(t) {{
+      if (!t) return '';
+      return t.split(String.fromCharCode(10)).join('<br>');
+    }}
+
+    function formatTitle(t) {{
+      if (!t) return '';
+      return t.split(String.fromCharCode(10)).join('<br>');
+    }}
+
     function renderSlide(direction = 'forward') {{
-      const slide = SLIDES_DATA[currentIndex];
+      const slide = getEffectiveSlide(currentIndex);
       const box = document.getElementById('slideBox');
       const pos = filteredIndices.indexOf(currentIndex);
 
@@ -2442,34 +2944,33 @@ html_content = f"""<!DOCTYPE html>
       const pct = ((pos + 1) / filteredIndices.length) * 100;
       document.getElementById('progressBar').style.width = pct + '%';
 
-      const animClass = direction === 'forward' ? 'slide-forward' : (direction === 'backward' ? 'slide-backward' : '');
+      const animClass = getSlideAnimClass(currentIndex, direction);
+      const palette = CARD_PALETTES[currentIndex % CARD_PALETTES.length];
 
       if (slide.type === 'title') {{
-        const creditsHtml = (slide.credits || []).map(c => `<li>${{c}}</li>`).join('');
+        const creditsHtml = (slide.credits || []).map(c => `<li contenteditable="false">${{c}}</li>`).join('');
+        const imgHtml = makeImagePanelHtml(
+          slide.img_path,
+          '3D VENTRICULAR PROJECTION',
+          'High-resolution reconstruction of cerebral ventricular cavities from Youmans & Winn.',
+          '',
+          false,
+          0
+        );
+
         box.innerHTML = `
           <div class="slide-content-container ${{animClass}}">
             <div class="title-slide-container">
               <div class="title-left">
-                <div class="slide-category-badge">${{slide.badge}}</div>
-                <h1 class="slide-title">${{slide.title.replace(/\\n/g, '<br>')}}</h1>
-                <p class="slide-subtitle">${{slide.subtitle}}</p>
+                <div class="slide-category-badge" contenteditable="false" data-edit-key="badge">${{slide.badge}}</div>
+                <h1 class="slide-title" contenteditable="false" data-edit-key="title">${{formatTitle(slide.title)}}</h1>
+                <p class="slide-subtitle" contenteditable="false" data-edit-key="subtitle">${{slide.subtitle}}</p>
                 <div class="credits-box">
-                  <div class="credits-heading">REFERENCE TEXT & CURRICULUM</div>
-                  <ul class="credits-list">
-                    ${{creditsHtml}}
-                  </ul>
+                  <div class="credits-heading">REFERENCE TEXT &amp; CURRICULUM</div>
+                  <ul class="credits-list">${{creditsHtml}}</ul>
                 </div>
               </div>
-              <div class="image-panel" data-step-order="1">
-                <div class="image-viewport" onclick="openLightbox('${{slide.img_path}}', '${{slide.title.replace(/\\n/g, ' ')}}')">
-                  <img src="${{slide.img_path}}" alt="${{slide.title}}">
-                  <div class="zoom-hint-badge">🔍 Zoom Ultra-Res (300 DPI)</div>
-                </div>
-                <div class="caption-card">
-                  <div class="caption-title">3D VENTRICULAR PROJECTION</div>
-                  <div class="caption-text">High-resolution reconstruction of cerebral ventricular cavities from Youmans & Winn.</div>
-                </div>
-              </div>
+              ${{imgHtml}}
             </div>
           </div>
         `;
@@ -2477,58 +2978,87 @@ html_content = f"""<!DOCTYPE html>
         const isSummary = (slide.type === 'summary');
         const isThankYou = (slide.type === 'thankyou');
         const cards = slide.cards || [];
-        
-        let badgeClass = '';
-        let cardClass = '';
+        const hasImage = !!slide.img_path;
+
+        let badgeClass = '', cardClass = '', colorStyle = '';
         if (isSummary) {{
-          badgeClass = 'badge-emerald';
-          cardClass = 'card-emerald';
+          badgeClass = 'badge-emerald'; cardClass = 'card-emerald'; colorStyle = 'color: var(--emerald);';
         }} else if (isThankYou) {{
-          badgeClass = 'badge-purple thankyou-badge';
-          cardClass = 'card-purple';
+          badgeClass = 'badge-purple thankyou-badge'; cardClass = 'card-purple'; colorStyle = 'color: var(--purple);';
+        }} else {{
+          badgeClass = palette.badgeClass; cardClass = palette.cardClass; colorStyle = '';
         }}
 
+        // Commentary cards with step order (reveal step-by-step)
         const cardsHtml = cards.map((c, i) => `
           <div class="lecture-card ${{cardClass}}" data-step-order="${{i + 1}}">
-            <div class="card-heading">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:0.8;"></span>
+            <div class="card-heading" contenteditable="false" data-card-idx="${{i}}" data-edit-key="card_title">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:currentColor;opacity:0.8;flex-shrink:0;"></span>
               ${{c[0]}}
             </div>
-            <div class="card-text">${{c[1]}}</div>
+            <div class="card-text" contenteditable="false" data-card-idx="${{i}}" data-edit-key="card_body">${{c[1]}}</div>
           </div>
         `).join('');
 
-        const imgStepOrder = cards.length + 1;
+        const extra_images = slide.extra_images || [];
+        const isMulti = extra_images.length > 0;
+        let allImgHtml = '';
 
-        box.innerHTML = `
-          <div class="slide-content-container ${{animClass}}">
-            <div class="slide-header">
-              <div class="slide-category-badge ${{badgeClass}}">${{slide.badge}}</div>
-              <h2 class="slide-title">${{slide.title.replace(/\\n/g, '<br>')}}</h2>
-              <p class="slide-subtitle">${{slide.subtitle}}</p>
+        if (hasImage) {{
+          allImgHtml += makeImagePanelHtml(slide.img_path, slide.caption_title || '', slide.caption_body || '', colorStyle, isMulti, 0);
+        }}
+        extra_images.forEach((ei, eidx) => {{
+          allImgHtml += makeImagePanelHtml(ei.path, ei.caption_title || 'ADDITIONAL FIGURE', ei.caption_body || '', colorStyle, true, eidx + 1);
+        }});
+
+        const addImgBtnHtml = `<div class="img-add-zone" onclick="editImageAddNew(${{currentIndex}})" style="display:none;" id="addImgZone_${{currentIndex}}">➕ Add Image to Slide</div>`;
+
+        if (hasImage || isMulti) {{
+          // IMAGE IS THE CENTER OF ATTENTION, DETAILS COME AFTER AS COMMENTS
+          box.innerHTML = `
+            <div class="slide-content-container ${{animClass}}">
+              <div class="slide-header">
+                <div class="slide-category-badge ${{badgeClass}}" contenteditable="false" data-edit-key="badge">${{slide.badge}}</div>
+                <h2 class="slide-title" contenteditable="false" data-edit-key="title">${{formatTitle(slide.title)}}</h2>
+                <p class="slide-subtitle" contenteditable="false" data-edit-key="subtitle">${{slide.subtitle}}</p>
+              </div>
+              <div class="slide-body-image-centered">
+                <div class="slide-image-hero">
+                  ${{allImgHtml}}
+                  ${{addImgBtnHtml}}
+                </div>
+                <div class="slide-cards-strip">
+                  ${{cardsHtml}}
+                </div>
+              </div>
             </div>
-            <div class="slide-body-grid">
-              <div class="cards-column">
+          `;
+        }} else {{
+          // NO IMAGE SLIDE: Cards take center stage in clean balanced layout
+          box.innerHTML = `
+            <div class="slide-content-container ${{animClass}}">
+              <div class="slide-header">
+                <div class="slide-category-badge ${{badgeClass}}" contenteditable="false" data-edit-key="badge">${{slide.badge}}</div>
+                <h2 class="slide-title" contenteditable="false" data-edit-key="title">${{formatTitle(slide.title)}}</h2>
+                <p class="slide-subtitle" contenteditable="false" data-edit-key="subtitle">${{slide.subtitle}}</p>
+              </div>
+              <div class="slide-body-no-image">
                 ${{cardsHtml}}
               </div>
-              <div class="image-panel" data-step-order="${{imgStepOrder}}">
-                <div class="image-viewport" onclick="openLightbox('${{slide.img_path}}', '${{slide.caption_title}}: ${{slide.caption_body}}')">
-                  <img src="${{slide.img_path}}" alt="${{slide.title}}">
-                  <div class="zoom-hint-badge">🔍 Zoom Ultra-Res (300 DPI)</div>
-                </div>
-                <div class="caption-card">
-                  <div class="caption-title" style="${{isSummary ? 'color: var(--emerald);' : (isThankYou ? 'color: var(--purple);' : '')}}">${{slide.caption_title}}</div>
-                  <div class="caption-text">${{slide.caption_body}}</div>
-                </div>
-              </div>
+              ${{addImgBtnHtml}}
             </div>
-          </div>
-        `;
+          `;
+        }}
       }}
 
+      if (document.body.classList.contains('edit-mode-active')) {{
+        const addZone = document.getElementById('addImgZone_' + currentIndex);
+        if (addZone) addZone.style.display = 'flex';
+      }}
+
+      applyEditModeToSlide();
       applyStepVisibility();
     }}
-
     // Drawer Functions
     let currentDrawerPart = 'all';
 
@@ -2600,7 +3130,54 @@ html_content = f"""<!DOCTYPE html>
     let startMouseX = 0;
     let startMouseY = 0;
 
+        // Touch Pinch-to-Zoom & Pan Support for Touchscreens
+    let touchStartDist = 0;
+    let touchStartScale = 1;
+    let touchPanStartX = 0;
+    let touchPanStartY = 0;
+
+    function initLightboxTouch() {{
+      const vp = document.getElementById('lightboxViewport');
+      if (!vp) return;
+
+      vp.addEventListener('touchstart', (e) => {{
+        if (e.touches.length === 2) {{
+          touchStartDist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          touchStartScale = zoomScale;
+        }} else if (e.touches.length === 1) {{
+          touchPanStartX = e.touches[0].clientX - panX;
+          touchPanStartY = e.touches[0].clientY - panY;
+        }}
+      }}, {{ passive: false }});
+
+      vp.addEventListener('touchmove', (e) => {{
+        if (e.touches.length === 2 && touchStartDist > 0) {{
+          e.preventDefault();
+          const dist = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          const factor = dist / touchStartDist;
+          zoomScale = Math.max(0.6, Math.min(5, touchStartScale * factor));
+          updateTransform();
+        }} else if (e.touches.length === 1 && zoomScale > 1) {{
+          e.preventDefault();
+          panX = e.touches[0].clientX - touchPanStartX;
+          panY = e.touches[0].clientY - touchPanStartY;
+          updateTransform();
+        }}
+      }}, {{ passive: false }});
+
+      vp.addEventListener('touchend', () => {{
+        touchStartDist = 0;
+      }});
+    }}
+
     function openLightbox(src, caption) {{
+      initLightboxTouch();
       const modal = document.getElementById('lightboxModal');
       document.getElementById('lightboxImg').src = src;
       document.getElementById('lightboxCap').textContent = caption;
@@ -2996,9 +3573,9 @@ html_content = f"""<!DOCTYPE html>
         type: 'HOST_SYNC',
         state: hostState,
         questionIndex: currentQIdx,
-        totalQuestions: QUIZ_QUESTIONS.length,
+        totalQuestions: getActiveQuestions().length,
         timeRemaining: questionTimerVal,
-        correctAnswer: (hostState === 'REVEAL' || hostState === 'PODIUM') ? QUIZ_QUESTIONS[currentQIdx].answer : null,
+        correctAnswer: (hostState === 'REVEAL' || hostState === 'PODIUM') ? getShuffledQuestion(currentQIdx).answer : null,
         ranks: ranks,
         participantCount: Object.keys(participants).length
       }});
@@ -3127,7 +3704,7 @@ html_content = f"""<!DOCTYPE html>
         type: 'HOST_QUIZ_ENDED',
         ranks: ranks,
         questionIndex: currentQIdx,
-        totalQuestions: QUIZ_QUESTIONS.length,
+        totalQuestions: getActiveQuestions().length,
         reason: 'ADMIN_STOPPED'
       }});
 
@@ -3319,6 +3896,7 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function startLiveQuiz() {{
+      buildShuffledQuestions();
       // If 0 participants, automatically add simulation attendees for immediate smooth presentation
       if (Object.keys(participants).length === 0) {{
         simulateAttendees();
@@ -3359,7 +3937,7 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function scheduleBotAnswers(qIdx) {{
-      const correctAns = QUIZ_QUESTIONS[qIdx].answer;
+      const correctAns = getShuffledQuestion(qIdx).answer;
       Object.values(participants).forEach(p => {{
         if (p.isBot) {{
           // Bot randomized answer delay
@@ -3406,7 +3984,7 @@ html_content = f"""<!DOCTYPE html>
 
     function renderQuestionScreen() {{
       const body = document.getElementById('quizArenaBody');
-      const item = QUIZ_QUESTIONS[currentQIdx];
+      const item = getShuffledQuestion(currentQIdx);
       const count = getSubmittedCount();
       const total = Object.keys(participants).length;
       const pct = total > 0 ? (count / total) * 100 : 0;
@@ -3460,7 +4038,7 @@ html_content = f"""<!DOCTYPE html>
       hostState = 'REVEAL';
 
       // Grade participants and calculate scores
-      const correctAns = QUIZ_QUESTIONS[currentQIdx].answer;
+      const correctAns = getShuffledQuestion(currentQIdx).answer;
       Object.values(participants).forEach(p => {{
         const resp = p.answers[currentQIdx];
         if (resp && resp.choice === correctAns) {{
@@ -3516,7 +4094,7 @@ html_content = f"""<!DOCTYPE html>
 
     function advanceToNextQuestion() {{
       clearInterval(revealTimerInterval);
-      if (currentQIdx < QUIZ_QUESTIONS.length - 1) {{
+      if (currentQIdx < getActiveQuestions().length - 1) {{
         startQuestionRound(currentQIdx + 1);
       }} else {{
         showGrandPodium();
@@ -3525,7 +4103,7 @@ html_content = f"""<!DOCTYPE html>
 
     function renderRevealScreen(voteCounts) {{
       const body = document.getElementById('quizArenaBody');
-      const item = QUIZ_QUESTIONS[currentQIdx];
+      const item = getShuffledQuestion(currentQIdx);
       const letters = ['A', 'B', 'C', 'D'];
       const totalVotes = Object.values(participants).length;
 
@@ -3752,7 +4330,7 @@ html_content = f"""<!DOCTYPE html>
       let csv = 'Rank,Name,Score,CorrectAnswers,TotalQuestions,Date\\n';
       const dateStr = new Date().toISOString();
       list.forEach((p, idx) => {{
-        const correctCount = Object.keys(p.answers).filter(qI => p.answers[qI].choice === QUIZ_QUESTIONS[qI].answer).length;
+        const correctCount = Object.keys(p.answers).filter(qI => p.answers[qI].choice === getShuffledQuestion(parseInt(qI)).answer).length;
         csv += `${{idx + 1}},"${{p.name}}",${{p.score}},${{correctCount}},${{QUIZ_QUESTIONS.length}},"${{dateStr}}"\\n`;
       }});
 
@@ -3765,6 +4343,7 @@ html_content = f"""<!DOCTYPE html>
     }}
 
     function restartArenaSession() {{
+      buildShuffledQuestions();
       hostState = 'LOBBY';
       participants = {{}};
       currentQIdx = 0;
@@ -3778,7 +4357,7 @@ html_content = f"""<!DOCTYPE html>
     function renderSoloScreen() {{
       const body = document.getElementById('quizArenaBody');
       const answeredCount = Object.keys(soloAnswers).length;
-      const totalCount = QUIZ_QUESTIONS.length;
+      const totalCount = getActiveQuestions().length;
       const isComplete = (answeredCount === totalCount);
 
       let scoreHtml = '';
@@ -3799,7 +4378,7 @@ html_content = f"""<!DOCTYPE html>
         `;
       }}
 
-      body.innerHTML = scoreHtml + QUIZ_QUESTIONS.map((item, qIdx) => {{
+      const _soloQs = getActiveQuestions(); body.innerHTML = scoreHtml + _soloQs.map((item, qIdx) => {{
         const userAnswer = soloAnswers[qIdx];
         const isAnswered = (userAnswer !== undefined);
 
@@ -3839,17 +4418,367 @@ html_content = f"""<!DOCTYPE html>
     function answerSoloQuestion(qIdx, optIdx) {{
       if (soloAnswers[qIdx] !== undefined) return;
       soloAnswers[qIdx] = optIdx;
-      if (optIdx === QUIZ_QUESTIONS[qIdx].answer) {{
+      if (optIdx === getShuffledQuestion(qIdx).answer) {{
         soloScore++;
       }}
       renderSoloScreen();
     }}
 
     function restartSoloQuiz() {{
+      buildShuffledQuestions();
       soloAnswers = {{}};
       soloScore = 0;
       renderSoloScreen();
     }}
+
+
+    // ==========================================================================
+    // EDIT MODE: Inline text editing + image management + localStorage
+    // ==========================================================================
+    const EDIT_STORAGE_KEY = 'ventricular_lecture_slide_edits_v1';
+    let slideEdits = {{}}; // {{ [globalId]: {{ badge, title, subtitle, caption_title, caption_body, img_path, extra_images, cards[] }} }}
+
+    function loadSlideEdits() {{
+      try {{
+        const stored = localStorage.getItem(EDIT_STORAGE_KEY);
+        if (stored) slideEdits = JSON.parse(stored);
+      }} catch(e) {{ slideEdits = {{}}; }}
+    }}
+    loadSlideEdits();
+
+    function saveSlideEdits() {{
+      try {{ localStorage.setItem(EDIT_STORAGE_KEY, JSON.stringify(slideEdits)); }} catch(e) {{}}
+    }}
+
+    function getEffectiveSlide(idx) {{
+      const base = SLIDES_DATA[idx];
+      const edits = slideEdits[base.global_id];
+      if (!edits) return base;
+      return Object.assign({{}}, base, edits);
+    }}
+
+    let editModeActive = false;
+    function toggleEditMode() {{
+      editModeActive = !editModeActive;
+      document.body.classList.toggle('edit-mode-active', editModeActive);
+      const btn = document.getElementById('btnEditMode');
+      btn.classList.toggle('edit-active', editModeActive);
+      renderSlide('none');
+    }}
+
+    function applyEditModeToSlide() {{
+      if (!editModeActive) return;
+      // Make text elements contenteditable
+      document.querySelectorAll('[data-edit-key]').forEach(el => {{
+        el.contentEditable = 'true';
+        el.addEventListener('blur', onEditFieldBlur, {{ once: true }});
+      }});
+      // Show add-image zones
+      document.querySelectorAll('.img-add-zone').forEach(el => el.style.display = 'flex');
+    }}
+
+    function onEditFieldBlur(e) {{
+      const el = e.target;
+      const key = el.getAttribute('data-edit-key');
+      const cardIdx = el.getAttribute('data-card-idx');
+      const slide = SLIDES_DATA[currentIndex];
+      const gid = slide.global_id;
+      if (!slideEdits[gid]) slideEdits[gid] = {{}};
+
+      const rawText = el.innerText.trim();
+
+      if (cardIdx !== null) {{
+        // Editing a card
+        if (!slideEdits[gid].cards) {{
+          const effective = getEffectiveSlide(currentIndex);
+          slideEdits[gid].cards = effective.cards ? effective.cards.map(c => [c[0], c[1]]) : [];
+        }}
+        const ci = parseInt(cardIdx);
+        if (!slideEdits[gid].cards[ci]) slideEdits[gid].cards[ci] = ['',''];
+        if (key === 'card_title') slideEdits[gid].cards[ci][0] = rawText;
+        if (key === 'card_body')  slideEdits[gid].cards[ci][1] = rawText;
+      }} else {{
+        slideEdits[gid][key] = rawText;
+      }}
+      saveSlideEdits();
+    }}
+
+    // --- Image management ---
+    let _pendingImgAction = null; // {{ action: 'replace'|'add', imgPath: str, slideIdx: int }}
+
+    function editImageReplace(btn, currentPath) {{
+      if (!editModeActive) return;
+      _pendingImgAction = {{ action: 'replace', imgPath: currentPath, slideIdx: currentIndex }};
+      document.getElementById('imgUploadInput').click();
+    }}
+
+    function editImageAdd(btn) {{
+      if (!editModeActive) return;
+      _pendingImgAction = {{ action: 'add', slideIdx: currentIndex }};
+      document.getElementById('imgUploadInput').click();
+    }}
+
+    function editImageAddNew(idx) {{
+      if (!editModeActive) return;
+      _pendingImgAction = {{ action: 'add', slideIdx: idx }};
+      document.getElementById('imgUploadInput').click();
+    }}
+
+    function editImageRemove(btn) {{
+      if (!editModeActive) return;
+      const panel = btn.closest('.image-panel');
+      const img = panel && panel.querySelector('img');
+      if (!img) return;
+      const removedSrc = img.src.replace(window.location.origin + '/', '').replace(window.location.origin, '');
+      const slide = SLIDES_DATA[currentIndex];
+      const gid = slide.global_id;
+      if (!slideEdits[gid]) slideEdits[gid] = {{}};
+      const effective = getEffectiveSlide(currentIndex);
+      // If removing primary image
+      if (removedSrc === effective.img_path || img.src.endsWith(effective.img_path)) {{
+        if (effective.extra_images && effective.extra_images.length > 0) {{
+          // Promote first extra to primary
+          const promoted = effective.extra_images[0];
+          slideEdits[gid].img_path = promoted.path;
+          slideEdits[gid].caption_title = promoted.caption_title;
+          slideEdits[gid].caption_body = promoted.caption_body;
+          slideEdits[gid].extra_images = effective.extra_images.slice(1);
+        }} else {{
+          slideEdits[gid].img_path = '';
+        }}
+      }} else {{
+        // Removing an extra image
+        const extras = (effective.extra_images || []).filter(ei => !img.src.endsWith(ei.path));
+        slideEdits[gid].extra_images = extras;
+      }}
+      saveSlideEdits();
+      renderSlide('none');
+    }}
+
+    function handleImageUpload(e) {{
+      const file = e.target.files[0];
+      if (!file || !_pendingImgAction) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {{
+        const dataUrl = ev.target.result;
+        const action = _pendingImgAction;
+        const slide = SLIDES_DATA[action.slideIdx];
+        const gid = slide.global_id;
+        if (!slideEdits[gid]) slideEdits[gid] = {{}};
+        const effective = getEffectiveSlide(action.slideIdx);
+
+        if (action.action === 'replace') {{
+          slideEdits[gid].img_path = dataUrl;
+        }} else if (action.action === 'add') {{
+          const extras = (effective.extra_images || []).slice();
+          extras.push({{ path: dataUrl, caption_title: 'ADDITIONAL IMAGE', caption_body: 'Uploaded image.' }});
+          slideEdits[gid].extra_images = extras;
+        }}
+        saveSlideEdits();
+        _pendingImgAction = null;
+        renderSlide('none');
+      }};
+      reader.readAsDataURL(file);
+      e.target.value = '';
+    }}
+
+    // ==========================================================================
+    // QUIZ EDITOR: Add/Remove/Edit questions, choices, explanations + answer shuffle
+    // ==========================================================================
+    const QUIZ_EDIT_KEY = 'ventricular_quiz_custom_questions_v2';
+    let editableQuestions = null; // null = use QUIZ_QUESTIONS; array = custom set
+
+    function loadQuizEdits() {{
+      try {{
+        const stored = localStorage.getItem(QUIZ_EDIT_KEY);
+        if (stored) editableQuestions = JSON.parse(stored);
+      }} catch(e) {{ editableQuestions = null; }}
+    }}
+    loadQuizEdits();
+
+    function getActiveQuestions() {{
+      return editableQuestions !== null ? editableQuestions : QUIZ_QUESTIONS;
+    }}
+
+    // Override QUIZ_QUESTIONS references in quiz engine to use getActiveQuestions()
+    // (done dynamically via the functions below)
+
+    function openQuizEditor() {{
+      // Deep clone current questions for editing
+      const qs = getActiveQuestions().map(q => ({{
+        q: q.q,
+        options: q.options.slice(),
+        answer: q.answer,
+        explanation: q.explanation
+      }}));
+      renderQuizEditor(qs);
+      document.getElementById('quizEditorModal').classList.add('active');
+    }}
+
+    function closeQuizEditor() {{
+      document.getElementById('quizEditorModal').classList.remove('active');
+    }}
+
+    function renderQuizEditor(qs) {{
+      const body = document.getElementById('quizEditorBody');
+      const letters = ['A','B','C','D'];
+      const letClasses = ['let-a','let-b','let-c','let-d'];
+      body.innerHTML = qs.map((q, qi) => `
+        <div class="qe-question-card" id="qeCard_${{qi}}">
+          <div class="qe-q-num">Question ${{qi + 1}}</div>
+          <button class="qe-delete-btn" onclick="deleteQeQuestion(${{qi}})" title="Delete question">✕</button>
+          <div>
+            <div class="qe-field-label">Question Text</div>
+            <textarea class="qe-textarea" id="qeQ_${{qi}}">${{q.q}}</textarea>
+          </div>
+          <div>
+            <div class="qe-field-label">Answer Choices (select correct one)</div>
+            <div class="qe-options-grid">
+              ${{q.options.map((opt, oi) => `
+                <div class="qe-option-row">
+                  <div class="qe-opt-letter ${{letClasses[oi]}}">${{letters[oi]}}</div>
+                  <input class="qe-input" type="text" id="qeOpt_${{qi}}_${{oi}}" value="${{opt.replace(/"/g,'&quot;')}}" style="flex:1;">
+                  <input type="radio" class="qe-correct-radio" name="correct_${{qi}}" value="${{oi}}" ${{q.answer === oi ? 'checked' : ''}} id="qeCorr_${{qi}}_${{oi}}" title="Mark as correct">
+                  <label for="qeCorr_${{qi}}_${{oi}}" style="font-size:0.72rem;color:var(--emerald);font-weight:700;cursor:pointer;">✓</label>
+                </div>
+              `).join('')}}
+            </div>
+          </div>
+          <div>
+            <div class="qe-field-label">Explanation / Rationale</div>
+            <textarea class="qe-textarea" id="qeExp_${{qi}}">${{q.explanation}}</textarea>
+          </div>
+        </div>
+      `).join('');
+      // Store count for save
+      body.setAttribute('data-q-count', qs.length);
+    }}
+
+    function deleteQeQuestion(qi) {{
+      const body = document.getElementById('quizEditorBody');
+      const card = document.getElementById('qeCard_' + qi);
+      if (card) card.remove();
+      // Re-number remaining
+      const remaining = body.querySelectorAll('.qe-question-card');
+      remaining.forEach((c, i) => {{
+        c.id = 'qeCard_' + i;
+        const num = c.querySelector('.qe-q-num');
+        if (num) num.textContent = 'Question ' + (i+1);
+      }});
+      body.setAttribute('data-q-count', remaining.length);
+    }}
+
+    function addNewQuestion() {{
+      const body = document.getElementById('quizEditorBody');
+      const count = parseInt(body.getAttribute('data-q-count') || '0');
+      const qi = count;
+      const letters = ['A','B','C','D'];
+      const letClasses = ['let-a','let-b','let-c','let-d'];
+      const newCard = document.createElement('div');
+      newCard.className = 'qe-question-card';
+      newCard.id = 'qeCard_' + qi;
+      newCard.innerHTML = `
+        <div class="qe-q-num">Question ${{qi + 1}}</div>
+        <button class="qe-delete-btn" onclick="deleteQeQuestion(${{qi}})" title="Delete question">✕</button>
+        <div>
+          <div class="qe-field-label">Question Text</div>
+          <textarea class="qe-textarea" id="qeQ_${{qi}}" placeholder="Enter question text..."></textarea>
+        </div>
+        <div>
+          <div class="qe-field-label">Answer Choices (select correct one)</div>
+          <div class="qe-options-grid">
+            ${{[0,1,2,3].map(oi => `
+              <div class="qe-option-row">
+                <div class="qe-opt-letter ${{letClasses[oi]}}">${{letters[oi]}}</div>
+                <input class="qe-input" type="text" id="qeOpt_${{qi}}_${{oi}}" placeholder="Option ${{letters[oi]}}..." style="flex:1;">
+                <input type="radio" class="qe-correct-radio" name="correct_${{qi}}" value="${{oi}}" ${{oi===0?'checked':''}} id="qeCorr_${{qi}}_${{oi}}">
+                <label for="qeCorr_${{qi}}_${{oi}}" style="font-size:0.72rem;color:var(--emerald);font-weight:700;cursor:pointer;">✓</label>
+              </div>
+            `).join('')}}
+          </div>
+        </div>
+        <div>
+          <div class="qe-field-label">Explanation / Rationale</div>
+          <textarea class="qe-textarea" id="qeExp_${{qi}}" placeholder="Explain the correct answer..."></textarea>
+        </div>
+      `;
+      body.appendChild(newCard);
+      body.setAttribute('data-q-count', qi + 1);
+      newCard.scrollIntoView({{ behavior: 'smooth' }});
+    }}
+
+    function saveQuizEdits() {{
+      const body = document.getElementById('quizEditorBody');
+      const count = parseInt(body.getAttribute('data-q-count') || '0');
+      const saved = [];
+      for (let qi = 0; qi < 200; qi++) {{
+        const card = document.getElementById('qeCard_' + qi);
+        if (!card) continue;
+        const qText = (document.getElementById('qeQ_' + qi) || {{}}).value || '';
+        const opts = [0,1,2,3].map(oi => (document.getElementById('qeOpt_' + qi + '_' + oi) || {{}}).value || '');
+        const corrRadio = body.querySelector('input[name="correct_' + qi + '"]:checked');
+        const ans = corrRadio ? parseInt(corrRadio.value) : 0;
+        const exp = (document.getElementById('qeExp_' + qi) || {{}}).value || '';
+        if (qText.trim()) {{
+          saved.push({{ q: qText.trim(), options: opts, answer: ans, explanation: exp.trim() }});
+        }}
+      }}
+      editableQuestions = saved.length > 0 ? saved : null;
+      try {{
+        if (editableQuestions) localStorage.setItem(QUIZ_EDIT_KEY, JSON.stringify(editableQuestions));
+        else localStorage.removeItem(QUIZ_EDIT_KEY);
+      }} catch(e) {{}}
+      closeQuizEditor();
+      // Notify
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--emerald);color:#030712;padding:8px 22px;border-radius:999px;font-weight:800;font-size:0.85rem;box-shadow:0 4px 16px rgba(16,185,129,0.5);';
+      banner.textContent = '✓ Quiz questions saved! ' + (editableQuestions ? editableQuestions.length : QUIZ_QUESTIONS.length) + ' questions active.';
+      document.body.appendChild(banner);
+      setTimeout(() => banner.remove(), 2800);
+    }}
+
+    function resetQuizToDefaults() {{
+      if (!confirm('Reset all quiz questions to the original defaults?')) return;
+      editableQuestions = null;
+      localStorage.removeItem(QUIZ_EDIT_KEY);
+      closeQuizEditor();
+    }}
+
+    // --- Answer Shuffling ---
+    // We patch the quiz engine to shuffle answer choices on each quiz start.
+    // shuffledQuestionMaps stores: {{ questionIdx: {{ shuffledOptions: [], correctShuffledIdx: int }} }}
+    let shuffledQuestionMaps = [];
+
+    function buildShuffledQuestions() {{
+      const qs = getActiveQuestions();
+      shuffledQuestionMaps = qs.map(q => {{
+        // Create index array and shuffle it
+        const indices = [0,1,2,3].slice(0, q.options.length);
+        // Fisher-Yates shuffle
+        for (let i = indices.length - 1; i > 0; i--) {{
+          const j = Math.floor(Math.random() * (i + 1));
+          [indices[i], indices[j]] = [indices[j], indices[i]];
+        }}
+        const shuffledOptions = indices.map(i => q.options[i]);
+        const correctShuffledIdx = indices.indexOf(q.answer);
+        return {{ shuffledOptions, correctShuffledIdx, originalAnswer: q.answer }};
+      }});
+    }}
+
+    function getShuffledQuestion(qIdx) {{
+      const base = getActiveQuestions()[qIdx];
+      if (!shuffledQuestionMaps[qIdx]) return base;
+      const map = shuffledQuestionMaps[qIdx];
+      return {{
+        q: base.q,
+        options: map.shuffledOptions,
+        answer: map.correctShuffledIdx,
+        explanation: base.explanation
+      }};
+    }}
+
+    // Keyboard shortcut: E = toggle Edit Mode
+    // (Added to existing keydown handler below)
 
     // Master Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {{
@@ -3906,8 +4835,15 @@ html_content = f"""<!DOCTYPE html>
     if (stepParam === 'all') {{
       currentStep = 999;
     }}
+    const editParam = urlParams.get('edit');
+    if (editParam === 'true' || editParam === '1') {{
+      toggleEditMode();
+    }}
     const quizParam = urlParams.get('quiz');
-    if (quizParam === 'open' || quizParam === 'lobby') {{
+    if (quizParam === 'edit') {{
+      toggleQuiz();
+      openQuizEditor();
+    }} else if (quizParam === 'open' || quizParam === 'lobby') {{
       toggleQuiz();
     }} else if (quizParam === 'start') {{
       toggleQuiz();
@@ -3940,6 +4876,7 @@ html_content = f"""<!DOCTYPE html>
     // Initialize first slide on load
     renderSlide('forward');
   </script>
+
 </body>
 </html>
 """
@@ -3955,5 +4892,5 @@ import shutil
 shutil.copyfile('build_html_lecture_arena.py', 'generate_html_lecture.py')
 
 print(f"Master interactive lecture web application generated successfully!")
-print(f"Total slides: {len(ALL_SLIDES)} (Part 1: 33, Part 2: 33)")
+print(f"Total slides: {len(ALL_SLIDES)} (Part 1: {len(DECK1_SLIDES)}, Part 2: {len(DECK2_SLIDES)})")
 print(f"Files written: index.html ({len(html_content)//1024} KB) and interactive_lecture.html")
